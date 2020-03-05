@@ -2,9 +2,9 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
-const screenHeight = Math.round(Dimensions.get('window').height);
+const screenHeight = Dimensions.get('window').height;
 
-export default class App extends React.Component {
+export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,6 +12,14 @@ export default class App extends React.Component {
       password: '',
       inputError: false
     };
+  }
+
+  goBack() {
+    this.props.navigation.goBack()
+  }
+
+  navTo(route) {
+    this.props.navigation.navigate(route)
   }
 
   setEmail(email) {
@@ -90,23 +98,21 @@ export default class App extends React.Component {
               <Text style={styles.forgotPassword}>forgot password?</Text>
             </TouchableOpacity>
 
-            <View style={{ paddingTop: '10%', }}>
-              <Button title="Sign in"></Button>
+            <View style={{ paddingTop: '10%' }}>
+              <Button onPress={() => this.navTo('SkateMap')} title="Sign in"></Button>
               <Text style={styles.connectText}>or connect using</Text>
               <Button title="Google+"></Button>
             </View>
 
-          </ScrollView>
-
-          <View style={styles.dontHaveAccountContainer}>
-            <View style={{ flex: 1, textAlign: "center", alignItems: "center" }}>
-              <Text>Don't have an account?</Text>
-              <TouchableOpacity>
-                <Text style={styles.signUpHereText}> Sign up here.</Text>
-              </TouchableOpacity>
+            <View style={styles.dontHaveAccountContainer}>
+              <View style={{ flex: 1, textAlign: "center", alignItems: "center" }}>
+                <Text>Don't have an account?</Text>
+                <TouchableOpacity onPress={() => this.navTo('Register')}>
+                  <Text style={styles.signUpHereText}> Sign up here.</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-
+          </ScrollView>
         </SafeAreaView>
       </View>
     );
@@ -117,7 +123,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   title: {
     fontSize: 24,
@@ -164,8 +170,6 @@ const styles = StyleSheet.create({
   },
   dontHaveAccountContainer: {
     flexDirection: "row",
-    position: 'absolute',
-    bottom: 0,
-    margin: 36
+    margin: 36,
   }
 });
