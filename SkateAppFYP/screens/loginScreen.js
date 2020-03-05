@@ -71,7 +71,7 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        {/* <StatusBar barStyle="white" backgroundColor="black" /> */}
+        <StatusBar barStyle="white" backgroundColor="blue" />
         <SafeAreaView>
           <ScrollView style={styles.container}>
 

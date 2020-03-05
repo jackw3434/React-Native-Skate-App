@@ -20,11 +20,24 @@ export default class RegisterScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView>
-                    <ScrollView >
+                    <ScrollView contentContainerStyle={styles.container}>
                         <TouchableOpacity onPress={() => this.goBack()}>
                             <Text style={styles.goBack}>Go Back</Text>
                         </TouchableOpacity>
-                        <Text style={styles.title}>Register Screen</Text>
+
+                        <View>
+                            <Text style={styles.title}>Register Screen</Text>
+                        </View>
+                        <View >
+                            <Text>Create Account</Text>
+                            <Text>Let's get started!</Text>
+                        </View>
+
+                        <View></View>
+                        <View></View>
+                        <View></View>
+                        <View></View>
+                        <View></View>
                     </ScrollView>
                 </SafeAreaView>
             </View>
@@ -33,14 +46,19 @@ export default class RegisterScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 15,
+        width: '100%',
+        height: '100%'
+    },
     title: {
         fontSize: 24,
         textAlign: "center",
         paddingTop: '10%'
     },
     goBack: {
-        color:'blue',
-        paddingTop:'5%',
+        color: 'blue',
+        paddingTop: '5%',
         paddingHorizontal: 15,
     }
 });
