@@ -71,7 +71,7 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <StatusBar barStyle="white" backgroundColor="blue" />
+        {/* <StatusBar barStyle="white" backgroundColor="blue" /> */}
         <SafeAreaView>
           <ScrollView style={styles.container}>
 
@@ -99,7 +99,7 @@ export default class LoginScreen extends React.Component {
             </TouchableOpacity>
 
             <View style={{ paddingTop: '10%' }}>
-              <Button onPress={() => this.navTo('SkateMap')} title="Sign in"></Button>
+              <Button onPress={() => this.navTo('LoggedIn')} title="Sign in"></Button>
               <Text style={styles.connectText}>or connect using</Text>
               <Button title="Google+"></Button>
             </View>

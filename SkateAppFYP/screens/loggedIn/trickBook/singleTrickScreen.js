@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
 
-export default class UserProfileScreen extends React.Component {
+export default class SingleTrickScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,11 +20,11 @@ export default class UserProfileScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView>
-                    <ScrollView>
-                        <TouchableOpacity onPress={() => this.goBack()}>
-                            <Text style={styles.goBack}>Go Back</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.title}>User Profile</Text>
+                    <TouchableOpacity onPress={() => this.goBack()}>
+                        <Text style={styles.goBack}>Go Back</Text>
+                    </TouchableOpacity>
+                    <ScrollView style={styles.container}>
+                        <Text style={styles.title}>Single Trick Screen</Text>
                     </ScrollView>
                 </SafeAreaView>
             </View>
@@ -33,6 +33,11 @@ export default class UserProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 15,
+        width: '100%',
+        height: '100%'
+    },
     title: {
         fontSize: 24,
         textAlign: "center",

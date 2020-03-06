@@ -1,16 +1,16 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
 
-export default class SkateMapScreen extends React.Component {
+export default class SocialFeedScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
         };
     }
 
-    goBack() {
-        this.props.navigation.goBack()
-    }
+    // goBack() {
+    //     this.props.navigation.goBack()
+    // }
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -20,19 +20,11 @@ export default class SkateMapScreen extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView>
-                    <ScrollView >
-                        <TouchableOpacity onPress={() => this.goBack()}>
+                    <ScrollView style={styles.container}>
+                        {/* <TouchableOpacity onPress={() => this.goBack()}>
                             <Text style={styles.goBack}>Go Back</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.title}>Skate Map</Text>
-
-                        <TouchableOpacity style={{}} onPress={() => this.navTo('TrickBook')}>
-                            <Text>Trick Book</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={{}} onPress={() => this.navTo('SocialFeed')}>
-                            <Text>Social Feed</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
+                        <Text style={styles.title}>Social Feed</Text>
                     </ScrollView>
                 </SafeAreaView>
             </View>
@@ -41,6 +33,11 @@ export default class SkateMapScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 15,
+        width: '100%',
+        height: '100%'
+    },
     title: {
         fontSize: 24,
         textAlign: "center",
