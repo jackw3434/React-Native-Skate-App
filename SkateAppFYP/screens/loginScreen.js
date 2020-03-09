@@ -69,6 +69,7 @@ export default class LoginScreen extends React.Component {
   }
 
   render() {
+    console.log(this.props)
     return (
       <View style={{ flex: 1 }}>
         {/* <StatusBar barStyle="white" backgroundColor="blue" /> */}
@@ -94,12 +95,12 @@ export default class LoginScreen extends React.Component {
               />
             </View>
 
-            <TouchableOpacity style={styles.forgotPasswordContainer}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
               <Text style={styles.forgotPassword}>forgot password?</Text>
             </TouchableOpacity>
 
             <View style={{ paddingTop: '10%' }}>
-              <Button onPress={() => this.navTo('LoggedIn')} title="Sign in"></Button>
+              <Button onPress={() => this.props.navigation.navigate('LoginTabNavigationStack', this.props.navigation)} title="Sign in"></Button>
               <Text style={styles.connectText}>or connect using</Text>
               <Button title="Google+"></Button>
             </View>
@@ -107,7 +108,7 @@ export default class LoginScreen extends React.Component {
             <View style={styles.dontHaveAccountContainer}>
               <View style={{ flex: 1, textAlign: "center", alignItems: "center" }}>
                 <Text>Don't have an account?</Text>
-                <TouchableOpacity onPress={() => this.navTo('Register')}>
+                <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
                   <Text style={styles.signUpHereText}> Sign up here.</Text>
                 </TouchableOpacity>
               </View>

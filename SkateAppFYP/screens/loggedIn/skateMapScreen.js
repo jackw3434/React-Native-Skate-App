@@ -20,11 +20,8 @@ export default class SkateMapScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props.navigation}>
+            <AppContainer passNav={this.props} isNested={false}>
                 <Text style={styles.title}>Skate Map</Text>
-                {/* <TouchableOpacity onPress={() => this.props.navigation.navigate('Login Screen')}>
-                    <Text style={{ color: 'blue' }}>Logout</Text>
-                </TouchableOpacity> */}
             </AppContainer>
         );
     }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
-import HeaderContainer from './HeaderContainer'
 
 export default class AppContainer extends React.Component {
     constructor(props) {
@@ -9,15 +8,31 @@ export default class AppContainer extends React.Component {
         };
     }
 
+    goBack() {
+        this.props.navigation.goBack()
+    }
+
     render() {
-         console.log("app container", this.props.passNav)
         return (
             <View style={{ flex: 1 }}>
                 <SafeAreaView style={styles.container}>
-                    {/* <HeaderContainer/> */}
-                    <TouchableOpacity onPress={() => this.props.passNav.navigate('Login Screen')}>
-                        <Text style={{ color: 'blue' }}>Logout</Text>
-                    </TouchableOpacity>
+                    {!this.props.isNested ?
+                        <View style={{
+                            flexDirection: 'row', alignSelf: 'flex-end',
+                            textAlign: 'right',
+                        }}>
+                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
+                                <Text style={{ color: 'blue', paddingRight:10 }}>User Profile</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
+                                <Text style={{ color: 'blue' }}>Logout</Text>
+                            </TouchableOpacity>
+                        </View>
+                        :
+                        <TouchableOpacity onPress={() => this.props.passNav.navigation.goBack()}>
+                            <Text style={styles.goBack}>Go Back</Text>
+                        </TouchableOpacity>
+                    }
                     <ScrollView>
                         {this.props.children}
                     </ScrollView>
@@ -34,4 +49,11 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
+    headerContainer: {
+        height: 40,
+        alignSelf: 'flex-end'
+    },
+    goBack: {
+        color: 'blue'
+    }
 });

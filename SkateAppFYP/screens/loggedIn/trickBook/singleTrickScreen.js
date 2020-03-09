@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
+import AppContainer from '../../containers/AppContainer';
 
 export default class SingleTrickScreen extends React.Component {
     constructor(props) {
@@ -18,16 +19,12 @@ export default class SingleTrickScreen extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <SafeAreaView>
-                    <TouchableOpacity onPress={() => this.goBack()}>
-                        <Text style={styles.goBack}>Go Back</Text>
-                    </TouchableOpacity>
-                    <ScrollView style={styles.container}>
-                        <Text style={styles.title}>Single Trick Screen</Text>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+            <AppContainer passNav={this.props} isNested={true}>
+                {/* <TouchableOpacity onPress={() => this.goBack()}>
+                    <Text style={styles.goBack}>Go Back</Text>
+                </TouchableOpacity> */}
+                <Text style={styles.title}>Single Trick Screen</Text>
+            </AppContainer>
         );
     }
 }
@@ -41,11 +38,9 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         textAlign: "center",
-        paddingTop: '10%'
+        //paddingTop: '10%'
     },
     goBack: {
-        color: 'blue',
-        paddingTop: '5%',
-        paddingHorizontal: 15,
+        color: 'blue'        
     }
 });

@@ -24,20 +24,13 @@ export default class RegisterScreen extends React.Component {
                         <TouchableOpacity onPress={() => this.goBack()}>
                             <Text style={styles.goBack}>Go Back</Text>
                         </TouchableOpacity>
-
                         <View>
                             <Text style={styles.title}>Register Screen</Text>
                         </View>
-                        <View >
-                            <Text>Create Account</Text>
-                            <Text>Let's get started!</Text>
+                        <View>
+                            <Text style={{ textAlign: 'center' }}>Create Account</Text>
+                            <Text style={{ textAlign: 'center' }}>Let's get started!</Text>
                         </View>
-
-                        <View></View>
-                        <View></View>
-                        <View></View>
-                        <View></View>
-                        <View></View>
                     </ScrollView>
                 </SafeAreaView>
             </View>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
+import AppContainer from '../containers/AppContainer';
 
 export default class SocialFeedScreen extends React.Component {
     constructor(props) {
@@ -18,16 +19,9 @@ export default class SocialFeedScreen extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <SafeAreaView>
-                    <ScrollView style={styles.container}>
-                        {/* <TouchableOpacity onPress={() => this.goBack()}>
-                            <Text style={styles.goBack}>Go Back</Text>
-                        </TouchableOpacity> */}
-                        <Text style={styles.title}>Social Feed</Text>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+            <AppContainer passNav={this.props} isNested={false}>
+                <Text style={styles.title}>Social Feed</Text>
+            </AppContainer>
         );
     }
 }
@@ -41,7 +35,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         textAlign: "center",
-        paddingTop: '10%'
+        //paddingTop: '10%'
     },
     goBack: {
         color: 'blue',

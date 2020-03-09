@@ -1,8 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
-import AppContainer from '../containers/AppContainer';
 
-export default class UserProfileScreen extends React.Component {
+export default class ForgotPasswordScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,9 +18,16 @@ export default class UserProfileScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>
-                <Text style={styles.title}>User Profile</Text>
-            </AppContainer>
+            <View style={{ flex: 1 }}>
+                <SafeAreaView>
+                    <ScrollView contentContainerStyle={styles.container}>
+                        <TouchableOpacity onPress={() => this.goBack()}>
+                            <Text style={styles.goBack}>Go Back</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.title}>Forgot Password Screen</Text>
+                    </ScrollView>
+                </SafeAreaView>
+            </View>
         );
     }
 }
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         textAlign: "center",
-        //paddingTop: '10%'
+        paddingTop: '10%'
     },
     goBack: {
         color: 'blue',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
+import AppContainer from '../../containers/AppContainer';
 
 export default class TrickBookScreen extends React.Component {
     constructor(props) {
@@ -18,16 +19,12 @@ export default class TrickBookScreen extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <SafeAreaView>
-                    <ScrollView style={styles.container}>                       
-                        <Text style={styles.title}>Trick Book</Text>
-                        <TouchableOpacity style={{}} onPress={() => this.navTo('SingleTrick')}>
-                            <Text>Single Trick Screen</Text>
-                        </TouchableOpacity>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+            <AppContainer passNav={this.props} isNested={false}>
+                <Text style={styles.title}>Trick Book</Text>
+                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
+                    <Text style={styles.goBack}>Single Trick Screen</Text>
+                </TouchableOpacity>
+            </AppContainer>
         );
     }
 }
@@ -41,7 +38,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         textAlign: "center",
-        paddingTop: '10%'
+        //paddingTop: '10%'
     },
     goBack: {
         color: 'blue',
