@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
+import AppContainer from './containers/AppContainer';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -66,53 +67,47 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1}}>
-        {/* <StatusBar barStyle="white" backgroundColor="blue" /> */}
-        <SafeAreaView style={styles.container}>
-        
-          <ScrollView style={styles.container}>
+      <AppContainer noHeader={true}>       
 
-            <View style={styles.spacer} />
+        <Text style={styles.title}>Skate App</Text>
+        <Text style={styles.tagline}>A community skate application</Text>
+        <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
 
-            <Text style={styles.title}>Skate App</Text>
-            <Text style={styles.tagline}>A community skate application</Text>
-            <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
+        <View style={styles.spacer} />
 
-            <View style={styles.spacer} />
+        <SkateTextInput
+          valid={this.state.emailValid}
+          placeholder="Email"
+          onChangeText={(email) => this.setEmail(email)}
+          text={this.state.email}
+          iconName="UserRegIcon"
+          align="center"
+          viewBox="0 -5 23.405 23.405"
+        />
+        <SkateTextInput
+          valid={this.state.passwordValid}
+          placeholder="Password"
+          onChangeText={password => this.setPassword(password)}
+          text={this.state.password}
+          iconName="Padlock"
+          align="center"
+          iconStyle={{ marginTop: 7 }}
+          viewBox="0 0 20 30"
+        />
 
-            <SkateTextInput
-              valid={this.state.emailValid}
-              placeholder="Email"
-              onChangeText={(email) => this.setEmail(email)}
-              text={this.state.email}
-              iconName="UserRegIcon"
-              align="center"
-              viewBox="0 -5 23.405 23.405"
-            />
-            <SkateTextInput
-              valid={this.state.passwordValid}
-              placeholder="Password"
-              onChangeText={password => this.setPassword(password)}
-              text={this.state.password}
-              iconName="Padlock"
-              align="center"
-              iconStyle={{ marginTop: 7 }}
-              viewBox="0 0 20 30"
-            />
+        <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
+          <Text style={styles.forgotPassword}>forgot password?</Text>
+        </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
-              <Text style={styles.forgotPassword}>forgot password?</Text>
-            </TouchableOpacity>
+        <View style={styles.spacer} />
 
-            <View style={styles.spacer} />
+        <SkateButton
+          buttonText="Sign in"
+          onPress={() => this.navTo('LoginTabNavigationStack')}
+        />
 
-            <SkateButton
-              buttonText="Sign in"
-              onPress={() => this.navTo('LoginTabNavigationStack')}
-            />
-
-            {/* <Text style={styles.connectText}>or connect using</Text> */}
-            {/* <SkateButton
+        {/* <Text style={styles.connectText}>or connect using</Text> */}
+        {/* <SkateButton
                     buttonText="Google+"
                     onPress={}
                     iconName="Padlock"
@@ -120,16 +115,14 @@ export default class LoginScreen extends React.Component {
                     viewBox="0 0 20 30"
                   /> */}
 
-            <View style={styles.dontHaveAccountContainer}>
-              <Text>Don't have an account?</Text>
-              <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
-                <Text style={styles.signUpHereText}> Sign up here.</Text>
-              </TouchableOpacity>
-            </View>
+        <View style={styles.dontHaveAccountContainer}>
+          <Text>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
+            <Text style={styles.signUpHereText}> Sign up here.</Text>
+          </TouchableOpacity>
+        </View>
+      </AppContainer>
 
-          </ScrollView>
-        </SafeAreaView>
-      </View>
     );
   }
 }

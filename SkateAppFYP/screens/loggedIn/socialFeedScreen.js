@@ -7,11 +7,7 @@ export default class SocialFeedScreen extends React.Component {
         super(props);
         this.state = {
         };
-    }
-
-    // goBack() {
-    //     this.props.navigation.goBack()
-    // }
+    }   
 
     navTo(route) {
         this.props.navigation.navigate(route)

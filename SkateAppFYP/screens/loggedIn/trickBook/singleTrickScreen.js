@@ -7,11 +7,7 @@ export default class SingleTrickScreen extends React.Component {
         super(props);
         this.state = {
         };
-    }
-
-    goBack() {
-        this.props.navigation.goBack()
-    }
+    }   
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -19,10 +15,7 @@ export default class SingleTrickScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>
-                {/* <TouchableOpacity onPress={() => this.goBack()}>
-                    <Text style={styles.goBack}>Go Back</Text>
-                </TouchableOpacity> */}
+            <AppContainer passNav={this.props} isNested={true}>                
                 <Text style={styles.title}>Single Trick Screen</Text>
             </AppContainer>
         );

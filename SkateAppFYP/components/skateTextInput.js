@@ -14,7 +14,7 @@ export default class SkateTextInput extends React.Component {
         return (
             <View style={[styles.Container, !this.props.valid && styles.invalid]}>
                 {!this.props.icon && <Icon style={this.props.iconStyle} name={this.props.iconName} fill="#000" viewBox={this.props.viewBox} height="28" width="28" />}
-                <TextInput placeholderTextColor="black" {...this.props} style={[styles.textBox, this.props.style]}>{[this.props.text]}</TextInput>
+                <TextInput placeholderTextColor="rgba(128, 128, 128,0.5)" {...this.props} style={[styles.textBox, this.props.style]}>{[this.props.text]}</TextInput>
                 {!this.props.valid && <Text style={styles.errorStyle}>*</Text>}
             </View>
         )
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         flex: 1,
         //color: 'rgba(255,255,255,0.7)',             
-        fontSize: 15
+        fontSize: 15,
     },
     Container: {
         flexDirection: 'row',
@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
         //backgroundColor: 'yellow',
         borderRadius: 40,
         borderColor: 'rgba(128, 128, 128,0.25)',
-        height: 40,
+        height:40,
+        maxHeight: 40,
         margin: 5,
         paddingLeft: 10,
         borderWidth: 2
@@ -50,6 +51,8 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginRight: 15,
         color: 'rgb(253,178,178)',
-        fontSize: 24
+        fontSize: 24,
+        height:40,
+        maxHeight: 40,
     }
 });

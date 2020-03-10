@@ -9,20 +9,25 @@ export default class TrickBookScreen extends React.Component {
         };
     }
 
-    // goBack() {
-    //     this.props.navigation.goBack()
-    // }
-
     navTo(route) {
         this.props.navigation.navigate(route)
     }
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false}>
+            <AppContainer passNav={this.props} isNested={false} pageTitle="Trick Book">
                 <Text style={styles.title}>Trick Book</Text>
                 <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
-                    <Text style={styles.goBack}>Single Trick Screen</Text>
+                    <Text style={styles.goBack}>Single Trick Screen (i.e Ollie)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
+                    <Text style={styles.goBack}>Single Trick Screen (i.e Pop Shuvit)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
+                    <Text style={styles.goBack}>Single Trick Screen (i.e Heelflip)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
+                    <Text style={styles.goBack}>Single Trick Screen (i.e Kickflip)</Text>
                 </TouchableOpacity>
             </AppContainer>
         );
@@ -30,11 +35,6 @@ export default class TrickBookScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 15,
-        width: '100%',
-        height: '100%'
-    },
     title: {
         fontSize: 24,
         textAlign: "center",
@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
     },
     goBack: {
         color: 'blue',
+        textAlign: "center",
         paddingTop: '5%',
-        paddingHorizontal: 15,
+        // paddingHorizontal: 15,
     }
 });

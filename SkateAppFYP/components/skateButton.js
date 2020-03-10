@@ -29,7 +29,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 30,
         margin: 5,
-        backgroundColor: 'rgba(0,0,255,0.9)'
+        backgroundColor: 'rgba(0,0,255,0.9)',
+        height:45,
+        maxHeight: 45,
+        minHeight:45
     },
     text: {
         color: '#fff',
