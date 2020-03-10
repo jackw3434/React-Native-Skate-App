@@ -1,8 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
-
-const screenWidth = Math.round(Dimensions.get('window').width);
-const screenHeight = Dimensions.get('window').height;
+import SkateButton from '../components/skateButton';
+import SkateTextInput from '../components/skateTextInput';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -10,12 +9,9 @@ export default class LoginScreen extends React.Component {
     this.state = {
       email: '',
       password: '',
-      inputError: false
+      emailValid: true,
+      passwordValid: true,
     };
-  }
-
-  goBack() {
-    this.props.navigation.goBack()
   }
 
   navTo(route) {
@@ -69,50 +65,68 @@ export default class LoginScreen extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1}}>
         {/* <StatusBar barStyle="white" backgroundColor="blue" /> */}
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
+        
           <ScrollView style={styles.container}>
+
+            <View style={styles.spacer} />
 
             <Text style={styles.title}>Skate App</Text>
             <Text style={styles.tagline}>A community skate application</Text>
             <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
 
-            <View style={styles.textInputContainer}>
-              <TextInput
-                style={!this.state.inputError ? styles.textInput : [styles.textInput, styles.inputError]}
-                onChangeText={email => this.setEmail(email)}
-                placeholder="Email"
-                autoCompleteType="email"
-              />
-              <TextInput
-                style={!this.state.inputError ? styles.textInput : [styles.textInput, styles.inputError]}
-                onChangeText={password => this.setPassword(password)}
-                placeholder="Password"
-                autoCompleteType="password"
-              />
-            </View>
+            <View style={styles.spacer} />
 
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
+            <SkateTextInput
+              valid={this.state.emailValid}
+              placeholder="Email"
+              onChangeText={(email) => this.setEmail(email)}
+              text={this.state.email}
+              iconName="UserRegIcon"
+              align="center"
+              viewBox="0 -5 23.405 23.405"
+            />
+            <SkateTextInput
+              valid={this.state.passwordValid}
+              placeholder="Password"
+              onChangeText={password => this.setPassword(password)}
+              text={this.state.password}
+              iconName="Padlock"
+              align="center"
+              iconStyle={{ marginTop: 7 }}
+              viewBox="0 0 20 30"
+            />
+
+            <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
               <Text style={styles.forgotPassword}>forgot password?</Text>
             </TouchableOpacity>
 
-            <View style={{ paddingTop: '10%' }}>
-              <Button onPress={() => this.props.navigation.navigate('LoginTabNavigationStack', this.props.navigation)} title="Sign in"></Button>
-              <Text style={styles.connectText}>or connect using</Text>
-              <Button title="Google+"></Button>
-            </View>
+            <View style={styles.spacer} />
+
+            <SkateButton
+              buttonText="Sign in"
+              onPress={() => this.navTo('LoginTabNavigationStack')}
+            />
+
+            {/* <Text style={styles.connectText}>or connect using</Text> */}
+            {/* <SkateButton
+                    buttonText="Google+"
+                    onPress={}
+                    iconName="Padlock"
+                    iconStyle={{ marginTop: 7 }}
+                    viewBox="0 0 20 30"
+                  /> */}
 
             <View style={styles.dontHaveAccountContainer}>
-              <View style={{ flex: 1, textAlign: "center", alignItems: "center" }}>
-                <Text>Don't have an account?</Text>
-                <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
-                  <Text style={styles.signUpHereText}> Sign up here.</Text>
-                </TouchableOpacity>
-              </View>
+              <Text>Don't have an account?</Text>
+              <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
+                <Text style={styles.signUpHereText}> Sign up here.</Text>
+              </TouchableOpacity>
             </View>
+
           </ScrollView>
         </SafeAreaView>
       </View>
@@ -124,7 +138,8 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
     width: '100%',
-    height: '100%'
+    height: '100%',
+    backgroundColor: 'rgb(240,248,255)'
   },
   title: {
     fontSize: 24,
@@ -132,45 +147,36 @@ const styles = StyleSheet.create({
     paddingTop: '10%'
   },
   tagline: {
+    fontSize: 20,
     textAlign: "center",
     paddingTop: '10%'
   },
   appDescripter: {
+    fontSize: 16,
     paddingTop: '10%',
     textAlign: "center"
   },
-  textInputContainer: {
-    paddingTop: '10%',
-  },
-  textInput: {
-    height: 40,
-    paddingLeft: 10,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10
-  },
-  inputError: {
-    height: 40,
-    paddingLeft: 10,
-    borderWidth: 2,
-    borderColor: 'red',
+  spacer: {
+    paddingTop: '15%'
   },
   forgotPasswordContainer: {
+    paddingTop: 5,
     alignSelf: 'flex-end',
-    textAlign: 'right',
+    textAlign: 'right'
   },
   forgotPassword: {
-    color: 'blue'
+    color: 'rgba(0,0,255,1)'
   },
   connectText: {
     paddingVertical: 10,
     textAlign: "center"
   },
   signUpHereText: {
-    color: "blue"
+    color: 'rgba(0,0,255,1)'
   },
   dontHaveAccountContainer: {
     flexDirection: "row",
     margin: 36,
+    justifyContent: 'center'
   }
 });

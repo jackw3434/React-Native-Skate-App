@@ -15,25 +15,25 @@ export default class AppContainer extends React.Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
+                {/* <StatusBar barStyle="white" backgroundColor="blue" /> */}
                 <SafeAreaView style={styles.container}>
-                    {!this.props.isNested ?
-                        <View style={{
-                            flexDirection: 'row', alignSelf: 'flex-end',
-                            textAlign: 'right',
-                        }}>
-                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
-                                <Text style={{ color: 'blue', paddingRight:10 }}>User Profile</Text>
+                    <View style={{borderBottomColor:'grey', borderBottomWidth:0.5, paddingBottom:10}}>
+                        {!this.props.isNested ?
+                            <View style={{ flexDirection: 'row', alignSelf: 'flex-end', textAlign: 'right' }}>
+                                <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
+                                    <Text style={{ color: 'blue', paddingRight: 10 }}>User Profile</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
+                                    <Text style={{ color: 'blue' }}>Logout</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <TouchableOpacity onPress={() => this.props.passNav.navigation.goBack()}>
+                                <Text style={styles.goBack}>Go Back</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
-                                <Text style={{ color: 'blue' }}>Logout</Text>
-                            </TouchableOpacity>
-                        </View>
-                        :
-                        <TouchableOpacity onPress={() => this.props.passNav.navigation.goBack()}>
-                            <Text style={styles.goBack}>Go Back</Text>
-                        </TouchableOpacity>
-                    }
-                    <ScrollView>
+                        }
+                    </View>
+                    <ScrollView style={styles.container}>
                         {this.props.children}
                     </ScrollView>
                 </SafeAreaView>
@@ -44,10 +44,10 @@ export default class AppContainer extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 10,
-        paddingHorizontal: 15,
+        padding: 15,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        backgroundColor: 'rgb(240,248,255)'
     },
     headerContainer: {
         height: 40,

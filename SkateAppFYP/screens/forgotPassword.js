@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
+import AppContainer from './containers/AppContainer'
 
 export default class ForgotPasswordScreen extends React.Component {
     constructor(props) {
@@ -18,16 +19,12 @@ export default class ForgotPasswordScreen extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <SafeAreaView>
-                    <ScrollView contentContainerStyle={styles.container}>
-                        <TouchableOpacity onPress={() => this.goBack()}>
-                            <Text style={styles.goBack}>Go Back</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.title}>Forgot Password Screen</Text>
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+            <AppContainer passNav={this.props} isNested={true}>
+                <View>
+                    <Text style={styles.title}>Forgot Password Screen</Text>
+                </View>
+
+            </AppContainer>
         );
     }
 }
@@ -36,7 +33,8 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 15,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        backgroundColor: 'rgb(240,248,255)'
     },
     title: {
         fontSize: 24,
