@@ -150,10 +150,11 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   spacer: {
-    paddingTop: '15%'
+    paddingTop: '13%'
   },
   forgotPasswordContainer: {
     paddingTop: 5,
+    marginRight: 10,
     alignSelf: 'flex-end',
     textAlign: 'right'
   },

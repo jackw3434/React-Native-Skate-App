@@ -25,7 +25,7 @@ export default class ForgotPasswordScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>
+            <AppContainer passNav={this.props} isNested={true} noBorder={true}>
                 <View style={styles.pageContainer}>
 
                     <View style={styles.topSection}>

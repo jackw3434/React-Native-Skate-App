@@ -7,7 +7,7 @@ export default class SocialFeedScreen extends React.Component {
         super(props);
         this.state = {
         };
-    }   
+    }
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -15,8 +15,8 @@ export default class SocialFeedScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false}>
-                <Text style={styles.title}>Social Feed</Text>
+            <AppContainer passNav={this.props} isNested={false} pageTitle="Social Feed">
+
             </AppContainer>
         );
     }

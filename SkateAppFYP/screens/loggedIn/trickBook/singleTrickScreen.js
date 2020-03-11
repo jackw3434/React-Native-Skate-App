@@ -15,8 +15,8 @@ export default class SingleTrickScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>                
-                <Text style={styles.title}>Single Trick Screen</Text>
+            <AppContainer passNav={this.props} isNested={true} pageTitle="Single Trick">              
+                
             </AppContainer>
         );
     }

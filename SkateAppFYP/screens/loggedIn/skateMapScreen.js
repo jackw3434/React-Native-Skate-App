@@ -16,8 +16,7 @@ export default class SkateMapScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false}>
-                <Text style={styles.title}>Skate Map</Text>
+            <AppContainer passNav={this.props} isNested={false} pageTitle="Skate Map">                
             </AppContainer>
         );
     }

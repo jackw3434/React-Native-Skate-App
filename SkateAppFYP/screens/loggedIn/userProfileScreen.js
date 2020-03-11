@@ -19,8 +19,8 @@ export default class UserProfileScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>
-                <Text style={styles.title}>User Profile</Text>
+            <AppContainer passNav={this.props} isNested={true} pageTitle="User Profile">
+            
             </AppContainer>
         );
     }

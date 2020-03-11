@@ -43,7 +43,7 @@ export default class RegisterScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true}>
+            <AppContainer passNav={this.props} isNested={true} noBorder={true}>
                 <View style={styles.pageContainer}>
 
                     <View style={styles.topSection}>
@@ -115,16 +115,15 @@ const styles = StyleSheet.create({
         height: screenHeight - 100
     },
     topSection: {
-        height: '15%'
+        height: '18%'
     },
     title: {
         fontSize: 24,
         textAlign: "center",
     },
     middleSection: {
-        height: '45%',
-        paddingTop: '5%',
-        justifyContent: 'space-evenly'
+        height: '40%',       
+        justifyContent: 'space-evenly'    
     },
     bottomSection: {
         height: '30%',
