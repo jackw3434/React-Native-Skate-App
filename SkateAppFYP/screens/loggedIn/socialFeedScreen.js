@@ -15,7 +15,7 @@ export default class SocialFeedScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false} pageTitle="Social Feed">
+            <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Social Feed">
 
             </AppContainer>
         );

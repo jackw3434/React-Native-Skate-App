@@ -67,7 +67,7 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <AppContainer noHeader={true}>       
+      <AppContainer noHeader={true} scrollView={true}>       
 
         <Text style={styles.title}>Skate App</Text>
         <Text style={styles.tagline}>A community skate application</Text>
@@ -81,7 +81,6 @@ export default class LoginScreen extends React.Component {
           onChangeText={(email) => this.setEmail(email)}
           text={this.state.email}
           iconName="UserRegIcon"
-          align="center"
           viewBox="0 -5 23.405 23.405"
         />
         <SkateTextInput
@@ -90,7 +89,6 @@ export default class LoginScreen extends React.Component {
           onChangeText={password => this.setPassword(password)}
           text={this.state.password}
           iconName="Padlock"
-          align="center"
           iconStyle={{ marginTop: 7 }}
           viewBox="0 0 20 30"
         />

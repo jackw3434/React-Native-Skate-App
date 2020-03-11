@@ -43,7 +43,7 @@ export default class RegisterScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true} noBorder={true}>
+            <AppContainer passNav={this.props} isNested={true} scrollView={true} noBorder={true}>
                 <View style={styles.pageContainer}>
 
                     <View style={styles.topSection}>
@@ -90,19 +90,16 @@ export default class RegisterScreen extends React.Component {
                     </View>
 
                     <View style={styles.bottomSection}>
-
                         <SkateButton
                             buttonText="Create Account"
                             onPress={() => this.navTo('LoginScreen')}
                         />
-
                         <View style={styles.dontHaveAccountContainer}>
                             <Text>Already have an account?</Text>
                             <TouchableOpacity onPress={() => this.navTo('LoginScreen')}>
                                 <Text style={styles.signUpHereText}> Login here.</Text>
                             </TouchableOpacity>
                         </View>
-
                     </View>
                 </View>
             </AppContainer>
@@ -128,12 +125,7 @@ const styles = StyleSheet.create({
     bottomSection: {
         height: '30%',
         justifyContent: 'center'
-    },
-    goBack: {
-        color: 'blue',
-        paddingTop: '5%',
-        paddingHorizontal: 15,
-    },
+    },    
     tagline: {
         fontSize: 20,
         textAlign: "center",
