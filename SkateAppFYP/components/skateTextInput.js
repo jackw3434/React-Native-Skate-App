@@ -24,22 +24,20 @@ const styles = StyleSheet.create({
     textBox: {
         padding: 0,
         paddingLeft: 10,
-        flex: 1,
-        //color: 'rgba(255,255,255,0.7)',             
+        flex: 1,           
         fontSize: 15,
     },
     Container: {
         flexDirection: 'row',
         flex: 1,
         backgroundColor: 'rgba(255,255,255,0.25)',
-        //backgroundColor: 'yellow',
         borderRadius: 40,
         borderColor: 'rgba(128, 128, 128,0.25)',
         height:40,
         maxHeight: 40,
         margin: 5,
         paddingLeft: 10,
-        borderWidth: 2
+        borderWidth: 2,
     },
     icon: {
        // marginTop: 5,

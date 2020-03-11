@@ -25,7 +25,7 @@ export default class ForgotPasswordScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={true} noBorder={true}>
+            <AppContainer passNav={this.props} isNested={true} scrollView={true} noBorder={true}>
                 <View style={styles.pageContainer}>
 
                     <View style={styles.topSection}>
@@ -33,8 +33,7 @@ export default class ForgotPasswordScreen extends React.Component {
                     </View>
 
                     <View style={styles.middleSection}>
-                    <Text style={styles.tagline}>Enter the email you used to create your account and we will send you a code to reset your password with.</Text>
-                   
+                    <Text style={styles.tagline}>Enter the email you used to create your account and we will send you a code to reset your password with.</Text>                   
                         <SkateTextInput
                             valid={this.state.emailValid}
                             placeholder="Email"
@@ -44,17 +43,13 @@ export default class ForgotPasswordScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             viewBox="2 -6 20 30"
                         />
-
-
                     </View>
 
-                    <View style={styles.bottomSection}>
-                        
+                    <View style={styles.bottomSection}>                        
                         <SkateButton
                             buttonText="Send Code"
                             onPress={() => this.navTo('LoginScreen')}
                         />
-
                         <View style={styles.dontHaveAccountContainer}>
                             <Text>Didn't receive a code?</Text>
                             <TouchableOpacity onPress={() => this.navTo('LoginScreen')}>
@@ -87,12 +82,7 @@ const styles = StyleSheet.create({
     bottomSection: {
         height: '35%',
         justifyContent: 'center'
-    },
-    goBack: {
-        color: 'blue',
-        paddingTop: '5%',
-        paddingHorizontal: 15,
-    },
+    },    
     tagline: {
         fontSize: 16,
         textAlign: "center",

@@ -21,7 +21,7 @@ export default class AppContainer extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle={barStyle} backgroundColor='black' />
-                <SafeAreaView style={styles.container}>
+                <SafeAreaView style={[this.props.scrollView ? styles.container : styles.containerNoPadding]}>
                     {!this.props.noHeader &&
                         <View>
                             {!this.props.isNested ?
@@ -46,13 +46,19 @@ export default class AppContainer extends React.Component {
 
                             }
                             {!this.props.noBorder &&
-                                <View style={{ borderBottomColor: 'grey', borderBottomWidth: 0.5, paddingBottom: 10 }} />
+                                <View style={styles.borderLine} />
                             }
                         </View>
                     }
-                    <ScrollView style={styles.container}>
-                        {this.props.children}
-                    </ScrollView>
+                    {this.props.scrollView ?
+                        <ScrollView style={styles.container}>
+                            {this.props.children}
+                        </ScrollView>
+                        :
+                        <View style={{ flex: 1 }}>
+                            {this.props.children}
+                        </View>
+                    }
                 </SafeAreaView>
             </View>
         );
@@ -62,6 +68,12 @@ export default class AppContainer extends React.Component {
 const styles = StyleSheet.create({
     container: {
         padding: 15,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(240,248,255, 0.2)',
+    },
+    containerNoPadding: {
+        paddingTop: 15,
         width: '100%',
         height: '100%',
         backgroundColor: 'rgba(240,248,255, 0.2)',
@@ -87,4 +99,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         alignContent: 'center'
     },
+    borderLine: {
+        borderBottomColor: 'grey',
+        borderBottomWidth: 0.5,
+        paddingBottom: 10
+    }
 });
