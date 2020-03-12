@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput,
 import AppContainer from './containers/AppContainer';
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
-
+import { registerUser } from '../functions/userAccessFunctions';
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default class RegisterScreen extends React.Component {
@@ -19,13 +19,13 @@ export default class RegisterScreen extends React.Component {
             confirmPassword: '',
             confirmPasswordValid: true,
         };
-    }    
+    }
 
     navTo(route) {
         this.props.navigation.navigate(route)
     }
 
-    setname(name) {
+    setName(name) {
         this.setState({ name: name })
     };
 
@@ -40,6 +40,57 @@ export default class RegisterScreen extends React.Component {
     setConfirmPassword(confirmPassword) {
         this.setState({ confirmPassword: confirmPassword })
     };
+
+    registerUserButton() {
+        console.warn("1");
+        let { name, email, password, confirmPassword } = this.state;
+
+        if (!name || !email || !password || !confirmPassword) {
+            console.warn("Missing Form Fields");
+        }
+        if (password !== confirmPassword) {
+            console.warn("Passwords do not match");
+            this.setState({ password: "", confirmPassword: "", passwordValid: false, confirmPasswordValid: false });
+        } else {
+            console.warn("2");
+            let newUser = {
+                "name": name,
+                "email": email,
+                "password": password
+            };
+
+            registerUser(newUser)
+
+                .then(response => {
+                    console.warn('3 ', response);
+                    if (response === "User: " + email + " has been created.") {
+
+                        this.navTo('LoginScreen');
+                        this.setState({ name: "", email: "", password: "", confirmPassword: "" });
+                    }
+
+                    if (response === "Error: Request failed with status code 409") {
+                        console.log("User with that email already exists");
+                        return;
+                    }
+
+                    if (response === "UnauthorizedError: jwt expired, clearing cache and retrying") {
+                        console.log("UnauthorizedError: jwt expired, clearing cache and retrying");
+                        return;
+                    }
+
+                    if (response === "Error: Network Error") {
+                        console.log("Error: Network Error, server not running");
+                        return;
+                    }
+
+                    if (response === undefined) {
+                        console.log("Generic_error: Network/JWT Issue");
+                        return;
+                    }                    
+                })
+        }
+    }
 
     render() {
         return (
@@ -68,6 +119,7 @@ export default class RegisterScreen extends React.Component {
                             iconName="Mail"
                             iconStyle={{ marginTop: 7 }}
                             viewBox="2 -6 20 30"
+                            keyboardType='email-address'
                         />
                         <SkateTextInput
                             valid={this.state.passwordValid}
@@ -77,6 +129,7 @@ export default class RegisterScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             iconName="Padlock"
                             viewBox="0 0 20 30"
+                            secureTextEntry={true}
                         />
                         <SkateTextInput
                             valid={this.state.confirmPasswordValid}
@@ -86,13 +139,14 @@ export default class RegisterScreen extends React.Component {
                             iconName="Padlock"
                             iconStyle={{ marginTop: 7 }}
                             viewBox="0 0 20 30"
+                            secureTextEntry={true}
                         />
                     </View>
 
                     <View style={styles.bottomSection}>
                         <SkateButton
                             buttonText="Create Account"
-                            onPress={() => this.navTo('LoginScreen')}
+                            onPress={() => this.registerUserButton()}
                         />
                         <View style={styles.dontHaveAccountContainer}>
                             <Text>Already have an account?</Text>
@@ -119,13 +173,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     middleSection: {
-        height: '40%',       
-        justifyContent: 'space-evenly'    
+        height: '40%',
+        justifyContent: 'space-evenly'
     },
     bottomSection: {
         height: '30%',
         justifyContent: 'center'
-    },    
+    },
     tagline: {
         fontSize: 20,
         textAlign: "center",

@@ -23,7 +23,6 @@ export default class SkateMapScreen extends React.Component {
                 <View style={styles.mapContainer}>
                     <MapView
                         style={{ height: '100%' }}
-                        //provider="google"
                         initialRegion={{
                             latitude: 50.3762, // Plymouth Uni
                             longitude: -4.1395,
@@ -40,7 +39,7 @@ export default class SkateMapScreen extends React.Component {
 
 const styles = StyleSheet.create({
     mapContainer: {
-      
+
         // borderColor: 'black',
         // borderWidth: 2,
     }

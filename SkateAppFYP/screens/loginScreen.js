@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput,
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
+import { loginUser, hitAPI } from '../functions/userAccessFunctions';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -10,29 +11,34 @@ export default class LoginScreen extends React.Component {
     this.state = {
       email: '',
       password: '',
-      emailValid: true,
-      passwordValid: true,
+      emailValid: Boolean,
+      passwordValid: Boolean,
     };
   }
+
+  // componentDidMount() {
+  //   hitAPI();
+  // }
 
   navTo(route) {
     this.props.navigation.navigate(route)
   }
 
   setEmail(email) {
-    this.setState({ email: email })
+    this.setState({ email: email, emailValid: true })
   };
 
   setPassword(password) {
-    this.setState({ password: password })
+    this.setState({ password: password, passwordValid: true })
   };
 
-  login() {
+  loginButton() {
 
-    let { email, password } = this.state;
+    let { email, emailValid, password, passwordValid } = this.state;
 
+    this.setState({ passwordValid: true, emailValid: true })
     if (!email || !password) {
-      this.setState({ inputEror: true })
+      this.setState({ passwordValid: false, emailValid: false })
       console.log("Missing Form Fields");
     } else {
 
@@ -41,23 +47,23 @@ export default class LoginScreen extends React.Component {
         "password": password
       };
 
-      // loginUser(user)
-      //   .then(response => {
-      //     if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+      loginUser(user)
+        .then(response => {
+          if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
-      //       localStorage.setItem("user_id", response.data.userData._id);
-      //       localStorage.setItem("first_name", response.data.userData.first_name);
-      //       localStorage.setItem("surname", response.data.userData.surname);
-      //       localStorage.setItem("email", response.data.userData.email);
-      //       localStorage.setItem("token", response.data.accessToken);
+            // localStorage.setItem("user_id", response.data.userData._id);
+            // localStorage.setItem("first_name", response.data.userData.first_name);
+            // localStorage.setItem("surname", response.data.userData.surname);
+            // localStorage.setItem("email", response.data.userData.email);
+            // localStorage.setItem("token", response.data.accessToken);
 
-      //       this.setState({ redirect: true });
-      //       console.log("Logging in, redirecting ");
-      //     } else {
-      //       console.log("failed login response : ", response);
-      //       return;
-      //     }
-      //   });
+            this.navTo('LoginTabNavigationStack')
+          } else {
+            this.setState({ passwordValid: false, emailValid: false })
+            //console.warn("failed login response : ", response);
+            return;
+          }
+        });
 
       // this.refs.email.value = "";
       // this.refs.password.value = "";
@@ -67,7 +73,7 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <AppContainer noHeader={true} scrollView={true}>       
+      <AppContainer noHeader={true} scrollView={true}>
 
         <Text style={styles.title}>Skate App</Text>
         <Text style={styles.tagline}>A community skate application</Text>
@@ -82,6 +88,7 @@ export default class LoginScreen extends React.Component {
           text={this.state.email}
           iconName="UserRegIcon"
           viewBox="0 -5 23.405 23.405"
+          keyboardType='email-address'
         />
         <SkateTextInput
           valid={this.state.passwordValid}
@@ -91,6 +98,7 @@ export default class LoginScreen extends React.Component {
           iconName="Padlock"
           iconStyle={{ marginTop: 7 }}
           viewBox="0 0 20 30"
+          secureTextEntry={true}
         />
 
         <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
@@ -101,7 +109,8 @@ export default class LoginScreen extends React.Component {
 
         <SkateButton
           buttonText="Sign in"
-          onPress={() => this.navTo('LoginTabNavigationStack')}
+          // onPress={() => this.navTo('LoginTabNavigationStack')}
+          onPress={() => this.loginButton()}
         />
 
         {/* <Text style={styles.connectText}>or connect using</Text> */}
