@@ -23,7 +23,7 @@ export default class AppContainer extends React.Component {
                     {!this.props.noHeader && // for the login screen
                         <View>
                             {!this.props.isNested ? // nested view with back button
-                                <View style={[!this.props.scrollView && {paddingLeft:15, paddingRight:15}]}>
+                                <View style={[!this.props.scrollView && { paddingLeft: 15, paddingRight: 15 }]}>  
                                     <View style={styles.headerContainer}>
                                         <View style={styles.leftHandContainer}>
                                             <Icon name='UserInCircleIcon' fill="black" viewBox="0 0 250 250" height="40" width="40" />
