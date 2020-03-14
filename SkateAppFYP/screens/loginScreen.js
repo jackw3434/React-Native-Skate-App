@@ -4,6 +4,7 @@ import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
 import { loginUser, hitAPI } from '../functions/userAccessFunctions';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -13,11 +14,18 @@ export default class LoginScreen extends React.Component {
       password: '',
       emailValid: Boolean,
       passwordValid: Boolean,
+      spinner: false,
+      loginErrorMessage: ''
     };
   }
 
   // componentDidMount() {
-  //   hitAPI();
+  //   // hitAPI();
+  //   setInterval(() => {
+  //     this.setState({
+  //       spinner: !this.state.spinner
+  //     });
+  //   }, 3000);
   // }
 
   navTo(route) {
@@ -25,21 +33,20 @@ export default class LoginScreen extends React.Component {
   }
 
   setEmail(email) {
-    this.setState({ email: email, emailValid: true })
+    this.setState({ email: email, emailValid: true, loginErrorMessage: '' })
   };
 
   setPassword(password) {
-    this.setState({ password: password, passwordValid: true })
+    this.setState({ password: password, passwordValid: true, loginErrorMessage: '' })
   };
 
   loginButton() {
 
-    let { email, emailValid, password, passwordValid } = this.state;
+    let { email, password } = this.state;
+    this.setState({ passwordValid: true, emailValid: true, spinner: !this.state.spinner, loginErrorMessage: '' })
 
-    this.setState({ passwordValid: true, emailValid: true })
     if (!email || !password) {
-      this.setState({ passwordValid: false, emailValid: false })
-      console.log("Missing Form Fields");
+      this.setState({ passwordValid: false, emailValid: false, spinner: this.state.spinner, loginErrorMessage: 'Missing Form Fields.' })
     } else {
 
       let user = {
@@ -49,6 +56,10 @@ export default class LoginScreen extends React.Component {
 
       loginUser(user)
         .then(response => {
+          if (response == "Error: Network Error") {
+            this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
+            return;
+          }
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
             // localStorage.setItem("user_id", response.data.userData._id);
@@ -56,17 +67,13 @@ export default class LoginScreen extends React.Component {
             // localStorage.setItem("surname", response.data.userData.surname);
             // localStorage.setItem("email", response.data.userData.email);
             // localStorage.setItem("token", response.data.accessToken);
-
+            
+            this.setState({ spinner: !this.state.spinner });
             this.navTo('LoginTabNavigationStack')
           } else {
-            this.setState({ passwordValid: false, emailValid: false })
-            //console.warn("failed login response : ", response);
-            return;
+            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })       
           }
         });
-
-      // this.refs.email.value = "";
-      // this.refs.password.value = "";
       this.setState({ email: "", password: "" });
     }
   }
@@ -89,6 +96,7 @@ export default class LoginScreen extends React.Component {
           iconName="UserRegIcon"
           viewBox="0 -5 23.405 23.405"
           keyboardType='email-address'
+          autoCapitalize='none'
         />
         <SkateTextInput
           valid={this.state.passwordValid}
@@ -105,6 +113,10 @@ export default class LoginScreen extends React.Component {
           <Text style={styles.forgotPassword}>forgot password?</Text>
         </TouchableOpacity>
 
+
+        {this.state.loginErrorMessage !== "" &&
+          <Text style={styles.errorMessege}>{this.state.loginErrorMessage}</Text>
+        }
         <View style={styles.spacer} />
 
         <SkateButton
@@ -128,6 +140,12 @@ export default class LoginScreen extends React.Component {
             <Text style={styles.signUpHereText}> Sign up here.</Text>
           </TouchableOpacity>
         </View>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+          indicatorStyle={styles.indicatorStyle}
+        />
       </AppContainer>
 
     );
@@ -179,5 +197,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: 36,
     justifyContent: 'center'
-  }
+  },
+  spinnerTextStyle: {
+    marginTop: 100,
+    color: '#FFF',
+  },
+
+  errorMessege: {
+    paddingTop: 10,
+    color: 'red',
+    textAlign: "center"
+  },
 });

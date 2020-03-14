@@ -18,6 +18,8 @@ export default class RegisterScreen extends React.Component {
             passwordValid: true,
             confirmPassword: '',
             confirmPasswordValid: true,
+            regErrorMessage: '',
+            successReg: false
         };
     }
 
@@ -39,20 +41,35 @@ export default class RegisterScreen extends React.Component {
 
     setConfirmPassword(confirmPassword) {
         this.setState({ confirmPassword: confirmPassword })
+        if (confirmPassword == this.state.password) {
+            this.setState({ passwordValid: true, confirmPasswordValid: true, regErrorMessage: "" })
+        }
     };
 
     registerUserButton() {
-        console.warn("1");
-        let { name, email, password, confirmPassword } = this.state;
+
+        let { name, email, password, confirmPassword, regErrorMessage } = this.state;
+        this.setState({ nameValid: true, emailValid: true, passwordValid: true, confirmPasswordValid: true, regErrorMessage: "" });
 
         if (!name || !email || !password || !confirmPassword) {
-            console.warn("Missing Form Fields");
+            this.setState({ regErrorMessage: "Error: Missing Form Fields" });
+            if (!name) {
+                this.setState({ nameValid: false });
+            }
+            if (!email) {
+                this.setState({ emailValid: false });
+            }
+            if (!password) {
+                this.setState({ passwordValid: false });
+            }
+            if (!confirmPassword) {
+                this.setState({ confirmPasswordValid: false });
+            }
         }
         if (password !== confirmPassword) {
-            console.warn("Passwords do not match");
-            this.setState({ password: "", confirmPassword: "", passwordValid: false, confirmPasswordValid: false });
+            this.setState({ passwordValid: false, confirmPasswordValid: false, regErrorMessage: "Error: Passwords do not match*" });
         } else {
-            console.warn("2");
+
             let newUser = {
                 "name": name,
                 "email": email,
@@ -62,32 +79,36 @@ export default class RegisterScreen extends React.Component {
             registerUser(newUser)
 
                 .then(response => {
-                    console.warn('3 ', response);
                     if (response === "User: " + email + " has been created.") {
 
-                        this.navTo('LoginScreen');
-                        this.setState({ name: "", email: "", password: "", confirmPassword: "" });
+                        this.setState({ name: "", email: "", password: "", confirmPassword: "", regErrorMessage: "", successReg: true });
+
+                        setTimeout(() => { this.navTo('LoginScreen'); }, 3000)
+
                     }
 
                     if (response === "Error: Request failed with status code 409") {
-                        console.log("User with that email already exists");
+                        console.warn("User with that email already exists");
+                        this.setState({ regErrorMessage: "User with that email already exists", emailValid: false });
                         return;
                     }
 
                     if (response === "UnauthorizedError: jwt expired, clearing cache and retrying") {
-                        console.log("UnauthorizedError: jwt expired, clearing cache and retrying");
+                        console.warn("UnauthorizedError: jwt expired, clearing cache and retrying");
                         return;
                     }
 
                     if (response === "Error: Network Error") {
-                        console.log("Error: Network Error, server not running");
+                        console.warn("Error: Network Error, server not running");
+                        this.setState({ regErrorMessage: "Error: Network Error, please try again later." });
                         return;
                     }
 
                     if (response === undefined) {
-                        console.log("Generic_error: Network/JWT Issue");
+                        console.warn("Generic_error: Network/JWT Issue");
+                        this.setState({ regErrorMessage: "Oops, something went wrong, please try again later." });
                         return;
-                    }                    
+                    }
                 })
         }
     }
@@ -110,6 +131,7 @@ export default class RegisterScreen extends React.Component {
                             text={this.state.name}
                             iconName="UserRegIcon"
                             viewBox="0 -5 23.405 23.405"
+                            onFocus={() => this.setState({ nameValid: true })}
                         />
                         <SkateTextInput
                             valid={this.state.emailValid}
@@ -120,6 +142,7 @@ export default class RegisterScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             viewBox="2 -6 20 30"
                             keyboardType='email-address'
+                            onFocus={() => this.setState({ emailValid: true })}
                         />
                         <SkateTextInput
                             valid={this.state.passwordValid}
@@ -142,6 +165,13 @@ export default class RegisterScreen extends React.Component {
                             secureTextEntry={true}
                         />
                     </View>
+
+                    {this.state.regErrorMessage !== "" &&
+                        <Text style={styles.errorMessege}>{this.state.regErrorMessage}</Text>
+                    }
+                    {this.state.successReg &&
+                        <Text style={styles.success}>Account has been created successfully!</Text>
+                    }
 
                     <View style={styles.bottomSection}>
                         <SkateButton
@@ -192,5 +222,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         margin: 36,
         justifyContent: 'center'
+    },
+    errorMessege: {
+        color: 'red',
+        textAlign: "center"
+    },
+    success: {
+        color: 'green',
+        textAlign: "center",
+        fontWeight:'bold'
     }
 });

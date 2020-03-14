@@ -1,10 +1,8 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import Icon from '../../Icon/Icon'
-const barStyle = Platform.OS === 'ios' ? 'default' : 'yellow';
 
-const screenHeight = Math.round(Dimensions.get('window').height);
-const screenWidth = Math.round(Dimensions.get('window').width);
+const barStyle = Platform.OS === 'ios' ? 'default' : 'yellow';
 
 export default class AppContainer extends React.Component {
     constructor(props) {
@@ -21,29 +19,36 @@ export default class AppContainer extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle={barStyle} backgroundColor='black' />
-                <SafeAreaView style={[this.props.scrollView ? styles.container : styles.containerNoPadding]}>
-                    {!this.props.noHeader &&
+                <SafeAreaView style={[this.props.scrollView ? styles.container : styles.containerNoPaddingBottom]}>
+                    {!this.props.noHeader && // for the login screen
                         <View>
-                            {!this.props.isNested ?
-                                <View style={styles.headerContainer}>
-                                    <Text style={styles.title}>{this.props.pageTitle}</Text>
-                                    <View style={styles.rightHandContainer}>
-                                        <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
-                                            <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
-                                            <Icon name='LogoutIcon' fill="blue" viewBox="-20 -25 175 175" height="40" width="40" />
-                                        </TouchableOpacity>
+                            {!this.props.isNested ? // nested view with back button
+                                <View style={[!this.props.scrollView && {paddingLeft:15, paddingRight:15}]}>
+                                    <View style={styles.headerContainer}>
+                                        <View style={styles.leftHandContainer}>
+                                            <Icon name='UserInCircleIcon' fill="black" viewBox="0 0 250 250" height="40" width="40" />
+                                            <Text style={styles.title}>{this.props.pageTitle}</Text>
+                                        </View>
+
+                                        <View style={styles.rightHandContainer}>
+                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
+                                                <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
+                                                <Icon name='LogoutIcon' fill="blue" viewBox="-20 -25 175 175" height="40" width="40" />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
                                 :
                                 <View style={styles.headerContainer}>
-                                    <TouchableOpacity style={styles.leftHandContainer} onPress={() => this.props.passNav.navigation.goBack()}>
-                                        <Icon name='BackArrow' fill="blue" viewBox="0 0 35 35" height="40" width="40" />
-                                    </TouchableOpacity>
-                                    <Text style={styles.title}>{this.props.pageTitle}</Text>
+                                    <View style={styles.leftHandContainer}>
+                                        <TouchableOpacity onPress={() => this.props.passNav.navigation.goBack()}>
+                                            <Icon name='BackArrow' fill="blue" viewBox="0 0 35 35" height="40" width="40" />
+                                        </TouchableOpacity>
+                                        <Text style={styles.title}>{this.props.pageTitle}</Text>
+                                    </View>
                                 </View>
-
                             }
                             {!this.props.noBorder &&
                                 <View style={styles.borderLine} />
@@ -51,7 +56,7 @@ export default class AppContainer extends React.Component {
                         </View>
                     }
                     {this.props.scrollView ?
-                        <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
+                        <ScrollView style={styles.container}>
                             {this.props.children}
                         </ScrollView>
                         :
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: 'rgba(240,248,255, 0.2)',
     },
-    containerNoPadding: {
+    containerNoPaddingBottom: {
         paddingTop: 15,
         width: '100%',
         height: '100%',
@@ -92,16 +97,18 @@ const styles = StyleSheet.create({
         right: 0
     },
     leftHandContainer: {
+        flexDirection: 'row',
+        width: '70%',
         position: 'absolute',
-        left: 0
+        left: 0,
+        alignItems: 'center',
     },
     title: {
-        fontSize: 24,
-        alignContent: 'center'
+        fontSize: 24
     },
     borderLine: {
         borderBottomColor: 'grey',
         borderBottomWidth: 0.5,
-        paddingBottom: 10
+        paddingBottom: 10,
     }
 });

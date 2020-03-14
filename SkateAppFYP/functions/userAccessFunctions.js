@@ -6,7 +6,6 @@ const url = 'https://skate-api.herokuapp.com';
 export const registerUser = (userObject) => {
     return axios.post(url + '/api/register', userObject)
         .then(response => {
-            console.warn("() ",response.data)
             return response.data;
         })
         .catch(function (error) {
@@ -36,14 +35,14 @@ export const loginUser = (userObject) => {
             return response;
         })
         .catch(function (error) {
-            //console.warn("loginUser() error ");
+            //console.warn("loginUser() error ", error);
             if (error === "Error: Request failed with status code 409") {
-                console.log(error.response);
+                //console.warn(error.response);
                 return error.response;
             }
-            if (error === "Error: Network Error") {
-                console.log("loginUser() Network Error: ", error);
-                return;
+            if (error == "Error: Network Error") {
+                //console.warn("loginUser() Network Error: ", error);
+                return error;
             }
 
             return error.response;
