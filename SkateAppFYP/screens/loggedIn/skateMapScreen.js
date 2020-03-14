@@ -19,7 +19,7 @@ export default class SkateMapScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false} scrollView={false} pageTitle="Skate Map" >
+            <AppContainer passNav={this.props} isNested={false} scrollView={false} pageTitle="Skate Map">
                 <View style={styles.mapContainer}>
                     <MapView
                         style={{ height: '100%' }}

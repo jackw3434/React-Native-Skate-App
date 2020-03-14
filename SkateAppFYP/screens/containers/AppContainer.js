@@ -26,7 +26,7 @@ export default class AppContainer extends React.Component {
                                 <View style={[!this.props.scrollView && { paddingLeft: 15, paddingRight: 15 }]}>  
                                     <View style={styles.headerContainer}>
                                         <View style={styles.leftHandContainer}>
-                                            <Icon name='UserInCircleIcon' fill="black" viewBox="0 0 250 250" height="40" width="40" />
+                                            <Icon style={{marginRight:5, marginLeft:Platform.OS === 'ios' ? 10: 0}} name={this.props.pageTitleIcon} fill="black" viewBox="0 0 50 50" height="50" width="50" />
                                             <Text style={styles.title}>{this.props.pageTitle}</Text>
                                         </View>
 

@@ -7,6 +7,8 @@ import { UserRegIcon } from './Icons/userRegIcon';
 import { Mail } from './Icons/mail'
 import { BackArrow } from './Icons/backArrow'
 import { LogoutIcon } from './Icons/logoutIcon'
+import { Book } from './Icons/book'
+import { MapIcon } from './Icons/mapIcon'
 
 
 // Each nameValuePair can be:
@@ -19,5 +21,7 @@ export default {
     UserRegIcon: UserRegIcon,
     Mail: Mail,
     BackArrow: BackArrow,
-    LogoutIcon: LogoutIcon
+    LogoutIcon: LogoutIcon,
+    Book: Book,
+    MapIcon: MapIcon
 }
