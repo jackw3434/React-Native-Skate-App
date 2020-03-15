@@ -11,6 +11,7 @@ import { Book } from './Icons/book'
 import { MapIcon } from './Icons/mapIcon'
 import { Compass } from './Icons/compass';
 import { Newspaper } from './Icons/newspaper';
+import { PlusIcon } from './Icons/plus';
 
 
 // Each nameValuePair can be:
@@ -27,5 +28,6 @@ export default {
     Book: Book,
     MapIcon: MapIcon,
     Compass: Compass,
-    Newspaper: Newspaper
+    Newspaper: Newspaper,
+    PlusIcon: PlusIcon
 }
