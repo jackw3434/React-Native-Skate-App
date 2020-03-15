@@ -65,7 +65,8 @@ export default class ForgotPasswordScreen extends React.Component {
 
 const styles = StyleSheet.create({
     pageContainer: {
-        height: screenHeight - 100
+        height: screenHeight - 100,
+        padding:30
     },
     topSection: {
         height: '10%',

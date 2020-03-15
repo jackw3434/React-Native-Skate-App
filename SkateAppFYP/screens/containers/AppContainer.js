@@ -25,7 +25,7 @@ export default class AppContainer extends React.Component {
                             {!this.props.isNested ? // nested view with back button 
                                 <View>
                                     <View style={styles.headerContainer}>
-                                        <View style={styles.leftHandContainer}>
+                                        <View style={Platform.OS == 'android' && this.props.pageTitle == "Skate map" ? styles.leftHandContainer : [styles.leftHandContainer, { paddingHorizontal: 15 }]}>
                                             <Icon style={{ marginRight: 5 }} name={this.props.pageTitleIcon} viewBox={this.props.iconViewBox} height="50" width="50" />
                                             <Text style={styles.title}>{this.props.pageTitle}</Text>
                                         </View>
@@ -72,7 +72,7 @@ export default class AppContainer extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 15,
+        paddingTop: 15,
         width: '100%',
         height: '100%',
         backgroundColor: 'rgba(240,248,255, 0.2)'
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(240,248,255, 0.2)'
     },
     headerContainer: {
-        paddingLeft: 15,
         width: '100%',
         padding: 15,
         flexDirection: 'row',
@@ -104,7 +103,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         alignItems: 'center',
-        marginLeft: Platform.OS === 'ios' ? 15 : 0
     },
     title: {
         fontSize: 24

@@ -67,11 +67,11 @@ export default class LoginScreen extends React.Component {
             // localStorage.setItem("surname", response.data.userData.surname);
             // localStorage.setItem("email", response.data.userData.email);
             // localStorage.setItem("token", response.data.accessToken);
-            
+
             this.setState({ spinner: !this.state.spinner });
             this.navTo('LoginTabNavigationStack')
           } else {
-            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })       
+            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })
           }
         });
       this.setState({ email: "", password: "" });
@@ -81,52 +81,52 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <AppContainer noHeader={true} scrollView={true}>
+        <View style={{ paddingLeft: 15, paddingRight:15 }}>
+          <Text style={styles.title}>Skate App</Text>
+          <Text style={styles.tagline}>A community skate application</Text>
+          <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
 
-        <Text style={styles.title}>Skate App</Text>
-        <Text style={styles.tagline}>A community skate application</Text>
-        <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
+          <View style={styles.spacer} />
 
-        <View style={styles.spacer} />
+          <SkateTextInput
+            valid={this.state.emailValid}
+            placeholder="Email"
+            onChangeText={(email) => this.setEmail(email)}
+            text={this.state.email}
+            iconName="UserRegIcon"
+            viewBox="0 -5 23.405 23.405"
+            keyboardType='email-address'
+            autoCapitalize='none'
+          />
+          <SkateTextInput
+            valid={this.state.passwordValid}
+            placeholder="Password"
+            onChangeText={password => this.setPassword(password)}
+            text={this.state.password}
+            iconName="Padlock"
+            iconStyle={{ marginTop: 7 }}
+            viewBox="0 0 20 30"
+            secureTextEntry={true}
+          />
 
-        <SkateTextInput
-          valid={this.state.emailValid}
-          placeholder="Email"
-          onChangeText={(email) => this.setEmail(email)}
-          text={this.state.email}
-          iconName="UserRegIcon"
-          viewBox="0 -5 23.405 23.405"
-          keyboardType='email-address'
-          autoCapitalize='none'
-        />
-        <SkateTextInput
-          valid={this.state.passwordValid}
-          placeholder="Password"
-          onChangeText={password => this.setPassword(password)}
-          text={this.state.password}
-          iconName="Padlock"
-          iconStyle={{ marginTop: 7 }}
-          viewBox="0 0 20 30"
-          secureTextEntry={true}
-        />
-
-        <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
-          <Text style={styles.forgotPassword}>forgot password?</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
+            <Text style={styles.forgotPassword}>forgot password?</Text>
+          </TouchableOpacity>
 
 
-        {this.state.loginErrorMessage !== "" &&
-          <Text style={styles.errorMessege}>{this.state.loginErrorMessage}</Text>
-        }
-        <View style={styles.spacer} />
+          {this.state.loginErrorMessage !== "" &&
+            <Text style={styles.errorMessege}>{this.state.loginErrorMessage}</Text>
+          }
+          <View style={styles.spacer} />
 
-        <SkateButton
-          buttonText="Sign in"
-          // onPress={() => this.navTo('LoginTabNavigationStack')}
-          onPress={() => this.loginButton()}
-        />
+          <SkateButton
+            buttonText="Sign in"
+            // onPress={() => this.navTo('LoginTabNavigationStack')}
+            onPress={() => this.loginButton()}
+          />
 
-        {/* <Text style={styles.connectText}>or connect using</Text> */}
-        {/* <SkateButton
+          {/* <Text style={styles.connectText}>or connect using</Text> */}
+          {/* <SkateButton
                     buttonText="Google+"
                     onPress={}
                     iconName="Padlock"
@@ -134,18 +134,19 @@ export default class LoginScreen extends React.Component {
                     viewBox="0 0 20 30"
                   /> */}
 
-        <View style={styles.dontHaveAccountContainer}>
-          <Text>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
-            <Text style={styles.signUpHereText}> Sign up here.</Text>
-          </TouchableOpacity>
+          <View style={styles.dontHaveAccountContainer}>
+            <Text>Don't have an account?</Text>
+            <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
+              <Text style={styles.signUpHereText}> Sign up here.</Text>
+            </TouchableOpacity>
+          </View>
+          <Spinner
+            visible={this.state.spinner}
+            textContent={'Loading...'}
+            textStyle={styles.spinnerTextStyle}
+            indicatorStyle={styles.indicatorStyle}
+          />
         </View>
-        <Spinner
-          visible={this.state.spinner}
-          textContent={'Loading...'}
-          textStyle={styles.spinnerTextStyle}
-          indicatorStyle={styles.indicatorStyle}
-        />
       </AppContainer>
 
     );
