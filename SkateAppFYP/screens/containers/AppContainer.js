@@ -23,10 +23,10 @@ export default class AppContainer extends React.Component {
                     {!this.props.noHeader && // for the login screen
                         <View>
                             {!this.props.isNested ? // nested view with back button
-                                <View style={[!this.props.scrollView && { paddingLeft: 15, paddingRight: 15 }]}>  
+                                <View style={[!this.props.scrollView && { paddingLeft: 15, paddingRight: 15 }]}>
                                     <View style={styles.headerContainer}>
                                         <View style={styles.leftHandContainer}>
-                                            <Icon style={{marginRight:5, marginLeft:Platform.OS === 'ios' ? 10: 0}} name={this.props.pageTitleIcon} fill="black" viewBox="0 0 50 50" height="50" width="50" />
+                                            <Icon style={{ marginRight: 5, marginLeft: Platform.OS === 'ios' && this.props.pageTitle !== "Skate Map" ? 15 : 0 }} name={this.props.pageTitleIcon} viewBox={this.props.iconViewBox} height="50" width="50" />
                                             <Text style={styles.title}>{this.props.pageTitle}</Text>
                                         </View>
 

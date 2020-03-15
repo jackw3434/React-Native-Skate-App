@@ -9,6 +9,8 @@ import { BackArrow } from './Icons/backArrow'
 import { LogoutIcon } from './Icons/logoutIcon'
 import { Book } from './Icons/book'
 import { MapIcon } from './Icons/mapIcon'
+import { Compass } from './Icons/compass';
+import { Newspaper } from './Icons/newspaper';
 
 
 // Each nameValuePair can be:
@@ -23,5 +25,7 @@ export default {
     BackArrow: BackArrow,
     LogoutIcon: LogoutIcon,
     Book: Book,
-    MapIcon: MapIcon
+    MapIcon: MapIcon,
+    Compass: Compass,
+    Newspaper: Newspaper
 }

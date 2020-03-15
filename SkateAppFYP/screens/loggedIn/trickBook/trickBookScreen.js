@@ -15,7 +15,7 @@ export default class TrickBookScreen extends React.Component {
 
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book">                
+            <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book" iconViewBox="0 0 50 50">                
                 <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
                     <Text style={styles.goBack}>Single Trick Screen (i.e Ollie)</Text>
                 </TouchableOpacity>
