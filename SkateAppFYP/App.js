@@ -29,12 +29,11 @@ export default class App extends React.Component {
     return (
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="LoginTabNavigationStack" component={AuthorizedTabNavigation} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="ForgottenPasswordScreen" component={ForgottenPasswordScreen} />
           <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />
-        
+          <Stack.Screen name="LoginTabNavigationStack" component={AuthorizedTabNavigation} />
         </Stack.Navigator>
       </NavigationContainer>
     );
