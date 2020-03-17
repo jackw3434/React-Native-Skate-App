@@ -194,7 +194,7 @@ export default class RegisterScreen extends React.Component {
 const styles = StyleSheet.create({
     pageContainer: {
         height: screenHeight - 100,
-        padding:15
+        padding:30
     },
     topSection: {
         height: '20%'

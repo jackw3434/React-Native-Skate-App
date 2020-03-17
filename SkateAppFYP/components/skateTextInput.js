@@ -13,7 +13,7 @@ export default class SkateTextInput extends React.Component {
     render() {       
         return (
             <View style={[styles.Container, !this.props.valid && styles.invalid]}>
-                {!this.props.icon && <Icon style={this.props.iconStyle} name={this.props.iconName} fill="#000" viewBox={this.props.viewBox} height="28" width="28" />}
+                {!this.props.icon && <Icon style={this.props.iconStyle} name={this.props.iconName} fill={"#000"} viewBox={this.props.viewBox} height="28" width="28" />}
                 <TextInput placeholderTextColor="rgba(128, 128, 128,0.5)" {...this.props} style={[styles.textBox, this.props.style]}>{[this.props.text]}</TextInput>
                 {!this.props.valid && <Text style={styles.errorStyle}>*</Text>}
             </View>

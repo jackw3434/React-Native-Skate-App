@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(240,248,255, 0.2)'
+        backgroundColor: 'rgba(240,248,255, 0.8)'
     },
     containerNoPaddingBottom: {
         paddingTop: 15,

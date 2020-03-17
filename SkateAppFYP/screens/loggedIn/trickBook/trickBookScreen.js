@@ -37,12 +37,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         textAlign: "center",
-        //paddingTop: '10%'
     },
     goBack: {
         color: 'blue',
         textAlign: "center",
         paddingTop: '5%',
-        // paddingHorizontal: 15,
     }
 });

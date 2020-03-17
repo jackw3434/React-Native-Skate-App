@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions, Image } from 'react-native';
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
@@ -81,8 +81,8 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <AppContainer noHeader={true} scrollView={true}>
-        <View style={{ paddingLeft: 15, paddingRight:15 }}>
-          <Text style={styles.title}>Skate App</Text>
+        <View style={styles.container}>
+          <Text style={styles.title}>Skate Buddy</Text>
           <Text style={styles.tagline}>A community skate application</Text>
           <Text style={styles.appDescripter}>Learn to skate, meet others who skate, teach others to skate.</Text>
 
@@ -121,7 +121,6 @@ export default class LoginScreen extends React.Component {
 
           <SkateButton
             buttonText="Sign in"
-            // onPress={() => this.navTo('LoginTabNavigationStack')}
             onPress={() => this.loginButton()}
           />
 
@@ -155,15 +154,13 @@ export default class LoginScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    padding: 30,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgb(240,248,255)'
   },
   title: {
     fontSize: 24,
-    textAlign: "center",
-    paddingTop: '10%'
+    textAlign: "center"
   },
   tagline: {
     fontSize: 20,
