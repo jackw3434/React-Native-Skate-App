@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -21,15 +21,67 @@ export default class SkateMapScreen extends React.Component {
             isModalMenuVisible: false,
             isNewSkateSpotVisible: false,
             isHereToTeachVisible: false,
-            isGameOfSkateVisible: false
+            isGameOfSkateVisible: false,
+            isMarkerModalVisible:false,
+            locationProvider: false,
+            markers: [{
+                type: 'Skate Spot',
+                coordinate: {
+                    latitude: 50.3864,
+                    longitude: -4.1395,
+                },
+                title: '1',
+                description: '1',
+                pinColor: 'orange',
+                modalData: [{
+                    title: '',
+                    createdBy: '',
+                    location: {
+                        latitude: '',
+                        longitude: ''
+                    },
+                    photo: '',
+                    description: '',
+                    reviews: [],
+                    startTime: '',
+                    endTime: ''
+                }]
+            },
+            {
+                type: 'Here to Teach',
+                coordinate: {
+                    latitude: 50.3865,
+                    longitude: -4.1395,
+                },
+                title: '2',
+                description: '2',
+                pinColor: 'green'
+            },
+            {
+                type: 'Game of Skate',
+                coordinate: {
+                    latitude: 50.3866,
+                    longitude: -4.1395,
+                },
+                title: '3',
+                description: '3',
+                pinColor: 'blue'
+            }]
         };
     }
 
     componentDidMount() {
-        Geolocation.getCurrentPosition(info => {
-            //console.warn("latitude: ", info.coords.latitude, " longitude: ", info.coords.longitude);
-            this.setState({ currentLat: info.coords.latitude, currentLng: info.coords.longitude })
-        });
+        Geolocation.getCurrentPosition(
+            (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
+            (error) => { this.setState({ locationProvider: false }) },
+            { enableHighAccuracy: true }
+        );
+
+        Geolocation.watchPosition(
+            (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
+            (error) => { this.setState({ locationProvider: false }) },
+            { enableHighAccuracy: true }
+        );
     }
 
     navTo(route) {
@@ -90,14 +142,29 @@ export default class SkateMapScreen extends React.Component {
 
     }
 
+    openMarkerModal(marker) {
+        this.setState({ isMarkerModalVisible: true })
+    }
+
+    closeMarkerModal() { 
+        this.setState({ isMarkerModalVisible: false })
+    }
+
     render() {
         return (
-            <AppContainer passNav={this.props} isNested={false} scrollView={false} pageTitle="Skate Map" pageTitleIcon="MapIcon" iconViewBox="0 0 50 50">
+            <AppContainer
+                passNav={this.props}
+                isNested={false}
+                scrollView={false}
+                pageTitle="Skate Map"
+                pageTitleIcon="MapIcon"
+                iconViewBox="0 0 50 50">
+
                 <MapView
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                     loadingEnabled={true}
-                    userLocationAnnotationTitle="me"
+                    userLocationAnnotationTitle="Me!"
                     mapType={this.state.mapType}
                     style={{ height: '100%' }}
                     initialRegion={{
@@ -106,10 +173,16 @@ export default class SkateMapScreen extends React.Component {
                         latitudeDelta: 0.0221,
                         longitudeDelta: 0.0221,
                     }}
-                >
+                    // region={{
+                    //     latitude: this.state.currentLat ? this.state.currentLat : 50.3762, // Plymouth Uni
+                    //     longitude: this.state.currentLng ? this.state.currentLng : -4.1395,
+                    //     latitudeDelta: 0.0221,
+                    //     longitudeDelta: 0.0221, 
+                    // }}
+                > 
                     <Marker
                         coordinate={{
-                            latitude: 50.3862, // Plymouth Uni
+                            latitude: 50.3862,
                             longitude: -4.1395,
                         }}
                         title="Title"
@@ -117,7 +190,33 @@ export default class SkateMapScreen extends React.Component {
                         draggable
                         onDragEnd={e => console.warn(e.nativeEvent)}
                     />
+                    {this.state.markers.map(marker => (
+                        <Marker
+                            coordinate={{
+                                latitude: marker.coordinate.latitude,
+                                longitude: marker.coordinate.longitude,
+                            }}
+                            title={marker.title}
+                            description={marker.description}
+                            pinColor={marker.pinColor}
+                            onPress={() => this.openMarkerModal(marker)}
+                        />
+                    ))}
                 </MapView>
+
+                <Modal
+                    backdropTransitionInTiming={3000}
+                    backdropTransitionOutTiming={3000}
+                    onBackdropPress={() => this.closeMarkerModal()}
+                    style={{ alignItems: 'center' }}
+                    isVisible={this.state.isMarkerModalVisible}>
+                    <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Selected pin</Text>
+                                <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
+                                   This is a pin
+                                </Text>
+                    </View>
+                </Modal>
 
                 <Modal
                     backdropTransitionInTiming={3000}
@@ -125,10 +224,10 @@ export default class SkateMapScreen extends React.Component {
                     onBackdropPress={() => this.toggleModal()}
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isModalVisible}>
-                    <View style={{ backgroundColor: 'rgba(255,255,255,1)', borderRadius: 30, padding: 30 }}>
+                    <View style={styles.modalContainer}>
                         {this.state.isModalMenuVisible &&
                             <View>
-                                <Text style={{ fontSize: 28, borderBottomWidth: 0.5, width: '100%' }}>Create a Pin</Text>
+                                <Text style={styles.modalTitle}>Create a Pin</Text>
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
                                     Meet others who skate, teach others to skate,
                                     play a game of S.K.A.T.E or let others know about a cool skate spot.
@@ -137,17 +236,16 @@ export default class SkateMapScreen extends React.Component {
                                     buttonText="New Skate Spot"
                                     iconName="Pin"
                                     viewBox="0 0 30 30"
-                                    iconStyle={{ position: 'absolute', left: 10, top: 10 }}
+                                    iconStyle={styles.skateButtonIcon}
                                     fill='white'
                                     onPress={() => this.openSkateSpotModal()}
-
                                 />
                                 <SkateButton
                                     buttonText="Here To Teach :)"
                                     bgColor='red'
                                     iconName="Pin"
                                     viewBox="0 0 30 30"
-                                    iconStyle={{ position: 'absolute', left: 10, top: 10 }}
+                                    iconStyle={styles.skateButtonIcon}
                                     fill='white'
                                     onPress={() => this.openHereToTeachModal()}
                                 />
@@ -156,7 +254,7 @@ export default class SkateMapScreen extends React.Component {
                                     bgColor='red'
                                     iconName="Pin"
                                     viewBox="0 0 30 30"
-                                    iconStyle={{ position: 'absolute', left: 10, top: 10 }}
+                                    iconStyle={styles.skateButtonIcon}
                                     fill='white'
                                     onPress={() => this.openGameOfSkateModal()}
                                 />
@@ -164,7 +262,7 @@ export default class SkateMapScreen extends React.Component {
                         }
                         {this.state.isNewSkateSpotVisible &&
                             <View>
-                                <Text style={{ fontSize: 28, borderBottomWidth: 0.5, width: '100%' }}>New Skate Spot</Text>
+                                <Text style={styles.modalTitle}>New Skate Spot</Text>
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
                                     Let others know about a cool skate spot.
                                 </Text>
@@ -178,7 +276,7 @@ export default class SkateMapScreen extends React.Component {
                         }
                         {this.state.isHereToTeachVisible &&
                             <View>
-                                <Text style={{ fontSize: 28, borderBottomWidth: 0.5, width: '100%' }}>Here To Teach :)</Text>
+                                <Text style={styles.modalTitle}>Here To Teach :)</Text>
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
                                     Teach someone a new trick!
                                 </Text>
@@ -194,7 +292,7 @@ export default class SkateMapScreen extends React.Component {
                         }
                         {this.state.isGameOfSkateVisible &&
                             <View>
-                                <Text style={{ fontSize: 28, borderBottomWidth: 0.5, width: '100%' }}>Game of S.K.A.T.E</Text>
+                                <Text style={styles.modalTitle}>Game of S.K.A.T.E</Text>
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
                                     Let people know you want to have a skate with them.
                                 </Text>
@@ -215,12 +313,17 @@ export default class SkateMapScreen extends React.Component {
                         }
                     </View>
                 </Modal>
-                <TouchableOpacity style={{ position: 'absolute', paddingTop: 20 }} onPress={() => this.toggleMapType()}>
-                    <Text style={{ color: 'red', paddingLeft:10}}>Toggle Map Type, Current: {this.state.mapType}</Text>
+                <TouchableOpacity style={styles.toggleMapTypeContainer} onPress={() => this.toggleMapType()}>
+                    <Text>Map Type: {this.state.mapType}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
-                    <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
-                </TouchableOpacity>
+                <View style={styles.bottomContainer}>
+                    {!this.state.locationProvider &&
+                        <Text style={styles.gpsStatusStle}>GPS Status: disabled</Text>
+                    }
+                    <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
+                        <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
+                    </TouchableOpacity>
+                </View>
             </AppContainer>
         );
     }
@@ -229,14 +332,55 @@ export default class SkateMapScreen extends React.Component {
 const styles = StyleSheet.create({
     mapIconStyle: {
         position: 'absolute',
-        bottom: 20,
-        right: 10,
+        bottom: 5,
+        right: 5,
         height: 100,
         width: 100,
         borderRadius: 100,
         backgroundColor: 'rgba(108, 122, 137, 0.5)',
         justifyContent: 'center',
+        alignItems: 'center',
+    },
+    gpsStatusStle: {
+        padding: 8,
+        borderRadius: 30,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        textAlign: 'center'
+    },
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: 'row',
+        height: 40,
+        width: '100%',
+        justifyContent: 'center',
         alignItems: 'center'
     },
+    skateButtonIcon: {
+        position: 'absolute',
+        left: 10,
+        top: 10
+    },
+    modalContainer: {
+        backgroundColor: 'rgba(255,255,255,1)',
+        borderRadius: 30,
+        padding: 30
+    },
+    modalTitle: {
+        fontSize: 28,
+        borderBottomWidth: 0.5,
+        width: '100%'
+    },
+    toggleMapTypeContainer: {
+        position: 'absolute',
+        right: 5,
+        top: 5,
+        padding: 8,
+        borderColor: 'blue',
+        borderWidth: 0.5,
+        borderRadius: 30,
+        backgroundColor: 'white'
+    }
 
 });
