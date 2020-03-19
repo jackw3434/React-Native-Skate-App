@@ -233,6 +233,18 @@ export default class SkateMapScreen extends React.Component {
         this.setState({ isMarkerModalVisible: false })
     }
 
+    useCurrentLocation() {
+
+    }
+
+    selectLocationOnMap() {
+        // close modal
+        // tap somehwere on the map
+        // get coordinates
+        // confirm selection or goback/cancel
+
+    }
+
     _renderSkatePinModal() {
         let { type, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor } = this.state.currentSkatePinModalData;
 
@@ -423,15 +435,20 @@ export default class SkateMapScreen extends React.Component {
                         }
                         {this.state.isNewSkateSpotVisible &&
                             <View>
-                                <Text style={styles.modalTitle}>New Skate Spot</Text>
+                                <Text style={styles.modalTitle}>Upload New Skate Spot</Text>
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
-                                    Let others know about a cool skate spot.
+                                    Let others know about a good places to skate.
                                 </Text>
                                 <Text>Found By: Skater Andy</Text>
-                                <Text>Current Location</Text>
-                                <Text>Enter a description of the skate spot</Text>
-                                <View style={{ height: 120, width: '80%', borderWidth: 2 }}></View>
-                                <SkateButton buttonText="Submit" onPress={() => this.submitSkateSpotPin()} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>Location: </Text>
+                                    <TouchableOpacity onPress={() => this.useCurrentLocation()}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Use Current Location</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text style={{ paddingTop: 10, paddingBottom: 5 }}>Enter a description of the skate spot</Text>
+                                <View style={{ height: 120, width: '100%', borderWidth: 2 }}></View>
+                                <SkateButton style={{marginTop:10}} buttonText="Submit" onPress={() => this.submitSkateSpotPin()} />
                                 <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.modalCancelSkateSpot()} />
                             </View>
                         }
@@ -442,8 +459,17 @@ export default class SkateMapScreen extends React.Component {
                                     Teach someone a new trick!
                                 </Text>
                                 <Text>You: Skater Andy</Text>
-                                <Text>Current Location or pick a location</Text>
-                                <Text>Enter a description of the skate spot</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>Location: </Text>
+                                    <TouchableOpacity onPress={() => this.useCurrentLocation()}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Use Current Location</Text>
+                                    </TouchableOpacity>
+                                    <Text>or</Text>
+                                    <TouchableOpacity onPress={() => this.selectLocationOnMap()}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Pick a location.</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text style={{ paddingTop: 10 }}>Enter a description of the skate spot</Text>
                                 <View style={{ height: 120, width: '80%', borderWidth: 2 }}></View>
                                 <Text>Select the time you will be there</Text>
                                 <View style={{ height: 80, width: '80%', borderWidth: 2 }}></View>
@@ -458,7 +484,16 @@ export default class SkateMapScreen extends React.Component {
                                     Let people know you want to have a skate with them.
                                 </Text>
                                 <Text>You: Skater Andy</Text>
-                                <Text>Current Location or pick a location</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>Location: </Text>
+                                    <TouchableOpacity onPress={() => this.useCurrentLocation()}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Use Current Location</Text>
+                                    </TouchableOpacity>
+                                    <Text>or</Text>
+                                    <TouchableOpacity onPress={() => this.selectLocationOnMap()}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Pick a location.</Text>
+                                    </TouchableOpacity>
+                                </View>
                                 <Text>Enter a friendly message</Text>
                                 <View style={{ height: 120, width: '80%', borderWidth: 2 }}>
                                     <Text>
@@ -466,7 +501,7 @@ export default class SkateMapScreen extends React.Component {
                                         Check out my tricks on my profile and come see if you can beat me :)
                                     </Text>
                                 </View>
-                                <Text>Select the time you will be there</Text>
+                                <Text style={{ paddingTop: 10 }}>Select the time you will be there</Text>
                                 <View style={{ height: 80, width: '80%', borderWidth: 2 }}></View>
                                 <SkateButton buttonText="Submit" onPress={() => this.submitGameOfSkatePin()} />
                                 <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.modalCancelGameOfSkate()} />
