@@ -13,6 +13,7 @@ import { Compass } from './Icons/compass';
 import { Newspaper } from './Icons/newspaper';
 import { PlusIcon } from './Icons/plus';
 import { Pin } from './Icons/pin';
+import { Clock } from './Icons/clock';
 
 
 // Each nameValuePair can be:
@@ -31,5 +32,6 @@ export default {
     Compass: Compass,
     Newspaper: Newspaper,
     PlusIcon: PlusIcon,
-    Pin: Pin
+    Pin: Pin,
+    Clock: Clock
 }
