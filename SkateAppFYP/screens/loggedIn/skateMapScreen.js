@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -8,7 +8,7 @@ import AppContainer from '../containers/AppContainer'
 import Icon from '../../Icon/Icon'
 import Modal from "react-native-modal";
 import SkateButton from '../../components/skateButton'
-import { TextInput } from 'react-native-gesture-handler';
+//import { TextInput } from 'react-native-gesture-handler';
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -30,63 +30,60 @@ export default class SkateMapScreen extends React.Component {
                 latitude: null,
                 longitude: null,
             },
-            title: '',
             description: '',
             startTime: '',
             endTime: '',
             markers: [
                 {
-                _id: 1,
-                type: 'Skate Spot',
-                coordinate: {
-                    latitude: 50.3864,
-                    longitude: -4.1395,
+                    _id: 1,
+                    type: 'Skate Spot',
+                    coordinate: {
+                        latitude: 50.3864,
+                        longitude: -4.1395,
+                    },
+                    title: 'Stair set',
+                    createdBy: 'Skater Andy',
+                    photo: 'source goes here for image',
+                    description: 'Sick 3 stair set with smooth hand rail.',
+                    reviews: ["Nice area", "Really Fun Spot to learn.", "5 Star Spot", "Great Spot", "really good for learning", "I really like it", 'good spot'],
+                    startTime: '',
+                    endTime: '',
+                    pinColor: 'blue'
                 },
-                title: 'Stair set',
-                createdBy: 'Skater Andy',
-                photo: 'source goes here for image',
-                description: 'Sick 3 stair set with smooth hand rail.',
-                reviews: ["Nice area", "Really Fun Spot to learn.", "5 Star Spot", "Great Spot", "really good for learning", "I really like it", 'good spot'],
-                startTime: '',
-                endTime: '',
-                pinColor: 'blue'
-            },
-            {
-                _id: 2,
-                type: 'Here To Teach :)',
-                coordinate: {
-                    latitude: 50.3874,
-                    longitude: -4.1395,
+                {
+                    _id: 2,
+                    type: 'Here To Teach :)',
+                    coordinate: {
+                        latitude: 50.3874,
+                        longitude: -4.1395,
+                    },
+                    title: 'Teaching Kickflips!',
+                    createdBy: 'Skater Jill',
+                    photo: '',
+                    description: 'Im gona be around for a bit and help anyone with their kickflips.',
+                    reviews: ["Really Helpful and Friendly.", "So helpful.", "Amazing teacher, I learnt a lot"],
+                    startTime: '2pm',
+                    endTime: '4pm',
+                    pinColor: 'orange'
                 },
-                title: 'Teaching Kickflips!',
-                createdBy: 'Skater Jill',
-                photo: '',
-                description: 'Im gona be around for a bit and help anyone with their kickflips.',
-                reviews: ["Really Helpful and Friendly.", "So helpful.", "Amazing teacher, I learnt a lot"],
-                startTime: '2pm',
-                endTime: '4pm',
-                pinColor: 'orange'
-            },
-            {
-                _id: 3,
-                type: 'Game of S.K.A.T.E',
-                coordinate: {
-                    latitude: 50.3884,
-                    longitude: -4.1395,
-                },
-                title: 'Anyone fancy a game of Skate?',
-                createdBy: 'Skater Andy',
-                photo: '',
-                description: 'Here for a couple hours, come find me if you wanna play a game of skate.',
-                reviews: ["Fun to skate with, hard to beat at a game of S.K.A.T.E", "I beat him easy xD"],
-                startTime: '1pm',
-                endTime: '5pm',
-                pinColor: 'red'
-            }],
+                {
+                    _id: 3,
+                    type: 'Game of S.K.A.T.E',
+                    coordinate: {
+                        latitude: 50.3884,
+                        longitude: -4.1395,
+                    },
+                    title: 'Anyone fancy a game of Skate?',
+                    createdBy: 'Skater Andy',
+                    photo: '',
+                    description: 'Here for a couple hours, come find me if you wanna play a game of skate.',
+                    reviews: ["Fun to skate with, hard to beat at a game of S.K.A.T.E", "I beat him easy xD"],
+                    startTime: '1pm',
+                    endTime: '5pm',
+                    pinColor: 'red'
+                }],
             currentSkatePinModalData: {
-                type: '',
-                title: '',
-                createdBy: '',
+                createdBy: "LOGGED IN USER GOES HERE",
                 coordinate: {
                     latitude: '',
                     longitude: ''
@@ -104,10 +101,10 @@ export default class SkateMapScreen extends React.Component {
     componentDidMount() {
         Geolocation.getCurrentPosition(
             (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
-            (error) => { this.setState({ locationProvider: false }) },
+            (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
         );
-
+        // console.warn(this.state)
         // Geolocation.watchPosition(
         //     (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
         //     (error) => { this.setState({ locationProvider: false }) },
@@ -186,24 +183,22 @@ export default class SkateMapScreen extends React.Component {
     }
 
     submitHereToTeachPin() {
-       
+
         let hearToTeachPin = {
             _id: 4,
-            type: 'Here To Teach',
-            title: this.state.title,
-            createdBy: "LOGGED IN USER GOES HERE",
+            title: 'Here To Teach',
+            createdBy: this.state.createdBy,
             coordinate: {
                 latitude: this.state.mapCoordinatesToUse.latitude,
                 longitude: this.state.mapCoordinatesToUse.longitude
             },
             photo: null,
             description: this.state.description,
-            reviews: [],
             startTime: this.state.startTime,
             endTime: this.state.endTime,
             pinColor: 'orange'
         };
-     
+
         this.state.markers.push(hearToTeachPin);
 
         this.setState({
@@ -213,7 +208,6 @@ export default class SkateMapScreen extends React.Component {
                 latitide: '',
                 longitude: ''
             },
-            title: '',
             description: '',
             startTime: '',
             endTime: ''
@@ -240,13 +234,12 @@ export default class SkateMapScreen extends React.Component {
     }
 
     openMarkerModal(marker) {
-     
-        let { type, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor } = marker;
+
+        let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor } = marker;
 
         this.setState({
             isMarkerModalVisible: true,
             currentSkatePinModalData: {
-                type: type,
                 title: title,
                 createdBy: createdBy,
                 coordinate: coordinate,
@@ -265,7 +258,17 @@ export default class SkateMapScreen extends React.Component {
     }
 
     useCurrentLocation() {
-        this.setState({ mapCoordinatesToUse: { latitude: this.state.currentLat, longitude: this.state.currentLng } });
+
+        Geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({ mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude }, locationProvider: true })
+            },
+            (error) => {
+                console.warn("Location Services Not Enabled"),
+                this.setState({ locationProvider: false })
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+        );
     }
 
     selectLocationOnMap() {
@@ -355,6 +358,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     render() {
+
         return (
             <AppContainer
                 passNav={this.props}
@@ -392,12 +396,12 @@ export default class SkateMapScreen extends React.Component {
 
                         }
                     }}
-                // region={{
-                //     latitude: this.state.currentLat ? this.state.currentLat : 50.3762, // Plymouth Uni
-                //     longitude: this.state.currentLng ? this.state.currentLng : -4.1395,
-                //     latitudeDelta: 0.0221,
-                //     longitudeDelta: 0.0221, 
-                // }}
+                    region={{
+                        latitude: this.state.currentLat ? this.state.currentLat : 50.3762, // Plymouth Uni
+                        longitude: this.state.currentLng ? this.state.currentLng : -4.1395,
+                        latitudeDelta: 0.0221,
+                        longitudeDelta: 0.0221,
+                    }}
                 >
                     <Marker
                         coordinate={{
@@ -513,12 +517,12 @@ export default class SkateMapScreen extends React.Component {
                                 <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
                                     Let others know where you are going to be and teach someone a new trick!
                                 </Text>
-                                <Text style={{ textDecorationLine: 'underline' }}>Enter a title</Text>
+                                {/* <Text style={{ textDecorationLine: 'underline' }}>Enter a title</Text>
                                 <View style={{ height: 50, width: '100%', borderWidth: 2 }}>
                                     <TextInput style={{ height: '100%', width: '100%' }} onChangeText={(title) => { this.setState({ title: title }) }}>{this.state.title}</TextInput>
-                                </View>
+                                </View> */}
                                 <Text>You: USERNAME GOES HERE</Text>
-                                <Text>Location: </Text>
+                                <Text style={{paddingTop:5, paddingBottom:5}}>Location: </Text>
                                 <View style={{ flexDirection: 'row' }}>
                                     <TouchableOpacity onPress={() => this.useCurrentLocation()}>
                                         <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Use Current Location</Text>
@@ -532,18 +536,18 @@ export default class SkateMapScreen extends React.Component {
                                     <View>
                                         <Text style={{ paddingTop: 10 }}>Latitude: {this.state.mapCoordinatesToUse.latitude}</Text>
                                         <Text>Longitude: {this.state.mapCoordinatesToUse.longitude}</Text>
-                                    </View>
+                                    </View>                                   
                                 }
-                                <Text style={{ paddingTop: 10 }}>Enter a description of the skate spot</Text>
-                                <View style={{ height: 120, width: '100%', borderWidth: 2 }}>
-                                    <TextInput style={{ height: '100%', width: '100%' }} onChangeText={(text) => { this.setState({ description: text }) }}>{this.state.description}</TextInput>
+                                <Text style={{ paddingTop: 10, paddingBottom:5 }}>Enter a description of the skate spot</Text>
+                                <View style={{ height: 120, width: '100%', borderWidth: 0.5 }}>
+                                    <TextInput multiline={true} style={{ flex:1 }} onChangeText={(text) => { this.setState({ description: text }) }}>{this.state.description}</TextInput>
                                 </View>
-                                <Text>Select the time you will be there</Text>
-                                <View style={{ flexDirection: 'row', width: '100%', paddingTop: 5 }}>
+                                <Text style={{paddingTop:5}}>Select the time you will be there</Text>
+                                <View style={{ flexDirection: 'row', width: '70%', height:45, paddingTop: 10, paddingBottom:10 }}>
                                     <Text>Start: </Text>
-                                    <TextInput style={{ width: 50 }} onChangeText={(startTime) => { this.setState({ startTime: startTime }) }}>{this.state.startTime}</TextInput>
-                                    <Text> - End:</Text>
-                                    <TextInput style={{ width: 50 }} onChangeText={(endTime) => { this.setState({ endTime: endTime }) }}>{this.state.endTime}</TextInput>
+                                    <TextInput style={{ flex:2, backgroundColor:'yellow' }} onChangeText={(startTime) => { this.setState({ startTime: startTime }) }}>{this.state.startTime}</TextInput>
+                                    <Text>End:</Text>
+                                    <TextInput style={{ flex:2, backgroundColor:'yellow' }} onChangeText={(endTime) => { this.setState({ endTime: endTime }) }}>{this.state.endTime}</TextInput>
                                 </View>
                                 <SkateButton buttonText="Submit" onPress={() => this.submitHereToTeachPin()} />
                                 <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.modalCancelHereToTeach()} />
