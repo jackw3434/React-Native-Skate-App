@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Button, Dimensions } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Button, Dimensions, Platform } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -8,7 +8,6 @@ import AppContainer from '../containers/AppContainer'
 import Icon from '../../Icon/Icon'
 import Modal from "react-native-modal";
 import SkateButton from '../../components/skateButton'
-//import { TextInput } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default class SkateMapScreen extends React.Component {
@@ -174,7 +173,7 @@ export default class SkateMapScreen extends React.Component {
             skateDate: '',
             startTime: '',
             endTime: '',
-            description:''
+            description: ''
         })
     }
 
@@ -215,7 +214,7 @@ export default class SkateMapScreen extends React.Component {
             description: this.state.description,
             startTime: this.state.startTime,
             endTime: this.state.endTime,
-            reviews:["Good skate"],
+            reviews: ["Good skate", "Friendly Guy"],
             pinColor: 'orange'
         };
 
@@ -229,8 +228,9 @@ export default class SkateMapScreen extends React.Component {
                 longitude: ''
             },
             description: '',
+            skateDate: '',
             startTime: '',
-            endTime: ''
+            endTime: '',
         })
     }
 
@@ -311,7 +311,7 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
                     <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text>Type: {type}</Text>
+                        <Text>{type}</Text>
                         <Text style={styles.modalTitle}>{title}</Text>
                         <Text style={{ paddingTop: 5, paddingBottom: 5 }}>Found By: <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>{createdBy}</Text></Text>
                         <View style={{ flexDirection: 'row' }}>
@@ -345,9 +345,9 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
                     <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text>Type: {type}</Text>
+                        <Text>{type}</Text>
                         <Text style={styles.modalTitle}>{title}</Text>
-                        <Text style={{ paddingTop: 5, paddingBottom: 5, color: 'blue', textDecorationLine: 'underline' }}>{createdBy}</Text>
+                        <Text style={{ paddingTop: 5, paddingBottom: 5, color: 'blue', textDecorationLine: 'underline' }}>USERNAME GOES HERE: {createdBy}</Text>
                         <Text>description:</Text>
                         <View style={{ width: '100%', paddingBottom: 5, height: 50 }}>
                             <Text style={{ fontSize: 16, textAlign: 'left', width: '100%' }}>{description}</Text>
@@ -382,68 +382,34 @@ export default class SkateMapScreen extends React.Component {
         let utcSeconds = event.nativeEvent.timestamp;
         let selectedDate = new Date(utcSeconds).toLocaleDateString();
         let selectedTime = new Date(utcSeconds).toLocaleTimeString();
+        
+        if (Platform.OS == 'android') {
 
-       // this.setState({ selectedDate: selectedDate, selectedTime: selectedTime, date: date })
-    }
+            if (event.type == "set") {
 
-    _renderDateTimePicker() {
+                if (this.state.startOrEndTime == "startTime") {
 
-        if (this.state.startOrEndTime == "startTime") {
-            return (
-                <View>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    <SkateButton buttonText="Confirm" onPress={() => this.confirmStartTime()} />
-                    <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                </View>
-            );
-        } else if (this.state.startOrEndTime == "endTime") {
-            return (
-                <View>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    <SkateButton buttonText="Confirm" onPress={() => this.confirmEndTime()} />
-                    <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                </View>
-            );
+                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+                } else if (this.state.startOrEndTime == "endTime") {
+
+                    this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+                } else if (this.state.startOrEndTime == "Date") {
+
+                    this.setState({ skateDate: selectedDate, showDateTimePicker: false, date: new Date() })
+                }
+            }
+            if (event.type == "dismissed") {
+                this.cancelDateTime();
+            }
         } else {
-            return (
-                <View>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    <SkateButton buttonText="Confirm" onPress={() => this.confirmSkateDate()} />
-                    <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                </View>
-            );
+            this.setState({ selectedDate: selectedDate, selectedTime: selectedTime, date: date })
         }
-
     }
 
     showDateOrTimePicker(pickerType, startOrEndTime) {
 
         if (pickerType == "Date") {
-            this.setState({ dateTimePickerMode: 'date', showDateTimePicker: true })
+            this.setState({ dateTimePickerMode: 'date', showDateTimePicker: true, startOrEndTime: "Date" })
         }
         if (pickerType == "Time") {
             if (startOrEndTime == "startTime") {
@@ -456,18 +422,101 @@ export default class SkateMapScreen extends React.Component {
     }
 
     confirmStartTime() {
-        this.setState({ startTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        if (Platform.OS == 'ios' && this.state.selectedDate == "") {
+            let selectedTime = new Date().toLocaleTimeString();
+            this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        } else {
+            this.setState({ startTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        }
     }
+
     confirmEndTime() {
-        this.setState({ endTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        if (Platform.OS == 'ios' && this.state.selectedDate == "") {
+            let selectedTime = new Date().toLocaleTimeString();
+            this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        } else {
+            this.setState({ endTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+        }
     }
 
     confirmSkateDate() {
-        this.setState({ skateDate: this.state.selectedDate, showDateTimePicker: false, date: new Date() })
+        if (Platform.OS == 'ios' && this.state.selectedDate == "") {
+            let selectedDate = new Date().toLocaleDateString();
+            this.setState({ skateDate: selectedDate, showDateTimePicker: false, date: new Date() })
+        } else {
+            this.setState({ skateDate: this.state.selectedDate, showDateTimePicker: false, date: new Date() })
+        }
     }
 
     cancelDateTime() {
         this.setState({ showDateTimePicker: false, date: new Date() })
+    }
+
+    _renderDateTimePicker() {
+
+        if (this.state.startOrEndTime == "startTime") {
+            return (
+                <View style={{ flex: Platform.OS == 'android' && 1 }}>
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        timeZoneOffsetInMinutes={0}
+                        value={this.state.date}
+                        mode={this.state.dateTimePickerMode}
+                        is24Hour={true}
+                        display="default"
+                        onChange={this.setDateTime}
+                    />
+                    {Platform.OS == 'ios' &&
+                        <View>
+                            <SkateButton buttonText="Confirm" onPress={() => this.confirmStartTime()} />
+                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
+                        </View>
+                    }
+
+                </View>
+            );
+        } else if (this.state.startOrEndTime == "endTime") {
+            return (
+                <View style={{ flex: Platform.OS == 'android' && 1 }}>
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        timeZoneOffsetInMinutes={0}
+                        value={this.state.date}
+                        mode={this.state.dateTimePickerMode}
+                        is24Hour={true}
+                        display="default"
+                        onChange={this.setDateTime}
+                    />
+                    {Platform.OS == 'ios' &&
+                        <View>
+                            <SkateButton buttonText="Confirm" onPress={() => this.confirmEndTime()} />
+                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
+                        </View>
+                    }
+                </View>
+            );
+        } else {
+            return (
+                <View style={{ flex: Platform.OS == 'android' && 1 }}>
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        timeZoneOffsetInMinutes={0}
+                        value={this.state.date}
+                        mode={this.state.dateTimePickerMode}
+                        is24Hour={true}
+                        display="default"
+                        onChange={this.setDateTime}
+                    />
+                    {Platform.OS == 'ios' &&
+                        <View>
+                            <SkateButton buttonText="Confirm" onPress={() => this.confirmSkateDate()} />
+                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
+                        </View>
+                    }
+                </View>
+            );
+        }
+
     }
 
     render() {
@@ -532,7 +581,7 @@ export default class SkateMapScreen extends React.Component {
                                 latitude: marker.coordinate.latitude,
                                 longitude: marker.coordinate.longitude,
                             }}
-                            title={marker.type}
+                            title={marker.title}
                             description={marker.description}
                             pinColor={marker.pinColor}
                             onPress={() => this.openMarkerModal(marker)}
@@ -541,20 +590,6 @@ export default class SkateMapScreen extends React.Component {
                 </MapView>
 
                 {this._renderSkatePinModal()}
-
-                {/* <Modal
-                    backdropTransitionInTiming={3000}
-                    backdropTransitionOutTiming={3000}
-                    onBackdropPress={() => this.closeMarkerModal()}
-                    style={{ alignItems: 'center' }}
-                    isVisible={this.state.isMarkerModalVisible}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Selected pin</Text>
-                        <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
-                            This is a pin
-                                </Text>
-                    </View>
-                </Modal> */}
 
                 <Modal
                     backdropTransitionInTiming={3000}
@@ -627,66 +662,79 @@ export default class SkateMapScreen extends React.Component {
                             <View>
                                 {!this.state.showDateTimePicker ?
                                     <View>
-                                        <Text style={styles.modalTitle}>Here To Teach :)</Text>
-                                        <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
-                                            Let others know where you are going to be and teach someone a new trick!
-                                </Text>
-                                        {/* <Text style={{ textDecorationLine: 'underline' }}>Enter a title</Text>
-                                <View style={{ height: 50, width: '100%', borderWidth: 2 }}>
-                                    <TextInput style={{ height: '100%', width: '100%' }} onChangeText={(title) => { this.setState({ title: title }) }}>{this.state.title}</TextInput>
-                                </View> */}
-                                        <Text>You: USERNAME GOES HERE</Text>
-                                        <Text style={{ paddingTop: 5, paddingBottom: 5 }}>Location: </Text>
-                                        <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.modalTitle}>Here To Teach</Text>
+                                        <Text style={styles.modalDescription}>Let others know where you are going to be and teach someone a new trick!</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
+                                            <Text>You: USERNAME GOES HERE</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', paddingTop: 5, alignItems: 'center' }}>
+                                            <Icon name='Pin' viewBox={Platform.OS == 'ios' ? "5 0 250 250" : "0 0 25 25"} height="25" width="25" fill='blue' />
+                                            <Text style={{ paddingLeft: 5 }}>Location: </Text>
                                             <TouchableOpacity onPress={() => this.useCurrentLocation()}>
-                                                <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Use Current Location</Text>
+                                                <Text style={{ color: 'blue' }}>Use current</Text>
                                             </TouchableOpacity>
                                             <Text> or </Text>
                                             <TouchableOpacity onPress={() => this.selectLocationOnMap()}>
-                                                <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Pick a location.</Text>
+                                                <Text style={{ color: 'blue' }}>select a location</Text>
                                             </TouchableOpacity>
                                         </View>
                                         {this.state.mapCoordinatesToUse.latitude && this.state.mapCoordinatesToUse.longitude &&
-                                            <View>
-                                                <Text style={{ paddingTop: 10 }}>Latitude: {this.state.mapCoordinatesToUse.latitude}</Text>
-                                                <Text>Longitude: {this.state.mapCoordinatesToUse.longitude}</Text>
+                                            <View style={{ paddingLeft: 30 }}>
+                                                <Text style={{ paddingTop: 5 }}>
+                                                    Latitude: {this.state.mapCoordinatesToUse.latitude}
+                                                </Text>
+                                                <Text>
+                                                    Longitude: {this.state.mapCoordinatesToUse.longitude}
+                                                </Text>
                                             </View>
                                         }
-                                        <Text style={{ paddingTop: 10, paddingBottom: 5 }}>Enter a description of the skate spot</Text>
-                                        <View style={{ height: 120, width: '100%', borderWidth: 0.5 }}>
-                                            <TextInput multiline={true} style={{ flex: 1 }} onChangeText={(text) => { this.setState({ description: text }) }}>{this.state.description}</TextInput>
+
+                                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Enter a description of your intentions:</Text>
+                                        <View style={{ paddingLeft: 5, height: 120, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue' }}>
+                                            <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={(text) => { this.setState({ description: text }) }}>{this.state.description}</TextInput>
                                         </View>
-                                        <Text style={{ paddingTop: 5 }}>Select the date and time you will be there</Text>
-                                        <View style={{ flexDirection: 'row', width: '70%', height: 45, paddingTop: 10, paddingBottom: 10 }}>
-                                            <TouchableOpacity onPress={() => this.showDateOrTimePicker("Date", null)}>
-                                                <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-                                                    Select Date:
+
+                                        <View style={{ paddingLeft: 5 }}>
+                                            <Text style={{ paddingTop: 15, paddingBottom: 10 }}>Select the date and time you will be there:</Text>
+
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
+                                                <TouchableOpacity style={{ paddingBottom: 5 }} onPress={() => this.showDateOrTimePicker("Date", "Date")}>
+                                                    <Text style={{ color: 'blue' }}>
+                                                        Select date:
                                                     {this.state.skateDate &&
-                                                        <Text>{this.state.skateDate}</Text>
-                                                    }
-                                                </Text>
+                                                            <Text style={{ paddingLeft: 15 }}>{this.state.skateDate}</Text>
+                                                        }
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
 
-                                            </TouchableOpacity>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon name='Clock' viewBox="-50 -130 1024 1024" height="28" width="28" fill='blue' />
+                                                <TouchableOpacity style={{ paddingBottom: 5 }} onPress={() => this.showDateOrTimePicker("Time", "startTime")}>
+                                                    <Text style={{ color: 'blue' }}>
+                                                        Select start time:
+                                            {this.state.startTime &&
+                                                            <Text>{this.state.startTime}</Text>
+                                                        }
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <Icon name='Clock' viewBox="-50 -130 1024 1024" height="28" width="28" fill='blue' />
+                                                <TouchableOpacity style={{ paddingBottom: 5 }} onPress={() => this.showDateOrTimePicker("Time", "endTime")}>
+                                                    <Text style={{ color: 'blue' }}>
+                                                        Select end time:
+                                            {this.state.endTime &&
+                                                            <Text>{this.state.endTime}</Text>
+                                                        }
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
 
                                         </View>
-                                        {/* <View style={{ width: '70%', height: 45, paddingTop: 10, paddingBottom: 10 }}> */}
-                                        <TouchableOpacity onPress={() => this.showDateOrTimePicker("Time", "startTime")}>
-                                            <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-                                                Select Start Time:
-                                            {this.state.startTime &&
-                                                    <Text>{this.state.startTime}</Text>
-                                                }
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.showDateOrTimePicker("Time", "endTime")}>
-                                            <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-                                                Select Endtime:
-                                            {this.state.endTime &&
-                                                    <Text>{this.state.endTime}</Text>
-                                                }
-                                            </Text>
-                                        </TouchableOpacity>
-                                        {/* </View> */}
                                         <SkateButton buttonText="Submit" onPress={() => this.submitHereToTeachPin()} />
                                         <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.modalCancelHereToTeach()} />
                                     </View>
@@ -810,6 +858,12 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 30,
         backgroundColor: 'white'
+    },
+    modalDescription: {
+        fontSize: 16,
+        textAlign: 'left',
+        paddingTop: 10,
+        paddingBottom: 10
     }
 
 });

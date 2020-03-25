@@ -14,6 +14,7 @@ import { Newspaper } from './Icons/newspaper';
 import { PlusIcon } from './Icons/plus';
 import { Pin } from './Icons/pin';
 import { Clock } from './Icons/clock';
+import { Calender } from './Icons/calender';
 
 
 // Each nameValuePair can be:
@@ -33,5 +34,6 @@ export default {
     Newspaper: Newspaper,
     PlusIcon: PlusIcon,
     Pin: Pin,
-    Clock: Clock
+    Clock: Clock,
+    Calender: Calender
 }
