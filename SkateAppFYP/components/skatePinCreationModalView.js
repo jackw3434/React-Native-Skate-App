@@ -26,6 +26,7 @@ export default class SkatePinCreationModalView extends React.Component {
     // endTime
     // onPressSubmitPin
     // onPressCancelPin   
+    // locationProvider
 
     render() {
         return (
@@ -42,7 +43,16 @@ export default class SkatePinCreationModalView extends React.Component {
                     <Icon name='Pin' viewBox={Platform.OS == 'ios' ? "5 0 250 250" : "0 0 25 25"} height="25" width="25" fill='blue' />
                     <Text style={{ paddingLeft: 5 }}>Location: </Text>
                     <TouchableOpacity onPress={this.props.onPressCurrentLocation}>
-                        <Text style={this.props.useCurrentOrSelectedLocation == 'current' ? styles.highlightedLocationOption : { color: 'blue' }}>Use current</Text>
+                        <Text
+                            style={
+                                this.props.useCurrentOrSelectedLocation == 'current' ?
+                                    styles.highlightedLocationOption
+                                    :
+                                    { color: 'blue' }
+                            }
+                        >
+                            {this.props.locationProvider ? "Use current" : "GPS disabled"}
+                        </Text>
                     </TouchableOpacity>
                     {this.props.onPressSelectedLocation &&
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -103,7 +113,7 @@ export default class SkatePinCreationModalView extends React.Component {
                     </View>
                     :
                     <View>
-                       <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Enter a description of the skate spot you have found and want to share:</Text>
+                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Enter a description of the skate spot you have found and want to share:</Text>
                         <View style={{ paddingLeft: 5, height: 120, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
                             <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput>
                         </View>
