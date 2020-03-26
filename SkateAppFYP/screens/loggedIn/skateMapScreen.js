@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Button, Dimensions, Platform } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Button, Dimensions, Platform, BackHandler } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -111,6 +111,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     componentDidMount() {
+
         // Geolocation.getCurrentPosition(
         //     (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
         //     (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
@@ -139,7 +140,7 @@ export default class SkateMapScreen extends React.Component {
         //     (error) => { this.setState({ locationProvider: false }) },
         //     { enableHighAccuracy: true, timeout: 1000, maximumAge: 1000 }
         // );
-    }
+    }   
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -611,7 +612,9 @@ export default class SkateMapScreen extends React.Component {
                     backdropTransitionOutTiming={3000}
                     onBackdropPress={() => this.toggleModal()}
                     style={{ alignItems: 'center' }}
-                    isVisible={this.state.isModalVisible}>
+                    isVisible={this.state.isModalVisible}
+                    onBackButtonPress={() => this.toggleModal()}
+                    >
                     <View style={styles.modalContainer}>
                         {this.state.isModalMenuVisible &&
                             <View>
