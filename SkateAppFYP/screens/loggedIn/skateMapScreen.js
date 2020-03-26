@@ -23,6 +23,7 @@ export default class SkateMapScreen extends React.Component {
             date: new Date(),
             currentLat: null,
             currentLng: null,
+            useCurrentOrSelectedLocation: '',
             mapType: "standard",
             isModalVisible: false,
             isModalMenuVisible: false,
@@ -111,12 +112,6 @@ export default class SkateMapScreen extends React.Component {
     }
 
     componentDidMount() {
-
-        // Geolocation.getCurrentPosition(
-        //     (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
-        //     (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
-        //     { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-        // );
         Geolocation.getCurrentPosition(
             (position) => {
                 this.setState({
@@ -131,16 +126,17 @@ export default class SkateMapScreen extends React.Component {
                     locationProvider: true
                 })
             },
-            (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+            (error) => {
+                console.warn("Location Services Not Enabled", error.code, error.message);
+                this.setState({ locationProvider: false })
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 10000
+            }
         );
-        // console.warn(this.state)
-        // Geolocation.watchPosition(
-        //     (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
-        //     (error) => { this.setState({ locationProvider: false }) },
-        //     { enableHighAccuracy: true, timeout: 1000, maximumAge: 1000 }
-        // );
-    }   
+    }
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -304,7 +300,7 @@ export default class SkateMapScreen extends React.Component {
 
         Geolocation.getCurrentPosition(
             (position) => {
-                this.setState({ mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude }, locationProvider: true })
+                this.setState({ useCurrentOrSelectedLocation: 'current', mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude }, locationProvider: true })
             },
             (error) => {
                 console.warn("Location Services Not Enabled"),
@@ -315,7 +311,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     selectLocationOnMap() {
-        this.setState({ isModalVisible: false, canTapMap: true })
+        this.setState({ useCurrentOrSelectedLocation: 'selected', isModalVisible: false, canTapMap: true })
     }
 
     returnFromMapLocationSelection() {
@@ -330,6 +326,7 @@ export default class SkateMapScreen extends React.Component {
                 <Modal
                     backdropTransitionInTiming={3000}
                     backdropTransitionOutTiming={3000}
+                    onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
@@ -364,6 +361,7 @@ export default class SkateMapScreen extends React.Component {
                 <Modal
                     backdropTransitionInTiming={3000}
                     backdropTransitionOutTiming={3000}
+                    onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
@@ -614,7 +612,7 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isModalVisible}
                     onBackButtonPress={() => this.toggleModal()}
-                    >
+                >
                     <View style={styles.modalContainer}>
                         {this.state.isModalMenuVisible &&
                             <View>
@@ -690,23 +688,13 @@ export default class SkateMapScreen extends React.Component {
                                             <Icon name='Pin' viewBox={Platform.OS == 'ios' ? "5 0 250 250" : "0 0 25 25"} height="25" width="25" fill='blue' />
                                             <Text style={{ paddingLeft: 5 }}>Location: </Text>
                                             <TouchableOpacity onPress={() => this.useCurrentLocation()}>
-                                                <Text style={{ color: 'blue' }}>Use current</Text>
+                                                <Text style={this.state.useCurrentOrSelectedLocation == 'current' ? styles.highlightedLocationOption : { color: 'blue' }}>Use current</Text>
                                             </TouchableOpacity>
                                             <Text> or </Text>
                                             <TouchableOpacity onPress={() => this.selectLocationOnMap()}>
-                                                <Text style={{ color: 'blue' }}>select a location</Text>
+                                                <Text style={this.state.useCurrentOrSelectedLocation == 'selected' ? styles.highlightedLocationOption : { color: 'blue' }}>select a location</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        {this.state.mapCoordinatesToUse.latitude && this.state.mapCoordinatesToUse.longitude &&
-                                            <View style={{ paddingLeft: 30 }}>
-                                                <Text style={{ paddingTop: 5 }}>
-                                                    Latitude: {this.state.mapCoordinatesToUse.latitude}
-                                                </Text>
-                                                <Text>
-                                                    Longitude: {this.state.mapCoordinatesToUse.longitude}
-                                                </Text>
-                                            </View>
-                                        }
 
                                         <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Enter a description of your intentions:</Text>
                                         <View style={{ paddingLeft: 5, height: 120, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue' }}>
@@ -882,6 +870,13 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         paddingTop: 10,
         paddingBottom: 10
+    },
+    highlightedLocationOption: {
+        borderWidth: 1,
+        borderColor: 'blue',
+        borderRadius: 10,
+        padding: 2,
+        color: 'blue'
     }
 
 });
