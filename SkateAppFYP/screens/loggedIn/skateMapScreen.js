@@ -105,7 +105,7 @@ export default class SkateMapScreen extends React.Component {
                 photo: '',
                 description: '',
                 reviews: [],
-                skateDate:'',
+                skateDate: '',
                 startTime: '',
                 endTime: '',
                 pinColor: ''
@@ -339,14 +339,16 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
                     <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text>{type}</Text>
                         <Text style={styles.modalTitle}>{title}</Text>
-                        <Text style={{ paddingTop: 5, paddingBottom: 5 }}>Found By: <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>{createdBy}</Text></Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
+                            <Text>Found By: {createdBy}</Text>
+                        </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ height: 70, width: 70, borderWidth: 0.5, justifyContent: "center" }}><Text>Skate Spot Image</Text></View>
                             <Text style={{ fontSize: 16, textAlign: 'left', marginLeft: 10, flex: 1, flexWrap: 'wrap' }}>{description}</Text>
                         </View>
-                        <Text style={{ color: 'blue', textDecorationLine: 'underline', paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
+                        <Text style={{ paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
                         <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
                             <ScrollView>
                                 {reviews && reviews.map((review) => {
@@ -374,9 +376,12 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
                     <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text>{type}</Text>
+
                         <Text style={styles.modalTitle}>{title}</Text>
-                        <Text style={{ paddingTop: 5, paddingBottom: 5, color: 'blue', textDecorationLine: 'underline' }}>USERNAME GOES HERE: {createdBy}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
+                            <Text>{createdBy}</Text>
+                        </View>
                         <Text>description:</Text>
                         <View style={{ width: '100%', paddingBottom: 5, height: 50 }}>
                             <Text style={{ fontSize: 16, textAlign: 'left', width: '100%' }}>{description}</Text>
@@ -384,14 +389,14 @@ export default class SkateMapScreen extends React.Component {
 
 
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />                           
-                            <Text>{skateDate}</Text>                          
+                            <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
+                            <Text>{skateDate}</Text>
                         </View>
 
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
                             <Text>{startTime} - {endTime}</Text>
-                        </View>                    
+                        </View>
                         <Text style={{ color: 'blue', textDecorationLine: 'underline', paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
                         <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
                             <ScrollView>
@@ -811,26 +816,12 @@ const styles = StyleSheet.create({
     },
     toggleMapTypeContainer: {
         position: 'absolute',
-        left: 5,
+        right: 5,
         top: 5,
         padding: 8,
         borderColor: 'blue',
         borderWidth: 0.5,
         borderRadius: 30,
         backgroundColor: 'white'
-    },
-    modalDescription: {
-        fontSize: 16,
-        textAlign: 'left',
-        paddingTop: 10,
-        paddingBottom: 10
-    },
-    highlightedLocationOption: {
-        borderWidth: 1,
-        borderColor: 'blue',
-        borderRadius: 10,
-        padding: 2,
-        color: 'blue'
     }
-
 });
