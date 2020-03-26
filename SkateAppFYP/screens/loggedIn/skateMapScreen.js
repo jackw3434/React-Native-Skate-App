@@ -14,8 +14,13 @@ export default class SkateMapScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            region: {
+                latitude: 50.3762, // Plymouth Uni
+                longitude: -4.1395,
+                latitudeDelta: 0.1321,
+                longitudeDelta: 0.1321,
+            },
             date: new Date(),
-            mapRegion: null,
             currentLat: null,
             currentLng: null,
             mapType: "standard",
@@ -106,8 +111,25 @@ export default class SkateMapScreen extends React.Component {
     }
 
     componentDidMount() {
+        // Geolocation.getCurrentPosition(
+        //     (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
+        //     (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
+        //     { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+        // );
         Geolocation.getCurrentPosition(
-            (position) => { this.setState({ currentLat: position.coords.latitude, currentLng: position.coords.longitude, locationProvider: true }) },
+            (position) => {
+                this.setState({
+                    region: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.1321,
+                        longitudeDelta: 0.1321,
+                    },
+                    currentLat: position.coords.latitude,
+                    currentLng: position.coords.longitude,
+                    locationProvider: true
+                })
+            },
             (error) => { console.warn("Location Services Not Enabled"), this.setState({ locationProvider: false }) },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
         );
@@ -382,7 +404,7 @@ export default class SkateMapScreen extends React.Component {
         let utcSeconds = event.nativeEvent.timestamp;
         let selectedDate = new Date(utcSeconds).toLocaleDateString();
         let selectedTime = new Date(utcSeconds).toLocaleTimeString();
-        
+
         if (Platform.OS == 'android') {
 
             if (event.type == "set") {
@@ -519,6 +541,10 @@ export default class SkateMapScreen extends React.Component {
 
     }
 
+    onRegionChange(region) {
+        this.setState({ region: region })
+    }
+
     render() {
         return (
             <AppContainer
@@ -536,12 +562,8 @@ export default class SkateMapScreen extends React.Component {
                     userLocationAnnotationTitle="Me!"
                     mapType={this.state.mapType}
                     style={{ height: '100%' }}
-                    initialRegion={{
-                        latitude: this.state.currentLat ? this.state.currentLat : 50.3762, // Plymouth Uni
-                        longitude: this.state.currentLng ? this.state.currentLng : -4.1395,
-                        latitudeDelta: 0.0221,
-                        longitudeDelta: 0.0221,
-                    }}
+                    region={this.state.region}
+                    onRegionChangeComplete={(region) => this.onRegionChange(region)}
                     onPress={(e) => {
                         if (this.state.canTapMap === true) {
                             let coordinate = e.nativeEvent.coordinate;
@@ -554,14 +576,7 @@ export default class SkateMapScreen extends React.Component {
                             this.state.markers.push(tempPin)
                             this.setState({ mapCoordinatesToUse: { latitude: coordinate.latitude, longitude: coordinate.longitude } });
                             setTimeout(() => { this.state.markers.pop(), this.returnFromMapLocationSelection(); }, 400)
-
                         }
-                    }}
-                    region={{
-                        latitude: this.state.currentLat ? this.state.currentLat : 50.3762, // Plymouth Uni
-                        longitude: this.state.currentLng ? this.state.currentLng : -4.1395,
-                        latitudeDelta: 0.0221,
-                        longitudeDelta: 0.0221,
                     }}
                 >
                     <Marker
@@ -851,7 +866,7 @@ const styles = StyleSheet.create({
     },
     toggleMapTypeContainer: {
         position: 'absolute',
-        right: 5,
+        left: 5,
         top: 5,
         padding: 8,
         borderColor: 'blue',
