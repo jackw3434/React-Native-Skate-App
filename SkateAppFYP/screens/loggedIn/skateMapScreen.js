@@ -8,9 +8,10 @@ import AppContainer from '../containers/AppContainer'
 import Icon from '../../Icon/Icon'
 import Modal from "react-native-modal";
 import SkateButton from '../../components/skateButton'
-import DateTimePicker from '@react-native-community/datetimepicker';
+import SkateDateTimePicker from '../../components/skateDateTimePicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
 import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
+import SkateMarkerModal from '../../components/skateMarkerModal'
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -70,7 +71,7 @@ export default class SkateMapScreen extends React.Component {
         };
     }
 
-    componentDidMount() {               
+    componentDidMount() {
         Geolocation.getCurrentPosition(
             (position) => {
                 this.setState({
@@ -195,11 +196,12 @@ export default class SkateMapScreen extends React.Component {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
+                    photo: 'No Picture Yet',
                     description: this.state.description,
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
-                    // reviews: ["Good skate", "Friendly Guy"],
+                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews], axios get logged in user reviews
                     pinColor: 'orange'
                 };
             }
@@ -212,8 +214,9 @@ export default class SkateMapScreen extends React.Component {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
+                    photo: 'No Picture Yet',
                     description: this.state.description,
-                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews],
+                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews], axios get logged in user reviews
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
@@ -297,103 +300,38 @@ export default class SkateMapScreen extends React.Component {
 
         if (title == "Skate spot") {
             return (
-                <Modal
-                    backdropTransitionInTiming={3000}
-                    backdropTransitionOutTiming={3000}
+                <SkateMarkerModal
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
-                    style={{ alignItems: 'center' }}
-                    isVisible={this.state.isMarkerModalVisible}>
-                    <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text style={styles.modalTitle}>{title}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', height: 30, width: '100%' }}>
-                            <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
-                            <Text style={{ fontSize: 16 }}>Found By: {createdBy}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ height: 70, width: '25%', borderWidth: 0.5, justifyContent: "center" }}><Text>{photo}</Text></View>
-                            <ScrollView style={{ height: 70, width: '75%', borderWidth: 0.5 }}>
-                                <Text style={{ fontSize: 16, textAlign: 'left', marginLeft: 10, flex: 1, flexWrap: 'wrap' }}>
-                                    {description}
-                                </Text>
-                            </ScrollView>
-                        </View>
-                        <Text style={{ color: 'blue', textDecorationLine: 'underline', paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
-                        <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
-                            <ScrollView>
-                                {reviews && reviews.map((review) => {
-                                    return (
-                                        <View style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
-                                            <TouchableOpacity onPress={() => console.warn(review.reviewerID)}>
-                                                <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                            </TouchableOpacity>
-                                            <Text>{review.reviewMessage}</Text>
-                                        </View>
-                                    )
-                                })}
-                            </ScrollView>
-                        </View>
-                        <SkateButton
-                            buttonText="Get Directions"
-                            iconName="MapIcon"
-                            viewBox="0 0 30 30"
-                            iconStyle={styles.skateButtonIcon}
-                            onPress={() => console.warn('latitude: ', coordinate.latitude, ' longitude: ', coordinate.longitude)}
-                        />
-                    </View>
-                </Modal>
+                    isVisible={this.state.isMarkerModalVisible}
+                    modalTitle={title}
+                    createdBy={createdBy}
+                    onUserNamePress={() => console.warn(createdBy)} // .id
+                    photo={photo}
+                    description={description}
+                    reviews={reviews}
+                    coordinate={coordinate}
+                    onDirectionsPress={() => console.warn(coordinate.latitude, coordinate.longitude)}
+                />
             );
         } else {
             return (
-                <Modal
-                    backdropTransitionInTiming={3000}
-                    backdropTransitionOutTiming={3000}
+                <SkateMarkerModal
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
-                    style={{ alignItems: 'center' }}
-                    isVisible={this.state.isMarkerModalVisible}>
-                    <View style={[styles.modalContainer, { width: '100%' }]}>
-                        <Text style={styles.modalTitle}>{title}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
-                            <Text>{createdBy}</Text>
-                        </View>
-                        <Text>description:</Text>
-                        <View style={{ width: '100%', paddingBottom: 5, height: 50 }}>
-                            <Text style={{ fontSize: 16, textAlign: 'left', width: '100%' }}>{description}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
-                            <Text>{skateDate}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
-                            <Text>{startTime} - {endTime}</Text>
-                        </View>
-                        <Text style={{ color: 'blue', textDecorationLine: 'underline', paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
-                        <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
-                            <ScrollView>
-                                {reviews && reviews.map((review) => {
-                                    return (
-                                        <View style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
-                                            <TouchableOpacity onPress={() => console.warn(review.reviewerID)}>
-                                                <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                            </TouchableOpacity>
-                                            <Text>{review.reviewMessage}</Text>
-                                        </View>
-                                    )
-                                })}
-                            </ScrollView>
-                        </View>
-                        <SkateButton
-                            buttonText="Get Directions"
-                            iconName="MapIcon"
-                            viewBox="0 0 30 30"
-                            iconStyle={styles.skateButtonIcon}
-                            onPress={() => console.warn('latitude: ', coordinate.latitude, ' longitude: ', coordinate.longitude)}
-                        />
-                    </View>
-                </Modal>
+                    isVisible={this.state.isMarkerModalVisible}
+                    modalTitle={title}
+                    createdBy={createdBy}
+                    onUserNamePress={() => console.warn(createdBy)} // .id
+                    description={description}
+                    photo={photo}
+                    skateDate={skateDate}
+                    startTime={startTime}
+                    endTime={endTime}
+                    reviews={reviews}
+                    coordinate={coordinate}
+                    onDirectionsPress={() => console.warn(coordinate.latitude, coordinate.longitude)}
+                />
             );
         }
     }
@@ -409,8 +347,8 @@ export default class SkateMapScreen extends React.Component {
             if (event.type == "set") {
 
                 if (this.state.startOrEndTime == "startTime") {
-                    
-                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })                    
+
+                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
                 } else if (this.state.startOrEndTime == "endTime") {
 
                     this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
@@ -427,7 +365,7 @@ export default class SkateMapScreen extends React.Component {
         }
     }
 
-    showDateOrTimePicker(pickerType, startOrEndTime) {        
+    showDateOrTimePicker(pickerType, startOrEndTime) {
         if (pickerType == "Date") {
             this.setState({ dateTimePickerMode: 'date', showDateTimePicker: true, startOrEndTime: "Date" })
         }
@@ -475,74 +413,42 @@ export default class SkateMapScreen extends React.Component {
     _renderDateTimePicker() {
         if (this.state.startOrEndTime == "startTime") {
             return (
-                <View style={{ flex: Platform.OS == 'android' && 1 }}>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    {Platform.OS == 'ios' &&
-                        <View>
-                            <SkateButton buttonText="Confirm" onPress={() => this.confirmStartTime()} />
-                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                        </View>
-                    }
-
-                </View>
+                <SkateDateTimePicker
+                    value={this.state.date}
+                    mode={this.state.dateTimePickerMode}
+                    onChange={this.setDateTime}
+                    confirm={() => this.confirmStartTime()}
+                    cancel={() => this.cancelDateTime()}
+                />
             );
         } else if (this.state.startOrEndTime == "endTime") {
             return (
-                <View style={{ flex: Platform.OS == 'android' && 1 }}>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    {Platform.OS == 'ios' &&
-                        <View>
-                            <SkateButton buttonText="Confirm" onPress={() => this.confirmEndTime()} />
-                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                        </View>
-                    }
-                </View>
+                <SkateDateTimePicker
+                    value={this.state.date}
+                    mode={this.state.dateTimePickerMode}
+                    onChange={this.setDateTime}
+                    confirm={() => this.confirmEndTime()}
+                    cancel={() => this.cancelDateTime()}
+                />
             );
         } else {
             return (
-                <View style={{ flex: Platform.OS == 'android' && 1 }}>
-                    <DateTimePicker
-                        testID="dateTimePicker"
-                        timeZoneOffsetInMinutes={0}
-                        value={this.state.date}
-                        mode={this.state.dateTimePickerMode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={this.setDateTime}
-                    />
-                    {Platform.OS == 'ios' &&
-                        <View>
-                            <SkateButton buttonText="Confirm" onPress={() => this.confirmSkateDate()} />
-                            <SkateButton buttonText="Cancel" bgColor='red' onPress={() => this.cancelDateTime()} />
-                        </View>
-                    }
-                </View>
+                <SkateDateTimePicker
+                    value={this.state.date}
+                    mode={this.state.dateTimePickerMode}
+                    onChange={this.setDateTime}
+                    confirm={() => this.confirmSkateDate()}
+                    cancel={() => this.cancelDateTime()}
+                />
             );
         }
-
     }
 
     onRegionChange(region) {
         this.setState({ region: region })
     }
 
-    showTempPin(event){
+    showTempPin(event) {
         if (this.state.canTapMap === true) {
             let coordinate = event.nativeEvent.coordinate;
             let tempPin = {
@@ -577,7 +483,7 @@ export default class SkateMapScreen extends React.Component {
                     region={this.state.region}
                     onRegionChangeComplete={(region) => this.onRegionChange(region)}
                     onPress={(e) => this.showTempPin(e)}
-                >                  
+                >
                     {this.state.markers && this.state.markers.map(marker => (
                         <Marker
                             key={marker._id}
@@ -639,18 +545,18 @@ export default class SkateMapScreen extends React.Component {
                                 />
                             </View>
                         }
-                        {this.state.isNewSkateSpotVisible &&                         
-                                <SkatePinCreationModalView
-                                    modalTitle="New skate spot"
-                                    modalDescription="Let others know about a good places to skate."
-                                    locationProvider={this.state.locationProvider}
-                                    onPressCurrentLocation={this.useCurrentLocation()}
-                                    useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
-                                    description={this.state.description}
-                                    onChangeText={(text) => { this.setState({ description: text }) }}
-                                    onPressSubmitPin={() => this.submitPin("Skate spot")}
-                                    onPressCancelPin={() => this.cancelCreatingSkatePin()}
-                                />                           
+                        {this.state.isNewSkateSpotVisible &&
+                            <SkatePinCreationModalView
+                                modalTitle="New skate spot"
+                                modalDescription="Let others know about a good places to skate."
+                                locationProvider={this.state.locationProvider}
+                                onPressCurrentLocation={this.useCurrentLocation()}
+                                useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
+                                description={this.state.description}
+                                onChangeText={(text) => { this.setState({ description: text }) }}
+                                onPressSubmitPin={() => this.submitPin("Skate spot")}
+                                onPressCancelPin={() => this.cancelCreatingSkatePin()}
+                            />
                         }
                         {this.state.isHereToTeachVisible &&
                             <View>

@@ -6,8 +6,8 @@ const url = 'https://skate-api.herokuapp.com';
 export const postSkatePin = (skatePin) => {
     return axios.post(url + '/api/skatePin', skatePin)   
         .then(response => {
-            console.warn(skatePin)
-            console.warn(response);
+            // console.warn(skatePin)
+            // console.warn(response);
             return response;
         })
         .catch(function (error) {
