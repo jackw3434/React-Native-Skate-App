@@ -10,6 +10,7 @@ import Modal from "react-native-modal";
 import SkateButton from '../../components/skateButton'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
+import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -47,67 +48,7 @@ export default class SkateMapScreen extends React.Component {
             skateDate: '',
             startTime: '',
             endTime: '',
-            markers: [
-                {
-                    _id: 1,
-                    coordinate: {
-                        latitude: 50.3864,
-                        longitude: -4.1395,
-                    },
-                    title: 'Skate spot',
-                    createdBy: 'Skater Andy',
-                    photo: 'source goes here for image',
-                    description: 'Sick 3 stair set with smooth hand rail.',
-                    reviews: ["Nice area", "Really Fun Spot to learn.", "5 Star Spot", "Great Spot", "really good for learning", "I really like it", 'good spot'],
-                    startTime: '',
-                    endTime: '',
-                    pinColor: 'blue'
-                },
-                {
-                    _id: 2,
-                    coordinate: {
-                        latitude: 50.3874,
-                        longitude: -4.1395,
-                    },
-                    title: 'Here to teach',
-                    createdBy: 'Skater Jill',
-                    photo: '',
-                    description: 'Im gona be around for a bit and help anyone with their kickflips.',
-                    reviews: ["Really Helpful and Friendly.", "So helpful.", "Amazing teacher, I learnt a lot"],
-                    startTime: '2pm',
-                    endTime: '4pm',
-                    pinColor: 'orange'
-                },
-                {
-                    _id: 3,
-                    coordinate: {
-                        latitude: 50.3884,
-                        longitude: -4.1395,
-                    },
-                    title: 'Game of S.K.A.T.E',
-                    createdBy: 'Skater Andy',
-                    photo: '',
-                    description: 'Here for a couple hours, come find me if you wanna play a game of skate.',
-                    reviews: ["Fun to skate with, hard to beat at a game of S.K.A.T.E", "I beat him easy xD"],
-                    startTime: '1pm',
-                    endTime: '5pm',
-                    pinColor: 'red'
-                },
-                {
-                    _id: 4,
-                    coordinate: {
-                        latitude: 50.3894,
-                        longitude: -4.1395,
-                    },
-                    title: 'Game of S.K.A.T.E',
-                    createdBy: 'Skater Andy',
-                    photo: '',
-                    description: 'Here for a couple hours, come find me if you wanna play a game of skate.',
-                    reviews: ["Fun to skate with, hard to beat at a game of S.K.A.T.E", "I beat him easy xD"],
-                    startTime: '1pm',
-                    endTime: '5pm',
-                    pinColor: 'red'
-                }],
+            markers: [],
             currentSkatePinModalData: {
                 createdBy: "LOGGED IN USER GOES HERE",
                 coordinate: {
@@ -116,7 +57,11 @@ export default class SkateMapScreen extends React.Component {
                 },
                 photo: '',
                 description: '',
-                reviews: [],
+                reviews: [{
+                    reviewerID: '',
+                    reviewerName: '',
+                    reviewerMessage: ''
+                }],
                 skateDate: '',
                 startTime: '',
                 endTime: '',
@@ -125,7 +70,7 @@ export default class SkateMapScreen extends React.Component {
         };
     }
 
-    componentDidMount() {
+    componentDidMount() {               
         Geolocation.getCurrentPosition(
             (position) => {
                 this.setState({
@@ -144,13 +89,13 @@ export default class SkateMapScreen extends React.Component {
                 console.warn("Location Services Not Enabled", error.message);
                 this.setState({ locationProvider: false })
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 10000
-            }
-        );
-    }
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 });
+
+        getAllSkatePins().then((skatePins) => {
+
+            this.setState({ markers: skatePins })
+        });
+    };
 
     navTo(route) {
         this.props.navigation.navigate(route)
@@ -199,7 +144,7 @@ export default class SkateMapScreen extends React.Component {
         })
     }
 
-    cancelCreatingSkatePin(){
+    cancelCreatingSkatePin() {
         this.setState({
             isGameOfSkateVisible: false,
             isHereToTeachVisible: false,
@@ -240,7 +185,7 @@ export default class SkateMapScreen extends React.Component {
         let pin;
 
         if (!this.state.mapCoordinatesToUse.latitude) {
-            console.warn("1", this.state.mapCoordinatesToUse);
+            console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
             if (pinType == "Here to teach") {
                 pin = {
@@ -254,7 +199,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
-                    reviews: ["Good skate", "Friendly Guy"],
+                    // reviews: ["Good skate", "Friendly Guy"],
                     pinColor: 'orange'
                 };
             }
@@ -268,7 +213,7 @@ export default class SkateMapScreen extends React.Component {
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
                     description: this.state.description,
-                    reviews: ["Had  Fun Game", "Almost Won!"],
+                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews],
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
@@ -279,18 +224,23 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Skate spot") {
                 pin = {
                     title: 'Skate spot',
-                    createdBy: "User Who Found It Goes Here*",
+                    createdBy: this.state.currentSkatePinModalData.createdBy,
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
-                    photo: 'Picture Required',
+                    photo: 'No Picture Yet',
                     description: this.state.description,
-                    reviews: ['Skate spot review here', "good spot"],
                     pinColor: 'blue'
                 }
             }
-            this.state.markers.push(pin);
+
+            postSkatePin(pin).then(response => {
+                getAllSkatePins().then((skatePins) => {
+                    this.setState({ markers: skatePins })
+                })
+            })
+
             this.clearAfterPinSubmission();
         }
     }
@@ -321,7 +271,6 @@ export default class SkateMapScreen extends React.Component {
     }
 
     useCurrentLocation() {
-
         Geolocation.getCurrentPosition(
             (position) => {
                 this.setState({ useCurrentOrSelectedLocation: 'current', mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude }, locationProvider: true })
@@ -343,6 +292,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     _renderSkatePinModal() {
+
         let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
 
         if (title == "Skate spot") {
@@ -361,18 +311,25 @@ export default class SkateMapScreen extends React.Component {
                             <Text style={{ fontSize: 16 }}>Found By: {createdBy}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <View style={{ height: 70, width: '25%', borderWidth: 0.5, justifyContent: "center" }}><Text>Skate Spot Image</Text></View>
+                            <View style={{ height: 70, width: '25%', borderWidth: 0.5, justifyContent: "center" }}><Text>{photo}</Text></View>
                             <ScrollView style={{ height: 70, width: '75%', borderWidth: 0.5 }}>
                                 <Text style={{ fontSize: 16, textAlign: 'left', marginLeft: 10, flex: 1, flexWrap: 'wrap' }}>
                                     {description}
                                 </Text>
                             </ScrollView>
                         </View>
-                        <Text style={{ paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
+                        <Text style={{ color: 'blue', textDecorationLine: 'underline', paddingBottom: 5, paddingTop: 5 }}>Reviews:</Text>
                         <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
                             <ScrollView>
                                 {reviews && reviews.map((review) => {
-                                    return <Text style={{ paddingBottom: 5, paddingLeft: 2 }}>USER WHO LEFT REVIEW: {review}</Text>;
+                                    return (
+                                        <View style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                            <TouchableOpacity onPress={() => console.warn(review.reviewerID)}>
+                                                <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
+                                            </TouchableOpacity>
+                                            <Text>{review.reviewMessage}</Text>
+                                        </View>
+                                    )
                                 })}
                             </ScrollView>
                         </View>
@@ -396,7 +353,6 @@ export default class SkateMapScreen extends React.Component {
                     style={{ alignItems: 'center' }}
                     isVisible={this.state.isMarkerModalVisible}>
                     <View style={[styles.modalContainer, { width: '100%' }]}>
-
                         <Text style={styles.modalTitle}>{title}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
@@ -406,13 +362,10 @@ export default class SkateMapScreen extends React.Component {
                         <View style={{ width: '100%', paddingBottom: 5, height: 50 }}>
                             <Text style={{ fontSize: 16, textAlign: 'left', width: '100%' }}>{description}</Text>
                         </View>
-
-
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
                             <Text>{skateDate}</Text>
                         </View>
-
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
                             <Text>{startTime} - {endTime}</Text>
@@ -421,7 +374,14 @@ export default class SkateMapScreen extends React.Component {
                         <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5 }}>
                             <ScrollView>
                                 {reviews && reviews.map((review) => {
-                                    return <Text style={{ paddingBottom: 5, paddingLeft: 2 }}>NAME GOES HERE: {review}</Text>;
+                                    return (
+                                        <View style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                            <TouchableOpacity onPress={() => console.warn(review.reviewerID)}>
+                                                <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
+                                            </TouchableOpacity>
+                                            <Text>{review.reviewMessage}</Text>
+                                        </View>
+                                    )
                                 })}
                             </ScrollView>
                         </View>
@@ -449,8 +409,8 @@ export default class SkateMapScreen extends React.Component {
             if (event.type == "set") {
 
                 if (this.state.startOrEndTime == "startTime") {
-
-                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+                    
+                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })                    
                 } else if (this.state.startOrEndTime == "endTime") {
 
                     this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
@@ -467,8 +427,7 @@ export default class SkateMapScreen extends React.Component {
         }
     }
 
-    showDateOrTimePicker(pickerType, startOrEndTime) {
-
+    showDateOrTimePicker(pickerType, startOrEndTime) {        
         if (pickerType == "Date") {
             this.setState({ dateTimePickerMode: 'date', showDateTimePicker: true, startOrEndTime: "Date" })
         }
@@ -514,7 +473,6 @@ export default class SkateMapScreen extends React.Component {
     }
 
     _renderDateTimePicker() {
-
         if (this.state.startOrEndTime == "startTime") {
             return (
                 <View style={{ flex: Platform.OS == 'android' && 1 }}>
@@ -584,6 +542,21 @@ export default class SkateMapScreen extends React.Component {
         this.setState({ region: region })
     }
 
+    showTempPin(event){
+        if (this.state.canTapMap === true) {
+            let coordinate = event.nativeEvent.coordinate;
+            let tempPin = {
+                coordinate: {
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude
+                }
+            }
+            this.state.markers.push(tempPin)
+            this.setState({ mapCoordinatesToUse: { latitude: coordinate.latitude, longitude: coordinate.longitude } });
+            setTimeout(() => { this.state.markers.pop(), this.returnFromMapLocationSelection(); }, 400)
+        }
+    }
+
     render() {
         return (
             <AppContainer
@@ -603,31 +576,8 @@ export default class SkateMapScreen extends React.Component {
                     style={{ height: '100%' }}
                     region={this.state.region}
                     onRegionChangeComplete={(region) => this.onRegionChange(region)}
-                    onPress={(e) => {
-                        if (this.state.canTapMap === true) {
-                            let coordinate = e.nativeEvent.coordinate;
-                            let tempPin = {
-                                coordinate: {
-                                    latitude: coordinate.latitude,
-                                    longitude: coordinate.longitude
-                                }
-                            }
-                            this.state.markers.push(tempPin)
-                            this.setState({ mapCoordinatesToUse: { latitude: coordinate.latitude, longitude: coordinate.longitude } });
-                            setTimeout(() => { this.state.markers.pop(), this.returnFromMapLocationSelection(); }, 400)
-                        }
-                    }}
-                >
-                    <Marker
-                        coordinate={{
-                            latitude: 50.3862,
-                            longitude: -4.1395,
-                        }}
-                        title="Title"
-                        description="Description"
-                        draggable
-                        onDragEnd={e => console.warn(e.nativeEvent)}
-                    />
+                    onPress={(e) => this.showTempPin(e)}
+                >                  
                     {this.state.markers && this.state.markers.map(marker => (
                         <Marker
                             key={marker._id}
@@ -671,7 +621,7 @@ export default class SkateMapScreen extends React.Component {
                                 />
                                 <SkateButton
                                     buttonText="Here To Teach :)"
-                                    bgColor='red'
+                                    bgColor='orange'
                                     iconName="Pin"
                                     viewBox="0 0 30 30"
                                     iconStyle={styles.skateButtonIcon}
@@ -689,8 +639,7 @@ export default class SkateMapScreen extends React.Component {
                                 />
                             </View>
                         }
-                        {this.state.isNewSkateSpotVisible &&
-                            <View>
+                        {this.state.isNewSkateSpotVisible &&                         
                                 <SkatePinCreationModalView
                                     modalTitle="New skate spot"
                                     modalDescription="Let others know about a good places to skate."
@@ -701,8 +650,7 @@ export default class SkateMapScreen extends React.Component {
                                     onChangeText={(text) => { this.setState({ description: text }) }}
                                     onPressSubmitPin={() => this.submitPin("Skate spot")}
                                     onPressCancelPin={() => this.cancelCreatingSkatePin()}
-                                />
-                            </View>
+                                />                           
                         }
                         {this.state.isHereToTeachVisible &&
                             <View>
