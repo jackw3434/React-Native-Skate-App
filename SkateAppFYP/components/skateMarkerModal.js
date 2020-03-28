@@ -73,7 +73,7 @@ export default class SkateMarkerModal extends React.Component {
                             viewBox="0 0 30 30"
                             iconStyle={styles.skateButtonIcon}
                             onPress={this.props.onDirectionsPress}
-                        />
+                        />                      
                     </View>
                 </View>
             </Modal>

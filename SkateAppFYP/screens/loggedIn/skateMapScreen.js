@@ -12,6 +12,7 @@ import SkateDateTimePicker from '../../components/skateDateTimePicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
 import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
 import SkateMarkerModal from '../../components/skateMarkerModal'
+import { openMap, createOpenLink } from 'react-native-open-maps';
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -292,11 +293,20 @@ export default class SkateMapScreen extends React.Component {
 
     returnFromMapLocationSelection() {
         this.setState({ isModalVisible: true, canTapMap: false })
-    }
+    }   
 
     _renderSkatePinModal() {
+       
+         let travelType = 'walk';  
+         let lat, lng, start, end;   
+         let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
 
-        let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
+        if (this.state.currentLat && this.state.currentLng) {          
+             lat = this.state.currentLat;
+             lng = this.state.currentLng;
+             start = lat.toString().concat(",", lng.toString())
+             end = coordinate.latitude.toString().concat(",", coordinate.longitude.toString())                 
+        }      
 
         if (title == "Skate spot") {
             return (
@@ -311,7 +321,7 @@ export default class SkateMapScreen extends React.Component {
                     description={description}
                     reviews={reviews}
                     coordinate={coordinate}
-                    onDirectionsPress={() => console.warn(coordinate.latitude, coordinate.longitude)}
+                    onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
             );
         } else {
@@ -330,7 +340,7 @@ export default class SkateMapScreen extends React.Component {
                     endTime={endTime}
                     reviews={reviews}
                     coordinate={coordinate}
-                    onDirectionsPress={() => console.warn(coordinate.latitude, coordinate.longitude)}
+                    onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
             );
         }
