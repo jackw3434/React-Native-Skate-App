@@ -56,9 +56,9 @@ export default class SkateMarkerModal extends React.Component {
                     <Text style={{ color: 'blue', padding: 5 }}>Reviews:</Text>
                     <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5, paddingLeft: 5 }}>
                         <ScrollView>
-                            {this.props.reviews && this.props.reviews.map((review) => {
+                            {this.props.reviews && this.props.reviews.map((review,i) => {
                                 return (
-                                    <View style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                    <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
                                         <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
                                         <Text>{review.reviewMessage}</Text>
                                     </View>
@@ -73,7 +73,7 @@ export default class SkateMarkerModal extends React.Component {
                             viewBox="0 0 30 30"
                             iconStyle={styles.skateButtonIcon}
                             onPress={this.props.onDirectionsPress}
-                        />
+                        />                      
                     </View>
                 </View>
             </Modal>
