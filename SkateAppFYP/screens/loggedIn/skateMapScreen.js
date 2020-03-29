@@ -36,7 +36,7 @@ export default class SkateMapScreen extends React.Component {
             isGameOfSkateVisible: false,
             isMarkerModalVisible: false,
             locationProvider: false,
-            gpsStatus:"",
+            gpsStatus: "",
             showDateTimePicker: false,
             dateTimePickerMode: '',
             startOrEndTime: '',
@@ -73,61 +73,65 @@ export default class SkateMapScreen extends React.Component {
         };
     }
 
-    componentDidMount() {     
-        Geolocation.getCurrentPosition(
-            (position) => {
-                //console.warn("componentDidMount() ", position);
-                this.setState({
-                    region: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.1321,
-                        longitudeDelta: 0.1321,
-                    },
-                    currentLat: position.coords.latitude,
-                    currentLng: position.coords.longitude,
-                    locationProvider: true,
-                    gpsStatus: "CDM() GPS Status: enabled"
-                })
-            },
-            (error) => {
-               // console.warn("Location Services Not Enabled", error.message);
-                this.setState({ locationProvider: false, gpsStatus: "CDM() GPS Status: disabled " + error.message })
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 });
+    componentDidMount() {
+       // if (!this.state.currentLat) {
+            Geolocation.getCurrentPosition(
+                position => {
+                    this.setState({
+                        region: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            latitudeDelta: 0.1321,
+                            longitudeDelta: 0.1321,
+                        },
+                        currentLat: position.coords.latitude,
+                        currentLng: position.coords.longitude,
+                        locationProvider: true,
+                        gpsStatus: "CDM() GPS Status: enabled"
+                    })
+                },
+                (error) => {
+
+                    this.setState({ locationProvider: false, gpsStatus: "CDM() GPS Status: disabled " + error.message })
+                },
+                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+            );
+     //   }
 
         getAllSkatePins().then((skatePins) => {
-
             this.setState({ markers: skatePins })
         });
     };
 
-    componentDidUpdate(){
-        Geolocation.getCurrentPosition(
-            (position) => {
-               // console.warn("componentDidUpdate() ", position);
-                this.setState({
-                    region: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        latitudeDelta: 0.1321,
-                        longitudeDelta: 0.1321,
-                    },
-                    currentLat: position.coords.latitude,
-                    currentLng: position.coords.longitude,
-                    locationProvider: true,
-                    gpsStatus: "componentDidUpdate() GPS Status: enabled"
-                })
-            },
-            (error) => {
-               // console.warn("Location Services Not Enabled", error.message);
-                this.setState({ locationProvider: false, gpsStatus: "componentDidUpdate() GPS Status: disabled " + error.message })
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 });
+    componentDidUpdate() {
+
+        // causing infinite loop: does detect when gps is turned on or off by the user - causes map to update
+        // if (!this.state.locationProvider) {
+        //     Geolocation.getCurrentPosition(
+        //         (position) => {            
+        //             this.setState({
+        //                 region: {
+        //                     latitude: position.coords.latitude,
+        //                     longitude: position.coords.longitude,
+        //                     latitudeDelta: 0.1321,
+        //                     longitudeDelta: 0.1321,
+        //                 },
+        //                 currentLat: position.coords.latitude,
+        //                 currentLng: position.coords.longitude,
+        //                 locationProvider: true,
+        //                 gpsStatus: "componentDidUpdate() GPS Status: enabled"
+        //             })
+        //         },
+        //         (error) => {
+        //             this.setState({ locationProvider: false, gpsStatus: "componentDidUpdate() GPS Status: disabled " + error.message })
+        //         },
+        //         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+        //        );
+        // }
     }
 
-    componentWillUnmount(){
-        Geolocation.getCurrentPosition();
+    componentWillUnmount() {
+        // Geolocation.getCurrentPosition();
     }
 
     navTo(route) {
@@ -324,20 +328,20 @@ export default class SkateMapScreen extends React.Component {
 
     returnFromMapLocationSelection() {
         this.setState({ isModalVisible: true, canTapMap: false })
-    }   
+    }
 
     _renderSkatePinModal() {
-       
-         let travelType = 'walk';  
-         let lat, lng, start, end;   
-         let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
 
-        if (this.state.currentLat && this.state.currentLng) {          
-             lat = this.state.currentLat;
-             lng = this.state.currentLng;
-             start = lat.toString().concat(",", lng.toString())
-             end = coordinate.latitude.toString().concat(",", coordinate.longitude.toString())                 
-        }      
+        let travelType = 'walk';
+        let lat, lng, start, end;
+        let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
+
+        if (this.state.currentLat && this.state.currentLng) {
+            lat = this.state.currentLat;
+            lng = this.state.currentLng;
+            start = lat.toString().concat(",", lng.toString())
+            end = coordinate.latitude.toString().concat(",", coordinate.longitude.toString())
+        }
 
         if (title == "Skate spot") {
             return (
@@ -661,9 +665,9 @@ export default class SkateMapScreen extends React.Component {
                     <Text>Map Type: {this.state.mapType}</Text>
                 </TouchableOpacity>
                 <View style={styles.bottomContainer}>
-                  
-                        <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
-                  
+
+                    <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
+
                     <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
                         <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
                     </TouchableOpacity>

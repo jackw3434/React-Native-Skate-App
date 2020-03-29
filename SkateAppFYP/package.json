@@ -9,6 +9,7 @@
     "test": "jest",
     "lint": "eslint .",
     "build-release": "cd android && ./gradlew assembleRelease",
+    "build-debug": "cd android && ./gradlew assembleDebug",
     "install-release": "cd android/app/build/outputs/apk/release && adb install app-release.apk"
   },
   "dependencies": {
