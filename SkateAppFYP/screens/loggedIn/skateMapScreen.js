@@ -69,35 +69,28 @@ export default class SkateMapScreen extends React.Component {
                 startTime: '',
                 endTime: '',
                 pinColor: ''
-            }
+            },
+            isPinSubmissionValid: '',
+            hasComponentDidUpdateFired: false
         };
     }
 
-    componentDidMount() {
-       // if (!this.state.currentLat) {
+    getCurrentPosition = () => {
+        return new Promise((resolve, reject) => {
             Geolocation.getCurrentPosition(
                 position => {
-                    this.setState({
-                        region: {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            latitudeDelta: 0.1321,
-                            longitudeDelta: 0.1321,
-                        },
-                        currentLat: position.coords.latitude,
-                        currentLng: position.coords.longitude,
-                        locationProvider: true,
-                        gpsStatus: "CDM() GPS Status: enabled"
-                    })
+                    resolve(position);
                 },
                 (error) => {
+                    reject(error);
 
-                    this.setState({ locationProvider: false, gpsStatus: "CDM() GPS Status: disabled " + error.message })
                 },
-                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
             );
-     //   }
+        })
+    }
 
+    componentDidMount() {
         getAllSkatePins().then((skatePins) => {
             this.setState({ markers: skatePins })
         });
@@ -106,32 +99,47 @@ export default class SkateMapScreen extends React.Component {
     componentDidUpdate() {
 
         // causing infinite loop: does detect when gps is turned on or off by the user - causes map to update
-        // if (!this.state.locationProvider) {
-        //     Geolocation.getCurrentPosition(
-        //         (position) => {            
-        //             this.setState({
-        //                 region: {
-        //                     latitude: position.coords.latitude,
-        //                     longitude: position.coords.longitude,
-        //                     latitudeDelta: 0.1321,
-        //                     longitudeDelta: 0.1321,
-        //                 },
-        //                 currentLat: position.coords.latitude,
-        //                 currentLng: position.coords.longitude,
-        //                 locationProvider: true,
-        //                 gpsStatus: "componentDidUpdate() GPS Status: enabled"
-        //             })
-        //         },
-        //         (error) => {
-        //             this.setState({ locationProvider: false, gpsStatus: "componentDidUpdate() GPS Status: disabled " + error.message })
-        //         },
-        //         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-        //        );
-        // }
+
+        if (!this.state.currentLat) {
+            Geolocation.getCurrentPosition(
+                position => {
+                    if (this.state.locationProvider) {
+                        this.setState({
+                            currentLat: position.coords.latitude,
+                            currentLng: position.coords.longitude,
+
+                        })
+                    } else {
+                        this.setState({
+                            region: {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                latitudeDelta: 0.1321,
+                                longitudeDelta: 0.1321,
+                            },
+                            currentLat: position.coords.latitude,
+                            currentLng: position.coords.longitude,
+                            locationProvider: true,
+                            gpsStatus: "CDM() GPS Status: enabled"
+                        })
+                    }
+                },
+                (error) => {
+                    // calling setState on error creates complications
+
+                    // if (this.state.locationProvider) {
+                    //     return;
+                    // } else {
+                    //     this.setState({ locationProvider: false, gpsStatus: "CDM() GPS Status: disabled " + error.message })
+                    // }
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+            );
+        }
     }
 
     componentWillUnmount() {
-        // Geolocation.getCurrentPosition();
+        Geolocation.getCurrentPosition();
     }
 
     navTo(route) {
@@ -310,16 +318,16 @@ export default class SkateMapScreen extends React.Component {
     }
 
     useCurrentLocation() {
-        Geolocation.getCurrentPosition(
-            (position) => {
-                this.setState({ useCurrentOrSelectedLocation: 'current', mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude }, locationProvider: true })
-            },
-            (error) => {
-                console.warn("Location Services Not Enabled"),
-                    this.setState({ locationProvider: false })
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-        );
+        this.getCurrentPosition().then(position => {
+            this.setState({
+                useCurrentOrSelectedLocation: 'current',
+                mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude },
+                locationProvider: true,
+                gpsStatus: "GPS Status: enabled"
+            })
+        }).catch(error => {
+            this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message, currentLat: '', currentLng: '' })
+        });
     }
 
     selectLocationOnMap() {
@@ -699,7 +707,9 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: 'white',
         justifyContent: 'center',
-        textAlign: 'center'
+        textAlign: 'center',
+        // flex: 1,
+        flexWrap: 'wrap',
     },
     bottomContainer: {
         position: 'absolute',
