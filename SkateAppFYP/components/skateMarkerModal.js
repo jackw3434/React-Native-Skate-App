@@ -26,13 +26,13 @@ export default class SkateMarkerModal extends React.Component {
                         <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
                         <TouchableOpacity onPress={this.props.onUserNamePress}>
                             {this.props.modalTitle == "Skate spot" ?
-                                <Text style={{fontSize:14}}>Found By: {this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy}</Text>
                                 :
-                                <Text style={{fontSize:14}}>{this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>{this.props.createdBy}</Text>
                             }
                         </TouchableOpacity>
                     </View>
-                    <Text style={{ color: 'blue', paddingTop: 5, paddingLeft: 5, paddingBottom:5 }}>Description:</Text>
+                    <Text style={{ color: 'blue', paddingTop: 5, paddingLeft: 5, paddingBottom: 5 }}>Description:</Text>
                     <View style={styles.descriptionAndPhotoContainer}>
                         {this.props.photo &&
                             <View style={styles.photoContainer}>
@@ -45,18 +45,23 @@ export default class SkateMarkerModal extends React.Component {
                             </Text>
                         </ScrollView>
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop:15, paddingBottom:5 }}>
-                        <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
-                        <Text>{this.props.skateDate}</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', paddingLeft: 5 }}>
-                        <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
-                        <Text>{this.props.startTime} - {this.props.endTime}</Text>
-                    </View>
+
+                    {this.props.modalTitle !== "Skate spot" &&
+                        <View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop: 15, paddingBottom: 5 }}>
+                                <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
+                                <Text>{this.props.skateDate}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', paddingLeft: 5 }}>
+                                <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
+                                <Text>{this.props.startTime} - {this.props.endTime}</Text>
+                            </View>
+                        </View>
+                    }
                     <Text style={{ color: 'blue', padding: 5 }}>Reviews:</Text>
                     <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5, paddingLeft: 5 }}>
                         <ScrollView>
-                            {this.props.reviews && this.props.reviews.map((review,i) => {
+                            {this.props.reviews && this.props.reviews.map((review, i) => {
                                 return (
                                     <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
                                         <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
@@ -73,7 +78,7 @@ export default class SkateMarkerModal extends React.Component {
                             viewBox="0 0 30 30"
                             iconStyle={styles.skateButtonIcon}
                             onPress={this.props.onDirectionsPress}
-                        />                      
+                        />
                     </View>
                 </View>
             </Modal>
@@ -104,21 +109,21 @@ const styles = StyleSheet.create({
         paddingTop: 5
     },
     descriptionContainer: {
-        paddingLeft: 5,       
-        paddingRight: 8,     
+        paddingLeft: 5,
+        paddingRight: 8,
         fontSize: 16,
         textAlign: 'left',
         flex: 1,
         flexWrap: 'wrap',
     },
-    photoContainer: {     
+    photoContainer: {
         width: '25%',
         borderWidth: 0.5,
         borderRadius: 5,
         paddingLeft: 5,
         paddingTop: 3,
         paddingRight: 2,
-        paddingBottom: 2      
+        paddingBottom: 2
     },
     descriptionAndPhotoContainer: {
         flexDirection: 'row',

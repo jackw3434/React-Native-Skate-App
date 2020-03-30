@@ -351,7 +351,7 @@ export default class SkateMapScreen extends React.Component {
             end = coordinate.latitude.toString().concat(",", coordinate.longitude.toString())
         }
 
-        if (title == "Skate spot") {
+        if (title == "Skate spot") {       
             return (
                 <SkateMarkerModal
                     onBackButtonPress={() => this.closeMarkerModal()}
