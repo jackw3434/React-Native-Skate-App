@@ -12,6 +12,7 @@ import SkateDateTimePicker from '../../components/skateDateTimePicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
 import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
 import SkateMarkerModal from '../../components/skateMarkerModal'
+import SkateModalMenu from '../../components/skateModalMenu'
 import { openMap, createOpenLink } from 'react-native-open-maps';
 
 export default class SkateMapScreen extends React.Component {
@@ -577,39 +578,11 @@ export default class SkateMapScreen extends React.Component {
                 >
                     <View style={styles.modalContainer}>
                         {this.state.isModalMenuVisible &&
-                            <View>
-                                <Text style={styles.modalTitle}>Create a Pin</Text>
-                                <Text style={{ fontSize: 16, textAlign: 'left', paddingTop: 10, paddingBottom: 10 }}>
-                                    Meet others who skate, teach others to skate,
-                                    play a game of S.K.A.T.E or let others know about a cool skate spot.
-                                </Text>
-                                <SkateButton
-                                    buttonText="New Skate Spot"
-                                    iconName="Pin"
-                                    viewBox="0 0 30 30"
-                                    iconStyle={styles.skateButtonIcon}
-                                    fill='white'
-                                    onPress={() => this.openSkateSpotModal()}
-                                />
-                                <SkateButton
-                                    buttonText="Here To Teach :)"
-                                    bgColor='orange'
-                                    iconName="Pin"
-                                    viewBox="0 0 30 30"
-                                    iconStyle={styles.skateButtonIcon}
-                                    fill='white'
-                                    onPress={() => this.openHereToTeachModal()}
-                                />
-                                <SkateButton
-                                    buttonText="Game of S.K.A.T.E"
-                                    bgColor='red'
-                                    iconName="Pin"
-                                    viewBox="0 0 30 30"
-                                    iconStyle={styles.skateButtonIcon}
-                                    fill='white'
-                                    onPress={() => this.openGameOfSkateModal()}
-                                />
-                            </View>
+                            <SkateModalMenu
+                                onSkateSpotPress={() => this.openSkateSpotModal()}
+                                onHereToTeachPress={() => this.openHereToTeachModal()}
+                                onGameOfSkatePress={() => this.openGameOfSkateModal()}
+                            />
                         }
                         {this.state.isNewSkateSpotVisible &&
                             <SkatePinCreationModalView
@@ -685,10 +658,9 @@ export default class SkateMapScreen extends React.Component {
                 <TouchableOpacity style={styles.toggleMapTypeContainer} onPress={() => this.toggleMapType()}>
                     <Text>Map Type: {this.state.mapType}</Text>
                 </TouchableOpacity>
+
                 <View style={styles.bottomContainer}>
-
                     <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
-
                     <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
                         <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
                     </TouchableOpacity>
@@ -698,6 +670,7 @@ export default class SkateMapScreen extends React.Component {
                         </TouchableOpacity>
                     }
                 </View>
+
             </AppContainer>
         );
     }
@@ -721,7 +694,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'center',
         textAlign: 'center',
-        // flex: 1,
         flexWrap: 'wrap',
     },
     bottomContainer: {
@@ -732,22 +704,12 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    skateButtonIcon: {
-        position: 'absolute',
-        left: 10,
-        top: 10
-    },
+    },  
     modalContainer: {
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: 30,
         padding: 30
-    },
-    modalTitle: {
-        fontSize: 28,
-        borderBottomWidth: 0.5,
-        width: '80%'
-    },
+    },   
     toggleMapTypeContainer: {
         position: 'absolute',
         right: 5,
