@@ -12,18 +12,14 @@ export const postSkatePin = (skatePin) => {
         })
         .catch(function (error) {
             if (error === "Error: Request failed with status code 409") {
-                //console.log( "Error: Request failed with status code 409", error.response);
+           
                 return "Error: Request failed with status code 409";
             }
             if (error === "Error: Network Error") {
-                //console.log("registerUser() Network Error: ", error);
+             
                 return "Error: Network Error";
             }
-            // if (error.response.data.includes("UnauthorizedError: jwt expired")) {
-            //     // console.log("UnauthorizedError: jwt expired");               
-            //     registerUser(userObject);
-            //     return "UnauthorizedError: jwt expired, clearing cache and retrying";
-            // }
+          
             console.log("error", error);
             return error;
         });
@@ -31,19 +27,18 @@ export const postSkatePin = (skatePin) => {
 
 export const deleteSkatePin = (skatePinID) => {
  
-    return axios.delete(url + '/api/skatePin', skatePinID)
-        .then(response => {
-            //console.warn("loginUser() ", response);
+    return axios.delete(url + '/api/skatePin/'+ skatePinID)
+        .then(response => {            
             return response;
         })
-        .catch(function (error) {
-            //console.warn("loginUser() error ", error);
+        .catch(function (error) {         
+     
             if (error === "Error: Request failed with status code 409") {
-                //console.warn(error.response);
+        
                 return error.response;
             }
             if (error == "Error: Network Error") {
-                //console.warn("loginUser() Network Error: ", error);
+           
                 return error;
             }
 

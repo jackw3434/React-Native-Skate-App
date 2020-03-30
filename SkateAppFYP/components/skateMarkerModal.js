@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { deleteSkatePin } from '../functions/skatePinFunctions'
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
 import Icon from '../Icon/Icon';
@@ -11,7 +12,7 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
-    render() {
+   render() {
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -21,7 +22,12 @@ export default class SkateMarkerModal extends React.Component {
                 style={{ alignItems: 'center' }}
                 isVisible={this.props.isVisible}>
                 <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
+                    <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                        <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
+                        <TouchableOpacity onPress={this.props.onDeletePress}>
+                            <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.userNameContainer}>
                         <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
                         <TouchableOpacity onPress={this.props.onUserNamePress}>
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 28,
         borderBottomWidth: 0.5,
-        width: '80%',
+        width: '90%',
     },
     skateButtonIcon: {
         position: 'absolute',

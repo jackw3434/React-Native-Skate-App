@@ -15,6 +15,7 @@ import { PlusIcon } from './Icons/plus';
 import { Pin } from './Icons/pin';
 import { Clock } from './Icons/clock';
 import { Calender } from './Icons/calender';
+import { Bin } from './Icons/bin';
 
 
 // Each nameValuePair can be:
@@ -35,5 +36,6 @@ export default {
     PlusIcon: PlusIcon,
     Pin: Pin,
     Clock: Clock,
-    Calender: Calender
+    Calender: Calender,
+    Bin: Bin
 }

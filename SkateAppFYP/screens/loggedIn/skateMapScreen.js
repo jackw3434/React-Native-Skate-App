@@ -53,6 +53,7 @@ export default class SkateMapScreen extends React.Component {
             endTime: '',
             markers: [],
             currentSkatePinModalData: {
+                _id: '',
                 createdBy: "LOGGED IN USER GOES HERE",
                 coordinate: {
                     latitude: '',
@@ -294,11 +295,12 @@ export default class SkateMapScreen extends React.Component {
 
     openMarkerModal(marker) {
 
-        let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = marker;
+        let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = marker;
 
         this.setState({
             isMarkerModalVisible: true,
             currentSkatePinModalData: {
+                _id: _id,
                 title: title,
                 createdBy: createdBy,
                 coordinate: coordinate,
@@ -338,11 +340,20 @@ export default class SkateMapScreen extends React.Component {
         this.setState({ isModalVisible: true, canTapMap: false })
     }
 
+    deleteUsersPin(pinID) {
+        deleteSkatePin(pinID).then((response) => {
+            this.closeMarkerModal();
+            getAllSkatePins().then((skatePins) => {
+                this.setState({ markers: skatePins })
+            });
+        });
+    }
+
     _renderSkatePinModal() {
 
         let travelType = 'walk';
         let lat, lng, start, end;
-        let { title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
+        let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
 
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
@@ -351,9 +362,10 @@ export default class SkateMapScreen extends React.Component {
             end = coordinate.latitude.toString().concat(",", coordinate.longitude.toString())
         }
 
-        if (title == "Skate spot") {       
+        if (title == "Skate spot") {
             return (
                 <SkateMarkerModal
+                    onDeletePress={() => this.deleteUsersPin(_id)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
@@ -370,6 +382,7 @@ export default class SkateMapScreen extends React.Component {
         } else {
             return (
                 <SkateMarkerModal
+                    onDeletePress={() => this.deleteUsersPin(_id)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
