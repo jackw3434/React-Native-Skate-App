@@ -20,12 +20,30 @@ export default class LoginScreen extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = async () => {
+    try {
+      let userObject = await AsyncStorage.getItem("userObject");
+
+      if (userObject) {
+        this.navTo('LoginTabNavigationStack')
+      }
+    } catch (e) {
+      // error reading value
+      console.warn("e ", e)
+    }
+  }
+
+
   storeData = async (data) => {
 
     let reviews = [];
 
     for (let i = 0; i < data.reviews.length; i++) {
-   
+
       reviews.push({
         reviewerID: data.reviews[i].reviewerID,
         reviewerName: data.reviews[i].reviewerName,

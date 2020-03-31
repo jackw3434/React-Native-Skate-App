@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Icon from '../../Icon/Icon'
 
 const barStyle = Platform.OS === 'ios' ? 'default' : 'yellow';
@@ -13,6 +14,20 @@ export default class AppContainer extends React.Component {
 
     goBack() {
         this.props.navigation.goBack()
+    }
+
+    clearData = async () => {
+        try {
+            await AsyncStorage.setItem("userObject", "")
+        } catch (e) {
+            // saving error
+            console.warn("saving error: ", e)
+        }
+    }
+
+    logout() {
+        this.clearData()
+        this.props.passNav.navigation.navigate('LoginScreen')
     }
 
     render() {
@@ -32,9 +47,9 @@ export default class AppContainer extends React.Component {
 
                                         <View style={styles.rightHandContainer}>
                                             <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen', this.props.userData)}>
-                                                <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />                                             
+                                                <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
+                                            <TouchableOpacity onPress={() => this.logout()}>
                                                 <Icon name='LogoutIcon' fill="blue" viewBox="-20 -25 175 175" height="40" width="40" />
                                             </TouchableOpacity>
                                         </View>
