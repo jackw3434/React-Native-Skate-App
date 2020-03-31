@@ -31,8 +31,8 @@ export default class AppContainer extends React.Component {
                                         </View>
 
                                         <View style={styles.rightHandContainer}>
-                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
-                                                <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />
+                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen', this.props.userData)}>
+                                                <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />                                             
                                             </TouchableOpacity>
                                             <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
                                                 <Icon name='LogoutIcon' fill="blue" viewBox="-20 -25 175 175" height="40" width="40" />

@@ -1,19 +1,19 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Button, Dimensions, Platform, BackHandler } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import AppContainer from '../containers/AppContainer'
 import Icon from '../../Icon/Icon'
 import Modal from "react-native-modal";
-import SkateButton from '../../components/skateButton'
 import SkateDateTimePicker from '../../components/skateDateTimePicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
 import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
 import SkateMarkerModal from '../../components/skateMarkerModal'
 import SkateModalMenu from '../../components/skateModalMenu'
 import { openMap, createOpenLink } from 'react-native-open-maps';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -26,6 +26,7 @@ export default class SkateMapScreen extends React.Component {
                 longitudeDelta: 0.1321,
             },
             date: new Date(),
+            loggedInUserData: '',
             currentLat: null,
             currentLng: null,
             useCurrentOrSelectedLocation: '',
@@ -55,7 +56,10 @@ export default class SkateMapScreen extends React.Component {
             markers: [],
             currentSkatePinModalData: {
                 _id: '',
-                createdBy: "LOGGED IN USER GOES HERE",
+                createdBy: {
+                    _id: '',
+                    name: ''
+                },
                 coordinate: {
                     latitude: '',
                     longitude: ''
@@ -92,10 +96,22 @@ export default class SkateMapScreen extends React.Component {
         })
     }
 
+    getData = async () => {
+        try {
+            let userObject = await AsyncStorage.getItem("userObject");
+            //console.warn("value ", userObject ); 
+            return JSON.parse(userObject);
+        } catch (e) {
+            // error reading value
+            console.warn("e ", e)
+        }
+    }
+
     componentDidMount() {
         getAllSkatePins().then((skatePins) => {
             this.setState({ markers: skatePins })
         });
+        this.getData().then(userObject => { this.setState({ loggedInUserData: userObject }) })
     };
 
     componentDidUpdate() {
@@ -230,14 +246,14 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let pin;
-
+            console.warn()
         if (!this.state.mapCoordinatesToUse.latitude) {
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
             if (pinType == "Here to teach") {
                 pin = {
                     title: 'Here to teach',
-                    createdBy: this.state.currentSkatePinModalData.createdBy,
+                    createdBy: this.state.loggedInUserData.userName,
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
@@ -247,7 +263,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
-                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews], axios get logged in user reviews
+                    reviews: this.state.loggedInUserData.reviews,
                     pinColor: 'orange'
                 };
             }
@@ -255,14 +271,14 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Game of S.K.A.T.E") {
                 pin = {
                     title: 'Game of S.K.A.T.E',
-                    createdBy: this.state.currentSkatePinModalData.createdBy,
+                    createdBy: this.state.loggedInUserData.reviews,
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
                     photo: 'No Picture Yet',
                     description: this.state.description,
-                    // reviews: [ review id, reviewmessage, reviewer name of logged in skaters reviews], axios get logged in user reviews
+                    reviews: this.state.loggedInUserData.userName,
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
@@ -273,7 +289,7 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Skate spot") {
                 pin = {
                     title: 'Skate spot',
-                    createdBy: this.state.currentSkatePinModalData.createdBy,
+                    createdBy: this.state.loggedInUserData.userName,
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
@@ -538,7 +554,8 @@ export default class SkateMapScreen extends React.Component {
                 scrollView={false}
                 pageTitle="Skate Map"
                 pageTitleIcon="MapIcon"
-                iconViewBox="0 0 50 50">
+                iconViewBox="0 0 50 50"
+                userData={this.state.loggedInUserData}>
 
                 <MapView
                     showsUserLocation={true}
@@ -588,6 +605,7 @@ export default class SkateMapScreen extends React.Component {
                             <SkatePinCreationModalView
                                 modalTitle="New skate spot"
                                 modalDescription="Let others know about a good places to skate."
+                                createdBy={this.state.loggedInUserData.userName}
                                 locationProvider={this.state.locationProvider}
                                 onPressCurrentLocation={this.useCurrentLocation()}
                                 useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
@@ -603,6 +621,7 @@ export default class SkateMapScreen extends React.Component {
                                     <SkatePinCreationModalView
                                         modalTitle="Here to teach"
                                         modalDescription="Let others know where you are going to be and teach someone a new trick!"
+                                        createdBy={this.state.loggedInUserData.userName}
                                         locationProvider={this.state.locationProvider}
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
@@ -631,6 +650,7 @@ export default class SkateMapScreen extends React.Component {
                                     <SkatePinCreationModalView
                                         modalTitle="Game of S.K.A.T.E"
                                         modalDescription="Let people know you want to have a skate with them."
+                                        createdBy={this.state.loggedInUserData.userName}
                                         locationProvider={this.state.locationProvider}
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
@@ -704,12 +724,12 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center'
-    },  
+    },
     modalContainer: {
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: 30,
         padding: 30
-    },   
+    },
     toggleMapTypeContainer: {
         position: 'absolute',
         right: 5,

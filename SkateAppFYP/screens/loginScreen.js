@@ -3,8 +3,9 @@ import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput,
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
-import { loginUser, hitAPI } from '../functions/userAccessFunctions';
+import { loginUser } from '../functions/userAccessFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -19,14 +20,34 @@ export default class LoginScreen extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   // hitAPI();
-  //   setInterval(() => {
-  //     this.setState({
-  //       spinner: !this.state.spinner
-  //     });
-  //   }, 3000);
-  // }
+  storeData = async (data) => {
+
+    let reviews = [];
+
+    for (let i = 0; i < data.reviews.length; i++) {
+   
+      reviews.push({
+        reviewerID: data.reviews[i].reviewerID,
+        reviewerName: data.reviews[i].reviewerName,
+        reviewMessage: data.reviews[i].reviewMessage
+      })
+    }
+
+    let userObject = {
+      _id: data._id,
+      userName: data.name,
+      userEmail: data.email,
+      reviews: reviews
+    }
+
+    try {
+
+      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+    } catch (e) {
+      // saving error
+      console.warn("saving error: ", e)
+    }
+  }
 
   navTo(route) {
     this.props.navigation.navigate(route)
@@ -62,14 +83,13 @@ export default class LoginScreen extends React.Component {
           }
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
-            // localStorage.setItem("user_id", response.data.userData._id);
-            // localStorage.setItem("first_name", response.data.userData.first_name);
-            // localStorage.setItem("surname", response.data.userData.surname);
-            // localStorage.setItem("email", response.data.userData.email);
-            // localStorage.setItem("token", response.data.accessToken);
+            let userData = response.data.userData
+            delete userData.password;
 
+            this.storeData(userData);
             this.setState({ spinner: !this.state.spinner });
             this.navTo('LoginTabNavigationStack')
+
           } else {
             this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })
           }
@@ -124,15 +144,6 @@ export default class LoginScreen extends React.Component {
             onPress={() => this.loginButton()}
           />
 
-          {/* <Text style={styles.connectText}>or connect using</Text> */}
-          {/* <SkateButton
-                    buttonText="Google+"
-                    onPress={}
-                    iconName="Padlock"
-                    iconStyle={{ marginTop: 7 }}
-                    viewBox="0 0 20 30"
-                  /> */}
-
           <View style={styles.dontHaveAccountContainer}>
             <Text>Don't have an account?</Text>
             <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
@@ -147,7 +158,6 @@ export default class LoginScreen extends React.Component {
           />
         </View>
       </AppContainer>
-
     );
   }
 }

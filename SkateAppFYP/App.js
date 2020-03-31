@@ -9,13 +9,8 @@ import SkateMapScreen from './screens/loggedIn/skateMapScreen';
 import SocialFeedScreen from './screens/loggedIn/socialFeedScreen';
 import TrickBookScreen from './screens/loggedIn/trickBook/trickBookScreen';
 import SingleTrickScreen from './screens/loggedIn/trickBook/singleTrickScreen';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { check, PERMISSIONS, RESULTS, request, Permission } from 'react-native-permissions';
-import Geolocation from '@react-native-community/geolocation';
-
 import Icon from './Icon/Icon'
 
 const Stack = createStackNavigator();
@@ -28,37 +23,16 @@ export default class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-
-    // Geolocation.getCurrentPosition(
-    //   (position) => {
-    //     console.warn('1 ', position);
-    //     this.setState({ currentLat: info.coords.latitude, currentLng: info.coords.longitude })
-    //   },
-    //   (error) => {
-    //     // See error code charts below.
-    //     console.warn(error.code, error.message);
-    //   },
-    //   { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    // );
-
-    // Geolocation.getCurrentPosition(info,ERR => {
-    //     //console.warn("latitude: ", info.coords.latitude, " longitude: ", info.coords.longitude);
-    //     this.setState({ currentLat: info.coords.latitude, currentLng: info.coords.longitude })
-    // });
-
-  }
-
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="LoginTabNavigationStack" component={AuthorizedTabNavigation} />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>  
+                 
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="ForgottenPasswordScreen" component={ForgottenPasswordScreen} />
           <Stack.Screen name="UserProfileScreen" component={UserProfileScreen} />
-     
+          <Stack.Screen name="LoginTabNavigationStack" component={AuthorizedTabNavigation} /> 
         </Stack.Navigator>
       </NavigationContainer>
     );

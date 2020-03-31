@@ -143,6 +143,7 @@ export default class RegisterScreen extends React.Component {
                             viewBox="2 -6 20 30"
                             keyboardType='email-address'
                             onFocus={() => this.setState({ emailValid: true })}
+                            autoCapitalize='none'
                         />
                         <SkateTextInput
                             valid={this.state.passwordValid}
@@ -153,6 +154,7 @@ export default class RegisterScreen extends React.Component {
                             iconName="Padlock"
                             viewBox="0 0 20 30"
                             secureTextEntry={true}
+                            autoCapitalize='none'
                         />
                         <SkateTextInput
                             valid={this.state.confirmPasswordValid}
@@ -163,6 +165,7 @@ export default class RegisterScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             viewBox="0 0 20 30"
                             secureTextEntry={true}
+                            autoCapitalize='none'
                         />
                     </View>
 
