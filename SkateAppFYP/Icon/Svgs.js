@@ -16,6 +16,7 @@ import { Pin } from './Icons/pin';
 import { Clock } from './Icons/clock';
 import { Calender } from './Icons/calender';
 import { Bin } from './Icons/bin';
+import { AddCamera } from './Icons/addCamera';
 
 
 // Each nameValuePair can be:
@@ -37,5 +38,6 @@ export default {
     Pin: Pin,
     Clock: Clock,
     Calender: Calender,
-    Bin: Bin
+    Bin: Bin,
+    AddCamera: AddCamera
 }

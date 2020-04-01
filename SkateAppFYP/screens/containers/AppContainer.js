@@ -115,13 +115,13 @@ const styles = StyleSheet.create({
     },
     leftHandContainer: {
         flexDirection: 'row',
-        width: '70%',
+        width: '100%',
         position: 'absolute',
         left: 0,
         alignItems: 'center',
     },
     title: {
-        fontSize: 24
+        fontSize: 24,   
     },
     borderLine: {
         borderBottomColor: 'grey',
