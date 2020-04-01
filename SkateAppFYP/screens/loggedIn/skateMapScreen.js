@@ -163,7 +163,7 @@ export default class SkateMapScreen extends React.Component {
         this.props.navigation.navigate(route)
     }
 
-    toggleModal = () => {
+    toggleModal = () => {      
         this.setState({
             isModalVisible: !this.state.isModalVisible,
             isModalMenuVisible: true,
@@ -174,7 +174,12 @@ export default class SkateMapScreen extends React.Component {
             {
                 latitude: '',
                 longitude: ''
-            }
+            },
+            description: '',
+            skateDate: '',
+            startTime: '',
+            endTime: '',
+            useCurrentOrSelectedLocation: ''
         });
     };
 
@@ -245,7 +250,7 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let pin;
-
+  
         if (!this.state.mapCoordinatesToUse.latitude) {
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {

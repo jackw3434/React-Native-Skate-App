@@ -178,6 +178,7 @@ export default class LoginScreen extends React.Component {
             iconStyle={{ marginTop: 7 }}
             viewBox="0 0 20 30"
             secureTextEntry={true}
+            autoCapitalize='none'
           />
 
           <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
