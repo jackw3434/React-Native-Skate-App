@@ -9,24 +9,6 @@ export default class SkatePinCreationModalView extends React.Component {
         this.state = {
         };
     }
-    // PROPS
-
-    // modalTitle
-    // modalDescription
-    // description
-    // onPressCurrentLocation
-    // onPressSelectedLocation
-    // useCurrentOrSelectedLocation
-    // onChangeText
-    // onPressShowDatePicker
-    // skateDate
-    // onPressShowStartTimePicker
-    // startTime
-    // onPressShowEndTimePicker
-    // endTime
-    // onPressSubmitPin
-    // onPressCancelPin   
-    // locationProvider
 
     render() {
         return (
@@ -36,7 +18,7 @@ export default class SkatePinCreationModalView extends React.Component {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
-                    <Text>You: USERNAME GOES HERE</Text>
+                    <Text>You: {this.props.createdBy}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', paddingTop: 5, alignItems: 'center' }}>

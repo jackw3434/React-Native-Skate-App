@@ -6,6 +6,7 @@ export default class UserProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+
         };
     }
 
@@ -17,10 +18,33 @@ export default class UserProfileScreen extends React.Component {
         this.props.navigation.navigate(route)
     }
 
-    render() {
+    componentDidMount() {
+
+    }
+
+    render() {       
+        let { _id, userName, userEmail, reviews } = this.props.route.params;
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle="User Profile">
-            
+                <View style={{ paddingLeft: 10 }}>
+                    <Text>ID: {_id}</Text>
+                    <Text>Name: {userName}</Text>
+                    <Text>Email: {userEmail}</Text>
+                    <Text>Reviews:</Text>
+
+                    {reviews && reviews.map((review, i) => {
+                        return (
+                            <View key={i} style={{ paddingLeft: 10 }}>
+                                <Text style={{ color: 'blue' }}>({review.reviewerID}) {review.reviewerName}: </Text>
+                                <Text>{review.reviewMessage}</Text>
+                            </View>
+                        )
+                    })}
+
+                    <Text>{reviews.reviewerID}</Text>
+                    <Text>{reviews.reviewerName}</Text>
+                    <Text>{reviews.reviewMessage}</Text>
+                </View>
             </AppContainer>
         );
     }
