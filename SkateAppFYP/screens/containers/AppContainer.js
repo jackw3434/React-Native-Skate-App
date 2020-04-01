@@ -72,7 +72,7 @@ export default class AppContainer extends React.Component {
                         </View>
                     }
                     {this.props.scrollView ?
-                        <ScrollView style={styles.container}>
+                        <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
                             {this.props.children}
                         </ScrollView>
                         :

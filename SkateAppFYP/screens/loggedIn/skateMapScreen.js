@@ -98,8 +98,7 @@ export default class SkateMapScreen extends React.Component {
 
     getData = async () => {
         try {
-            let userObject = await AsyncStorage.getItem("userObject");
-            //console.warn("value ", userObject ); 
+            let userObject = await AsyncStorage.getItem("userObject");        
             return JSON.parse(userObject);
         } catch (e) {
             // error reading value
@@ -107,7 +106,7 @@ export default class SkateMapScreen extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount() {    
         getAllSkatePins().then((skatePins) => {
             this.setState({ markers: skatePins })
         });
@@ -138,7 +137,7 @@ export default class SkateMapScreen extends React.Component {
                             currentLat: position.coords.latitude,
                             currentLng: position.coords.longitude,
                             locationProvider: true,
-                            gpsStatus: "CDM() GPS Status: enabled"
+                            gpsStatus: "GPS Status: enabled"
                         })
                     }
                 },
@@ -148,7 +147,7 @@ export default class SkateMapScreen extends React.Component {
                     // if (this.state.locationProvider) {
                     //     return;
                     // } else {
-                    //     this.setState({ locationProvider: false, gpsStatus: "CDM() GPS Status: disabled " + error.message })
+                    //     this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message })
                     // }
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
@@ -246,7 +245,7 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let pin;
-          
+
         if (!this.state.mapCoordinatesToUse.latitude) {
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
@@ -680,7 +679,11 @@ export default class SkateMapScreen extends React.Component {
                 </TouchableOpacity>
 
                 <View style={styles.bottomContainer}>
-                    <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
+                    {this.state.gpsStatus != "" &&
+                        <View>
+                            <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
+                        </View>
+                    }
                     <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
                         <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
                     </TouchableOpacity>

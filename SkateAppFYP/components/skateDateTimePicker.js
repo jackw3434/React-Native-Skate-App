@@ -8,9 +8,9 @@ export default class SkateDateTimePicker extends React.Component {
         super(props);
         this.state = {
         };
-    }
+    }  
 
-    render() {
+    render() {       
         return (
             <View style={{ flex: Platform.OS == 'android' && 1 }}>
                 <DateTimePicker

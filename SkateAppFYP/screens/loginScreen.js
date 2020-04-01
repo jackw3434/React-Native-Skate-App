@@ -192,7 +192,7 @@ export default class LoginScreen extends React.Component {
 
           <SkateButton
             buttonText="Sign in"
-            onPress={() => this.loginButton()}
+            onPress={() => this.loginButton()}          
           />
 
           <View style={styles.dontHaveAccountContainer}>

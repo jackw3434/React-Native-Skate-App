@@ -26,8 +26,7 @@ export default class App extends React.Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>  
-                 
+        <Stack.Navigator screenOptions={{ headerShown: false }}>                  
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="ForgottenPasswordScreen" component={ForgottenPasswordScreen} />
