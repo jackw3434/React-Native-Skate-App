@@ -19,6 +19,7 @@ export default class AppContainer extends React.Component {
     clearData = async () => {
         try {
             await AsyncStorage.setItem("userObject", "")
+            await AsyncStorage.setItem("userPassword", "")
         } catch (e) {
             // saving error
             console.warn("saving error: ", e)

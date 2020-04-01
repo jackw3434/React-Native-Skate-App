@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
@@ -26,22 +26,52 @@ export default class LoginScreen extends React.Component {
 
   getData = async () => {
     try {
-      let userObject = await AsyncStorage.getItem("userObject");
 
-      if (userObject) {
-        this.navTo('LoginTabNavigationStack')
+      let userObject = await AsyncStorage.getItem("userObject");
+      let userPassword = await AsyncStorage.getItem("userPassword");
+   
+      userObject = JSON.parse(userObject)
+      userPassword = JSON.parse(userPassword)
+
+      if (userObject && userPassword) {    
+     
+        let user = {
+          "email": userObject.userEmail,
+          "password":userPassword
+        };        
+
+        loginUser(user).then(response => {
+
+          if (response == "Error: Network Error") {
+            this.setState({  loginErrorMessage: 'Network Error: Try again later' });
+            return;
+          }
+
+          if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+
+            let userData = response.data.userData;
+            let accessToken = response.data.accessToken;
+            userData.accessToken = accessToken;
+
+            this.storeData(userData);         
+            this.navTo('LoginTabNavigationStack');
+            return
+
+          } else {
+            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
+          }
+        });
+      } else {        
+        return;
       }
-    } catch (e) {
-      // error reading value
+    } catch (e) {     
       console.warn("e ", e)
     }
   }
 
-
   storeData = async (data) => {
 
     let reviews = [];
-
     for (let i = 0; i < data.reviews.length; i++) {
 
       reviews.push({
@@ -55,14 +85,13 @@ export default class LoginScreen extends React.Component {
       _id: data._id,
       userName: data.name,
       userEmail: data.email,
-      reviews: reviews
+      reviews: reviews,
+      accessToken: data.accessToken
     }
 
     try {
-
-      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))     
     } catch (e) {
-      // saving error
       console.warn("saving error: ", e)
     }
   }
@@ -93,23 +122,27 @@ export default class LoginScreen extends React.Component {
         "password": password
       };
 
-      loginUser(user)
-        .then(response => {
+      AsyncStorage.setItem("userPassword", JSON.stringify(password))
+
+      loginUser(user).then(response => {
+
           if (response == "Error: Network Error") {
             this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
             return;
           }
+
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
-            let userData = response.data.userData
-            delete userData.password;
+            let userData = response.data.userData;
+            let accessToken = response.data.accessToken;
+            userData.accessToken = accessToken;
 
             this.storeData(userData);
             this.setState({ spinner: !this.state.spinner });
-            this.navTo('LoginTabNavigationStack')
+            this.navTo('LoginTabNavigationStack');
 
           } else {
-            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })
+            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
           }
         });
       this.setState({ email: "", password: "" });
@@ -228,7 +261,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
     color: '#FFF',
   },
-
   errorMessege: {
     paddingTop: 10,
     color: 'red',

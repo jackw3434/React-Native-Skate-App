@@ -246,7 +246,7 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let pin;
-            console.warn()
+          
         if (!this.state.mapCoordinatesToUse.latitude) {
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
