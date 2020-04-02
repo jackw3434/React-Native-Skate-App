@@ -275,7 +275,7 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Game of S.K.A.T.E") {
                 pin = {
                     title: 'Game of S.K.A.T.E',
-                    createdBy: this.state.loggedInUserData.reviews,
+                    createdBy: this.state.loggedInUserData.userName,
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
