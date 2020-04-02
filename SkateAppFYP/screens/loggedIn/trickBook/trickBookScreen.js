@@ -1,6 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions } from 'react-native';
 import AppContainer from '../../containers/AppContainer';
+import SkateTrickList from '../../../components/skateTrickList';
 
 export default class TrickBookScreen extends React.Component {
     constructor(props) {
@@ -9,25 +10,18 @@ export default class TrickBookScreen extends React.Component {
         };
     }
 
-    navTo(route) {
-        this.props.navigation.navigate(route)
+    navTo(route, param) {
+        this.props.navigation.navigate(route, param)
     }
 
-    render() {
+    render() {       
         return (
-            <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book" iconViewBox="0 0 50 50">                
-                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
-                    <Text style={styles.goBack}>Single Trick Screen (i.e Ollie)</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
-                    <Text style={styles.goBack}>Single Trick Screen (i.e Pop Shuvit)</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
-                    <Text style={styles.goBack}>Single Trick Screen (i.e Heelflip)</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.navTo('SingleTrick')}>
-                    <Text style={styles.goBack}>Single Trick Screen (i.e Kickflip)</Text>
-                </TouchableOpacity>
+            <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book" iconViewBox="0 0 50 50">              
+               
+                <View style={{paddingHorizontal:20}}>
+                     <SkateTrickList passNav={this.props}/>
+                </View>
+               
             </AppContainer>
         );
     }

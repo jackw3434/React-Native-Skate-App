@@ -1,7 +1,9 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions, Image, Platform } from 'react-native';
 import AppContainer from '../containers/AppContainer';
 import ImagePicker from 'react-native-image-picker';
+import SkateTextInput from '../../components/skateTextInput'
+import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -76,54 +78,65 @@ export default class UserProfileScreen extends React.Component {
     }
 
     render() {
+
         let { _id, userName, userEmail, reviews } = this.props.route.params;
-        console.warn(_id, userName, userEmail, reviews)
+
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
 
                 <View style={styles.pageContainer}>
+
                     <View style={styles.topSection}>
-                        <TouchableOpacity style={{ paddingVertical: 20 }} onPress={() => this.chooseImage()}>
-                            <View style={styles.uploadAvatar}>
-                                {this.state.avatarSource == "" ?
-                                    <Icon name='AddCamera' viewBox="-200 -150 900 900" height='100' width='100' style={{ alignSelf: 'center' }} />
-                                    :
-                                    <Image source={this.state.avatarSource} style={styles.picture} />
-                                }
-                            </View>
-                        </TouchableOpacity>
-                        <Text style={styles.title}>{userName}</Text>
+                        <View style={styles.uploadAvatar}>
+                            {this.state.avatarSource == "" ?
+                                <TouchableOpacity onPress={() => this.chooseImage()}>
+                                    <Icon name='AddCamera' viewBox="-200 -200 900 900" height='130' width='130' style={{ alignSelf: 'center' }} />
+                                </TouchableOpacity>
+                                :
+                                <View style={{ height: "100%", width: "110%" }}>
+                                    <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
+                                        <Image source={this.state.avatarSource} style={styles.picture} />
+                                    </View>
+                                    <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
+                                        <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
+                                            <Icon name='Pencil' viewBox="0 0 450 500" height='40' width='40' fill="rgb(0, 0, 153)" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            }
+                        </View>
+                        <View style={{ padding: 10 }}>
+                            <Text style={{ fontSize: 38 }}>{userName}</Text>
+                        </View>
                     </View>
 
                     <View style={styles.middleSection}>
-
-
-                        <Text>ID: {_id}</Text>
-                        <Text>Name: {userName}</Text>
-                        <Text>Email: {userEmail}</Text>
-                        <Text>Reviews:</Text>
-
-                        {reviews && reviews.map((review, i) => {
-                            return (
-                                <View key={i} style={{ paddingLeft: 10 }}>
-                                    <Text style={{ color: 'blue' }}>({review.reviewerID}) {review.reviewerName}: </Text>
-                                    <Text>{review.reviewMessage}</Text>
-                                </View>
-                            )
-                        })}
+                        <View>
+                            <Text style={styles.profileLables}>Skate Stance: <Text style={{ color: "black" }}>Regular</Text></Text>
+                            <Text style={styles.profileLables}>Age: <Text style={{ color: "black" }}>25</Text></Text>
+                            <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}> Street, Ramps, Park, Oldschool, Flatland</Text></Text>
+                            <Text style={styles.profileLables}>Reason for using this app: <Text style={{ color: "black" }}>Learn to skate, teach others to skate, make friends with other skaters</Text></Text>
+                        </View>
+                        <View style={{ paddingTop: 10, paddingBottom: 20 }}>
+                            <Text style={styles.profileLables}>Reviews:</Text>
+                            <ScrollView style={{ height: screenHeight / 5, borderRadius: 30, borderWidth: 0.5 }}>
+                                {reviews && reviews.map((review, i) => {
+                                    return (
+                                        <View key={i} style={{ padding: 10 }}>
+                                            <Text style={{ color: 'blue', paddingBottom: 2 }}>{review.reviewerName}: </Text>
+                                            <Text>{review.reviewMessage}</Text>
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+                        </View>
                     </View>
 
-
-
                     <View style={styles.bottomSection}>
+                       <SkateTrickList/>
 
                     </View>
                 </View>
-
-
-
-
-
 
             </AppContainer>
         );
@@ -132,46 +145,34 @@ export default class UserProfileScreen extends React.Component {
 
 const styles = StyleSheet.create({
     pageContainer: {
-        height: screenHeight,
+        flex: 1,     
         paddingHorizontal: 30,
         paddingBottom: 10,
-
     },
     topSection: {
+        flex: 1,     
         alignItems: 'center',
-        // justifyContent: 'center',
+        borderBottomWidth: 0.5,
+        marginBottom: 20
     },
-    title: {
-        fontSize: 24,
-        textAlign: "center",
+    profileLables: {
+        fontSize: 18,
+        color: "blue",
+        paddingBottom: 5
     },
     middleSection: {
-        height: '40%',
-        // justifyContent: 'space-evenly',
-        //  backgroundColor: 'blue'
+        flex: 1,     
+        borderBottomWidth: 0.5,
+        marginBottom: 20
     },
-    bottomSection: {
-        height: '50%',
-        justifyContent: 'center',
-        backgroundColor: 'green'
+    bottomSection: {      
+         height:screenHeight-300,       
     },
-
-
     container: {
         paddingHorizontal: 15,
         width: '100%',
         height: '100%'
-    },
-    title: {
-        fontSize: 24,
-        textAlign: "center",
-        //paddingTop: '10%'
-    },
-    goBack: {
-        color: 'blue',
-        paddingTop: '5%',
-        paddingHorizontal: 15,
-    },
+    },  
     uploadAvatar: {
         height: screenHeight / 5,
         width: screenHeight / 5,
@@ -180,10 +181,23 @@ const styles = StyleSheet.create({
         borderColor: 'blue',
         borderWidth: 2,
         justifyContent: 'center',
+        zIndex: 100
     },
     picture: {
-        height: screenHeight / 5,
-        width: screenHeight / 5,
-        borderRadius: screenHeight / 5
+        height: screenHeight / 5.1,
+        width: screenHeight / 5.1,
+        borderRadius: screenHeight / 5.1,
+        zIndex: 1       
+    },
+    touchPencial: {
+        zIndex: 2,
+        height: screenHeight / 12,
+        width: screenHeight / 12,
+        borderRadius: screenHeight / 12,
+        borderWidth: 2,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(211,211,211,1)',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });

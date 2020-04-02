@@ -40,15 +40,18 @@ export default class LoginScreen extends React.Component {
           "password":userPassword
         };        
 
+        this.setState({ spinner: !this.state.spinner});
+
         loginUser(user).then(response => {
 
           if (response == "Error: Network Error") {
-            this.setState({  loginErrorMessage: 'Network Error: Try again later' });
+            this.setState({ spinner: !this.state.spinner,  loginErrorMessage: 'Network Error: Try again later' });
             return;
           }
 
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
+             this.setState({ spinner: !this.state.spinner})
             let userData = response.data.userData;
             let accessToken = response.data.accessToken;
             userData.accessToken = accessToken;
