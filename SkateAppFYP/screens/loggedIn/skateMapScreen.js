@@ -110,7 +110,7 @@ export default class SkateMapScreen extends React.Component {
         getAllSkatePins().then((skatePins) => {
             this.setState({ markers: skatePins })
         });
-        this.getData().then(userObject => { this.setState({ loggedInUserData: userObject }) })
+        this.getData().then(userObject => { this.setState({ loggedInUserData: userObject }) }) // will need to eventually check list of user pins to enable delete
     };
 
     componentDidUpdate() {
@@ -593,7 +593,7 @@ export default class SkateMapScreen extends React.Component {
                     backdropTransitionInTiming={3000}
                     backdropTransitionOutTiming={3000}
                     onBackdropPress={() => this.toggleModal()}
-                    style={{ alignItems: 'center' }}
+                    style={{ alignItems: 'center', alignSelf:"center" }}
                     isVisible={this.state.isModalVisible}
                     onBackButtonPress={() => this.toggleModal()}
                 >

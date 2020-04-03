@@ -31,7 +31,7 @@ export default class AppContainer extends React.Component {
         this.props.passNav.navigation.navigate('LoginScreen')
     }
 
-    render() {
+    render() {       
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle={barStyle} backgroundColor='black' />

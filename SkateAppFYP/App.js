@@ -73,7 +73,7 @@ function AuthorizedTabNavigation() {
       }}>
       <Tab.Screen name="Trick Book" component={TrickBookStack} />
       <Tab.Screen name="Skate Map" component={SkateMapScreen} />
-      <Tab.Screen name="Social Feed" component={SocialFeedScreen} />
+      {/* <Tab.Screen name="Social Feed" component={SocialFeedScreen} /> */}
     </Tab.Navigator>
   );
 }

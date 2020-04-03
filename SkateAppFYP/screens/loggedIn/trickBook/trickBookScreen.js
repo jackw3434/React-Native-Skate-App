@@ -9,10 +9,7 @@ export default class TrickBookScreen extends React.Component {
         this.state = {
         };
     }
-
-    navTo(route, param) {
-        this.props.navigation.navigate(route, param)
-    }
+    
 
     render() {       
         return (

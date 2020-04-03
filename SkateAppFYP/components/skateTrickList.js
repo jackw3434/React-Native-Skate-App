@@ -136,10 +136,10 @@ export default class SkateTrickList extends React.Component {
 
     render() {
         return (
-            <ScrollView>
-                {Tricks.map(trick => {
+            <ScrollView nestedScrollEnabled={true} >
+                {Tricks.map((trick,i) => {
                     return (
-                        <TouchableOpacity style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
+                        <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
                             <Text style={styles.skateText}>{trick.name}</Text>
                         </TouchableOpacity>
                     )

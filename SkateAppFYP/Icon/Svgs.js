@@ -17,7 +17,8 @@ import { Clock } from './Icons/clock';
 import { Calender } from './Icons/calender';
 import { Bin } from './Icons/bin';
 import { AddCamera } from './Icons/addCamera';
-import { Pencil } from './Icons/penicl';
+import { Pencil } from './Icons/pencil';
+import { Brain } from './Icons/brain';
 
 
 // Each nameValuePair can be:
@@ -41,5 +42,6 @@ export default {
     Calender: Calender,
     Bin: Bin,
     AddCamera: AddCamera,
-    Pencil: Pencil
+    Pencil: Pencil,
+    Brain:Brain
 }
