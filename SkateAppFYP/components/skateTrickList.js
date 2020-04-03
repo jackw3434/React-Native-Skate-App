@@ -132,18 +132,30 @@ export default class SkateTrickList extends React.Component {
         if (this.props.passNav) {
             this.props.passNav.navigation.navigate(route, params)
         }
-    }
+    }  
 
-    render() {
+    render() {    
         return (
             <ScrollView nestedScrollEnabled={true} >
-                {Tricks.map((trick,i) => {
-                    return (
-                        <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
-                            <Text style={styles.skateText}>{trick.name}</Text>
-                        </TouchableOpacity>
-                    )
-                })
+                {this.props.usersAchievedtricks == "" ?
+                    <Text style={{fontSize:22, textAlign:'center'}}>Head over to the trick book to learn some new tricks.</Text>
+                    :
+                    this.props.usersAchievedtricks.map((trick, i) => {                        
+                        return (
+                            <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
+                                <Text style={styles.skateText}>{trick}</Text>
+                            </TouchableOpacity>
+                        )
+                    })
+                }
+                {!this.props.usersAchievedtricks &&
+                    Tricks.map((trick, i) => {
+                        return (
+                            <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
+                                <Text style={styles.skateText}>{trick.name}</Text>
+                            </TouchableOpacity>
+                        )
+                    })
                 }
             </ScrollView>
         )
@@ -151,7 +163,7 @@ export default class SkateTrickList extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    skateText: {        
+    skateText: {
         fontSize: 32
     },
     trickContainer: {
@@ -160,7 +172,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         borderWidth: 2,
         margin: 5,
-        borderColor: 'rgba(0,0,255,0.9)',
+        borderColor: 'rgba(0,0,255,0.9)',     
         maxHeight: 100,
         minHeight: 100,
         minWidth: '80%'

@@ -17,7 +17,7 @@ export default class UserProfileScreen extends React.Component {
             userName: '',
             userEmail: '',
             reviews: [],
-            avatarSource: '',
+            profilePicture: '',
             skateStance: "",
             age: "",
             skateStyles: "",
@@ -47,25 +47,30 @@ export default class UserProfileScreen extends React.Component {
 
     componentDidMount() {
         this.getData().then(userObject => {
-            //  console.warn(userObject)
+            console.warn(userObject)
             this.setState({
                 _id: userObject._id,
                 userName: userObject.userName,
+                region: userObject.region,
                 userEmail: userObject.userEmail,
                 reviews: userObject.reviews,
-                avatarSource: '',
-                skateStance: "",
-                age: "",
-                skateStyles: "",
-                reasonsForAppUsage: '',
-                skateIQ: '',
-                achievedTricks: []
+                profilePicture: userObject.profilePicture,
+                skateStance: userObject.skateStance,
+                age: userObject.age,
+                styleOfSkating: userObject.styleOfSkating,
+                reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
+                skateIQ: userObject.skateIQ,
+                achievedTricks: userObject.achievedTricks,
             })
         })
     }
 
-    chooseImage() {
+    countTricks(tricks) {
+        console.warn(tricks.length)
+    }
 
+
+    chooseImage() {
 
         const options = {
             title: 'Select Avatar',
@@ -96,7 +101,7 @@ export default class UserProfileScreen extends React.Component {
                 const source = { uri: 'data:image/jpeg;base64,' + response.data };
                 console.warn('setState source = ');
                 this.setState({
-                    avatarSource: source
+                    profilePicture: source
                 });
             }
         });
@@ -118,11 +123,12 @@ export default class UserProfileScreen extends React.Component {
     setSkateStance(stance) {
         this.setState({ skateStance: stance })
     };
-
+    //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
     render() {
 
-        let { _id, userName, userEmail, reviews, avatarSource, skateStance, age, skateStyles, reasonsForAppUsage, skateIQ, achievedTricks } = this.state;
-
+        let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, region, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
+        let skateIQ = achievedTricks.length
+        //this.countTricks(achievedTricks)
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
 
@@ -130,14 +136,14 @@ export default class UserProfileScreen extends React.Component {
 
                     <View style={styles.topSection}>
                         <View style={styles.uploadAvatar}>
-                            {avatarSource == "" ?
+                            {!profilePicture || profilePicture == "" ?
                                 <TouchableOpacity onPress={() => this.chooseImage()}>
                                     <Icon name='AddCamera' viewBox="-200 -200 900 900" height='130' width='130' style={{ alignSelf: 'center' }} />
                                 </TouchableOpacity>
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={avatarSource} style={styles.picture} />
+                                        <Image source={profilePicture} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
@@ -148,7 +154,7 @@ export default class UserProfileScreen extends React.Component {
                             }
                         </View>
                         <View style={{ padding: 10 }}>
-                            <Text style={{ fontSize: 38 }}>{userName}</Text>
+                            <Text style={{ fontSize: 24 }}>{userName}</Text>
                         </View>
                     </View>
 
@@ -170,23 +176,27 @@ export default class UserProfileScreen extends React.Component {
                         </View>
 
 
-
+                        <Text style={styles.profileLables}>Region: <Text style={{ color: "black" }}>{region}</Text></Text>
                         <Text style={styles.profileLables}>Age: <Text style={{ color: "black" }}>{age}</Text></Text>
-                        <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}> {skateStyles}Street, Ramps, Park, Oldschool, Flatland</Text></Text>
-                        <Text style={styles.profileLables}>Reason for using this app: <Text style={{ color: "black" }}>{reasonsForAppUsage}Learn to skate, teach others to skate, make friends with other skaters</Text></Text>
+                        <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}> {styleOfSkating}</Text></Text>
+                        <Text style={styles.profileLables}>Reason for using this app: <Text style={{ color: "black" }}>{reasonsForUsingTheApp}</Text></Text>
 
                         <Text style={styles.profileLables}>Your reviews:</Text>
-                        <View style={{ height: screenHeight / 5, borderRadius: 30, borderWidth: 0.5, marginTop: 10 }}>
+                        <View style={{ minHeight: screenHeight / 5, maxHeight: screenHeight / 5, borderRadius: 30, borderWidth: 0.5, marginTop: 10 }}>
 
                             <ScrollView nestedScrollEnabled={true}>
-                                {reviews && reviews.map((review, i) => {
-                                    return (
-                                        <View key={i} style={{ paddingLeft: 20, paddingVertical: 6 }}>
-                                            <Text style={{ color: 'blue', paddingBottom: 0 }}>{review.reviewerName}: </Text>
-                                            <Text>{review.reviewMessage}</Text>
-                                        </View>
-                                    )
-                                })}
+                                {reviews.length == 0 ?
+                                    <Text style={{ fontSize: 22, textAlign: 'center', paddingTop:20 }}>No Reviews yet.</Text>
+                                    :
+                                    reviews.map((review, i) => {
+                                        return (
+                                            <View key={i} style={{ paddingLeft: 20, paddingVertical: 6 }}>
+                                                <Text style={{ color: 'blue', paddingBottom: 0 }}>{review.reviewerName}: </Text>
+                                                <Text>{review.reviewMessage}</Text>
+                                            </View>
+                                        )
+                                    })
+                                }
                             </ScrollView>
                         </View>
 
@@ -197,23 +207,23 @@ export default class UserProfileScreen extends React.Component {
                             <Icon name='Brain' viewBox="0 0 60 60" height="60" width="60" fill='black' />
                             <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Skate IQ:</Text>
                         </View>
-                        <Text style={{ fontSize: 54 }}>10</Text>
+                        <Text style={{ fontSize: 54 }}>{skateIQ}</Text>
                         <View style={{ borderBottomWidth: 0.5, width: "20%" }} />
+                    </View>
+                    <View style={{ alignItems: 'center', paddingBottom: 20 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name='Book' viewBox="0 0 60 60" height="60" width="60" fill='black' />
+                            <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Tricks:</Text>
+                        </View>
+
+                        <Text style={{ textAlign: 'center', width: "75%", paddingTop: 5 }}>Your skate IQ is calculated at 1 point for each trick you can do.</Text>
+
                     </View>
 
                     <View style={styles.bottomSection}>
 
-                        <View style={{ alignItems: 'center', paddingBottom: 20 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Icon name='Book' viewBox="0 0 60 60" height="60" width="60" fill='black' />
-                                <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Tricks:</Text>
-                            </View>
 
-                            <Text style={{ textAlign: 'center', width: "75%", paddingTop: 5 }}>Your skate IQ is calculated at 1 point for each trick you can do.</Text>
-
-                        </View>
-
-                        <SkateTrickList />
+                        <SkateTrickList usersAchievedtricks={achievedTricks} />
 
                     </View>
                 </View>
@@ -246,7 +256,7 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     bottomSection: {
-        height: screenHeight - 200,
+        maxHeight: screenHeight - 300,
         padding: 15,
         borderRadius: 30,
         borderWidth: 0.5,
