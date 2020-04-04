@@ -20,8 +20,8 @@ export default class UserProfileScreen extends React.Component {
             profilePicture: '',
             skateStance: "",
             age: "",
-            skateStyles: "",
-            reasonsForAppUsage: '',
+            styleOfSkating: [],
+            reasonsForUsingTheApp: [],
             skateIQ: '',
             achievedTricks: []
         };
@@ -46,16 +46,16 @@ export default class UserProfileScreen extends React.Component {
         this.props.navigation.navigate(route)
     }
 
-     componentDidMount() {
-         this.getData().then( userObject => {
-           // console.warn(userObject.profilePicture)
-             this.setState({
+    componentDidMount() {
+        this.getData().then(userObject => {
+            // console.warn(userObject.profilePicture)
+            this.setState({
                 _id: userObject._id,
                 userName: userObject.userName,
                 region: userObject.region,
                 userEmail: userObject.userEmail,
                 reviews: userObject.reviews,
-                profilePicture: userObject.profilePicture,
+                // profilePicture: userObject.profilePicture,
                 skateStance: userObject.skateStance,
                 age: userObject.age,
                 styleOfSkating: userObject.styleOfSkating,
@@ -70,7 +70,7 @@ export default class UserProfileScreen extends React.Component {
     chooseImage() {
 
         const options = {
-            title: 'Select Avatar',
+            title: 'Select Profile Picture',
             // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
             storageOptions: {
                 skipBackup: true,
@@ -95,15 +95,15 @@ export default class UserProfileScreen extends React.Component {
                 //const source = { uri: response.uri };
 
                 // You can also display the image using data:
-               // const source = { uri: "data:image/jpeg;base64," + response.data };
+                // const source = { uri: "data:image/jpeg;base64," + response.data };
                 //let string ='data:image/jpeg;base64,' + response.data ;
                 console.warn('setState source 1 ');
-                editMe(this.state._id, { profilePicture: response.data }, this.state.accessToken).then(res => {
-                    // console.warn("userprofile edit res", res)
-                    console.warn('setState source 2 ');
-                    this.setState({ profilePicture: response.data });
-                })
+                // editMe(this.state._id, { profilePicture: response.data }, this.state.accessToken).then(res => {
+                //     // console.warn("userprofile edit res", res)
+                //     console.warn('setState source 2 ');
 
+                // })
+                this.setState({ profilePicture: response.data });
             }
         });
 
@@ -119,8 +119,67 @@ export default class UserProfileScreen extends React.Component {
         // });
     }
 
+    storeData = async (data) => {        
+    
+        let userObject = {         
+          age: data.age,       
+          skateStance: data.skateStance          
+        }
+    
+        try {
+          await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+        } catch (e) {
+          console.warn("saving error: ", e)
+        }
+      }
+
     setSkateStance(stance) {
         this.setState({ skateStance: stance })
+        editMe(this.state._id, { skateStance: stance }, this.state.accessToken).then(res => {
+
+            let userObject = {                 
+                _id: this.state._id,
+                userName: this.state.userName,              
+                userEmail: this.state.userEmail,
+                reviews: this.state.reviews,           
+                skateStance: this.state.skateStance,
+                age: this.state.age,              
+                achievedTricks: this.state.achievedTricks,
+                accessToken: this.state.accessToken                       
+              }
+          
+              try {
+                AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+              } catch (e) {
+           //     console.warn("saving error: ", e)
+              }
+          //  console.warn("userprofile edit skateStance", res)
+            
+        })
+    };
+
+    setAge(age) {
+         this.setState({ age: age })
+        editMe(this.state._id, { age: age }, this.state.accessToken).then(res => { 
+            
+            let userObject = {                 
+                _id: this.state._id,
+                userName: this.state.userName,              
+                userEmail: this.state.userEmail,
+                reviews: this.state.reviews,           
+                skateStance: this.state.skateStance,
+                age: this.state.age,              
+                achievedTricks: this.state.achievedTricks,
+                accessToken: this.state.accessToken                       
+              }
+          
+              try {
+                AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+              } catch (e) {
+              //  console.warn("saving error: ", e)
+              }
+           // console.warn("userprofile edit age", res)
+        })        
     };
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
@@ -134,8 +193,15 @@ export default class UserProfileScreen extends React.Component {
             { label: "Goofy Mongo - (right foot at the back)", value: "Goofy Mongo" },
         ]
 
-        let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, region, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
+        let ageOptions = [
+            { label: "18-24", value: "18-24" },
+            { label: "25-30", value: "25-30" },
+            { label: "30+", value: "30+" },
+        ]
+
+        let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
+
 
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
@@ -151,7 +217,7 @@ export default class UserProfileScreen extends React.Component {
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={{uri: "data:image/jpeg;base64," +profilePicture.toString()}} style={styles.picture} />
+                                        <Image source={{ uri: "data:image/jpeg;base64," + profilePicture.toString() }} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
@@ -165,31 +231,83 @@ export default class UserProfileScreen extends React.Component {
                             <Text style={{ fontSize: 24 }}>{userName}</Text>
                         </View>
                     </View>
-
                     <View style={styles.middleSection}>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.profileLables}>Skate Stance: <Text style={{ color: "black" }}>{skateStance}</Text></Text>
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
+                            <Text style={styles.profileLables}>Skate Stance:</Text>
                             <RNPickerSelect
-                                placeholder={{ label: "select stance", value: "select stance" }}
+                                placeholder={{ label: this.state.skateStance, value: this.state.skateStance }}
                                 useNativeAndroidPickerStyle={false}
-                                placeholderTextColor="black"
-
-                                textInputProps={{ fontSize: 18, backgroundColor: 'yellow' }}
-                                onValueChange={(value) => console.log(value)}
+                                placeholderTextColor="blue"
+                                value={this.state.skateStance}
+                                textInputProps={{
+                                    fontSize: 18,
+                                    borderWidth: 1,
+                                    borderColor: 'blue',
+                                    borderRadius: 10,
+                                    padding: 5,
+                                    marginLeft: 5, width: Platform.OS == 'android' ? 175 : "100%"
+                                }}
+                               // onDonePress={(stance) => this.setSkateStance(stance)}                          
+                                onValueChange={(stance) => this.setSkateStance(stance)}
                                 items={skateStanceoptions}
                             />
                         </View>
 
 
-                        <Text style={styles.profileLables}>Region: <Text style={{ color: "black" }}>{region}</Text></Text>
-                        <Text style={styles.profileLables}>Age: <Text style={{ color: "black" }}>{age}</Text></Text>
-                        <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}>{styleOfSkating}</Text></Text>
-                        <Text style={styles.profileLables}>Reason for using this app: <Text style={{ color: "black" }}>{reasonsForUsingTheApp}</Text></Text>
+
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
+                            <Text style={styles.profileLables}>Age:</Text>
+                            <RNPickerSelect
+                                placeholder={{ label: this.state.age, value: this.state.age }}
+                                useNativeAndroidPickerStyle={false}
+                                placeholderTextColor="blue"
+                                value={this.state.age}
+                                textInputProps={{
+                                    fontSize: 18,
+                                    borderWidth: 1,
+                                    borderColor: 'blue',
+                                    borderRadius: 10,
+                                    padding: 5,
+                                    marginLeft: 5, width: Platform.OS == 'android' ? 175 : "100%"
+                                }}
+                                //onDonePress={(age) => this.setAge(age)}
+                                onValueChange={(age) => this.setAge(age)}
+                                items={ageOptions}
+                            />
+                        </View>
+                        {/* 
+                        <Text style={styles.profileLables}>Style of Skating:</Text>
+                        <View style={styles.labelRow}>
+                            {styleOfSkating.length == 0 ?
+                                <Text style={{ fontSize: 18 }}>No reasons yet.</Text>
+                                :
+                                styleOfSkating.map((skateStyle, i) => {
+                                    return (
+                                        <View style={{ paddingTop: 5 }}>
+                                            <Text key={i} style={styles.highlightedLabel}>{skateStyle}</Text>
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View>
+
+                        <Text style={styles.profileLables}>Reason for using this app:</Text>                     
+                        <View style={{flexDirection:'column'}}>                           
+                            {reasonsForUsingTheApp.length == 0 ?
+                                <Text style={{ fontSize: 18 }}>No reasons yet.</Text>
+                                :
+                                reasonsForUsingTheApp.map((reason, i) => {
+                                    return (
+                                        <View style={{ padding: 5, alignItems: 'flex-start' }}>
+                                            <Text key={i} style={styles.highlightedLabel}>{reason}</Text>
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View> */}
 
                         <Text style={styles.profileLables}>Your reviews:</Text>
                         <View style={{ minHeight: screenHeight / 5, maxHeight: screenHeight / 5, borderRadius: 30, borderWidth: 0.5, marginTop: 10 }}>
-
                             <ScrollView nestedScrollEnabled={true}>
                                 {reviews.length == 0 ?
                                     <Text style={{ fontSize: 22, textAlign: 'center', paddingTop: 20 }}>No Reviews yet.</Text>
@@ -197,7 +315,7 @@ export default class UserProfileScreen extends React.Component {
                                     reviews.map((review, i) => {
                                         return (
                                             <View key={i} style={{ paddingLeft: 20, paddingVertical: 6 }}>
-                                                <Text style={{ color: 'blue', paddingBottom: 0 }}>{review.reviewerName}: </Text>
+                                                <Text style={{ color: 'blue', paddingBottom: 0 }}>{review.reviewerName}:</Text>
                                                 <Text>{review.reviewMessage}</Text>
                                             </View>
                                         )
@@ -205,13 +323,12 @@ export default class UserProfileScreen extends React.Component {
                                 }
                             </ScrollView>
                         </View>
-
                     </View>
 
                     <View style={{ alignItems: 'center', paddingBottom: 20 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='Brain' viewBox="0 0 60 60" height="60" width="60" fill='black' />
-                            <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Skate IQ:</Text>
+                            <Text style={{ fontSize: 28, paddingLeft: 10 }}>Skate IQ</Text>
                         </View>
                         <Text style={{ fontSize: 54 }}>{skateIQ}</Text>
                         <View style={{ borderBottomWidth: 0.5, width: "20%" }} />
@@ -219,18 +336,12 @@ export default class UserProfileScreen extends React.Component {
                     <View style={{ alignItems: 'center', paddingBottom: 20 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='Book' viewBox="0 0 60 60" height="60" width="60" fill='black' />
-                            <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Tricks:</Text>
+                            <Text style={{ fontSize: 28, paddingLeft: 10 }}>Your Tricks</Text>
                         </View>
-
                         <Text style={{ textAlign: 'center', width: "75%", paddingTop: 5 }}>Your skate IQ is calculated at 1 point for each trick you can do.</Text>
-
                     </View>
-
                     <View style={styles.bottomSection}>
-
-
                         <SkateTrickList usersAchievedtricks={achievedTricks} />
-
                     </View>
                 </View>
             </AppContainer>
@@ -251,9 +362,13 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     profileLables: {
-        fontSize: 18,
+        fontSize: 22,
         color: "blue",
-        paddingBottom: 5
+    },
+    labelRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingBottom: 15
     },
     middleSection: {
         flex: 1,
@@ -298,5 +413,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(211,211,211,1)',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    highlightedLabel: {
+        // textAlign: 'center',
+        fontSize: 18,
+        borderWidth: 1,
+        borderColor: 'blue',
+        borderRadius: 10,
+        padding: 5,
+        marginLeft: 5,
+        color: 'blue'
     }
 });

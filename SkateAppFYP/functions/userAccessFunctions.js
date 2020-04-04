@@ -53,7 +53,7 @@ export const editMe = (myID,meToEdit, accessToken) => {
     //console.log("userObject ", userObject); 
     return axios.put(url + '/api/users/me/'+myID, meToEdit, {headers: {Authorization: accessToken}})
         .then(response => {
-            console.warn("done ", response);
+           // console.warn("done ", response);
             return response;
         })
         .catch(function (error) {   
