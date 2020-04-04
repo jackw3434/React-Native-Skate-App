@@ -14,9 +14,13 @@ export default class SingleTrickScreen extends React.Component {
     }
 
     render() {
+      
+        let trick = this.props.route.params;     
+       
         return (
-            <AppContainer passNav={this.props} isNested={true} scrollView={true}  pageTitle="Single Trick">              
-                
+            <AppContainer passNav={this.props} isNested={true} scrollView={true}  pageTitle={trick.name}>              
+                <Text>Description: {trick.description}</Text>
+                <Text>Video URL: {trick.videoUrl}</Text>
             </AppContainer>
         );
     }

@@ -29,31 +29,34 @@ export default class LoginScreen extends React.Component {
 
       let userObject = await AsyncStorage.getItem("userObject");
       let userPassword = await AsyncStorage.getItem("userPassword");
-   
+
       userObject = JSON.parse(userObject)
       userPassword = JSON.parse(userPassword)
 
-      if (userObject && userPassword) {    
-     
+      if (userObject && userPassword) {
+
         let user = {
           "email": userObject.userEmail,
-          "password":userPassword
-        };        
+          "password": userPassword
+        };
+
+        this.setState({ spinner: !this.state.spinner });
 
         loginUser(user).then(response => {
 
           if (response == "Error: Network Error") {
-            this.setState({  loginErrorMessage: 'Network Error: Try again later' });
+            this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
             return;
           }
 
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
-
+           // console.warn("getData ",  userObject)
+            this.setState({ spinner: !this.state.spinner })
             let userData = response.data.userData;
             let accessToken = response.data.accessToken;
             userData.accessToken = accessToken;
 
-            this.storeData(userData);         
+            this.storeData(userData);
             this.navTo('LoginTabNavigationStack');
             return
 
@@ -61,16 +64,16 @@ export default class LoginScreen extends React.Component {
             this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
           }
         });
-      } else {        
+      } else {
         return;
       }
-    } catch (e) {     
-      console.warn("e ", e)
+    } catch (e) {
+     // console.warn(" failed login getData ", e)
     }
   }
 
   storeData = async (data) => {
-
+    //console.warn("data ", data)
     let reviews = [];
     for (let i = 0; i < data.reviews.length; i++) {
 
@@ -83,14 +86,22 @@ export default class LoginScreen extends React.Component {
 
     let userObject = {
       _id: data._id,
+      profilePicture: data.profilePicture,
       userName: data.name,
       userEmail: data.email,
-      reviews: reviews,
+      age: data.age,
+      region: data.region,
+      skateStance: data.skateStance,
+      styleOfSkating: data.styleOfSkating,
+      reasonsForUsingTheApp: data.reasonsForUsingTheApp,
+      achievedTricks: data.achievedTricks,
+      usersCreatedPins: data.usersCreatedPins,
+        reviews: reviews,
       accessToken: data.accessToken
     }
 
     try {
-      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))     
+      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
     } catch (e) {
       console.warn("saving error: ", e)
     }
@@ -126,25 +137,25 @@ export default class LoginScreen extends React.Component {
 
       loginUser(user).then(response => {
 
-          if (response == "Error: Network Error") {
-            this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
-            return;
-          }
+        if (response == "Error: Network Error") {
+          this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
+          return;
+        }
 
-          if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+        if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
 
-            let userData = response.data.userData;
-            let accessToken = response.data.accessToken;
-            userData.accessToken = accessToken;
+          let userData = response.data.userData;
+          let accessToken = response.data.accessToken;
+          userData.accessToken = accessToken;
 
-            this.storeData(userData);
-            this.setState({ spinner: !this.state.spinner });
-            this.navTo('LoginTabNavigationStack');
+          this.storeData(userData);
+          this.setState({ spinner: !this.state.spinner });
+          this.navTo('LoginTabNavigationStack');
 
-          } else {
-            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
-          }
-        });
+        } else {
+          this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
+        }
+      });
       this.setState({ email: "", password: "" });
     }
   }
@@ -193,7 +204,7 @@ export default class LoginScreen extends React.Component {
 
           <SkateButton
             buttonText="Sign in"
-            onPress={() => this.loginButton()}          
+            onPress={() => this.loginButton()}
           />
 
           <View style={styles.dontHaveAccountContainer}>

@@ -12,7 +12,7 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
-   render() {
+  render() {
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -40,7 +40,7 @@ export default class SkateMarkerModal extends React.Component {
                     </View>
                     <Text style={{ color: 'blue', paddingTop: 5, paddingLeft: 5, paddingBottom: 5 }}>Description:</Text>
                     <View style={styles.descriptionAndPhotoContainer}>
-                        {this.props.photo &&
+                        {this.props.photo !== "" &&
                             <View style={styles.photoContainer}>
                                 <Text>{this.props.photo}</Text>
                             </View>

@@ -20,7 +20,7 @@ export default class SkateMapScreen extends React.Component {
         super(props);
         this.state = {
             region: {
-                latitude: 50.3762, // Plymouth Uni
+                latitude: 50.3762, // Plymouth Uni - will need to get region from user 
                 longitude: -4.1395,
                 latitudeDelta: 0.1321,
                 longitudeDelta: 0.1321,
@@ -98,19 +98,19 @@ export default class SkateMapScreen extends React.Component {
 
     getData = async () => {
         try {
-            let userObject = await AsyncStorage.getItem("userObject");        
+            let userObject = await AsyncStorage.getItem("userObject");
             return JSON.parse(userObject);
         } catch (e) {
-            // error reading value
-            console.warn("e ", e)
+            // error reading value           
         }
     }
 
-    componentDidMount() {    
-        getAllSkatePins().then((skatePins) => {
-            this.setState({ markers: skatePins })
-        });
-        this.getData().then(userObject => { this.setState({ loggedInUserData: userObject }) })
+    componentDidMount() {
+        this.getData().then(userObject => {
+            getAllSkatePins(userObject.accessToken).then((skatePins) => {
+                this.setState({ markers: skatePins, loggedInUserData: userObject })
+            });
+        }) // will need to eventually check list of user pins to enable delete            
     };
 
     componentDidUpdate() {
@@ -163,7 +163,7 @@ export default class SkateMapScreen extends React.Component {
         this.props.navigation.navigate(route)
     }
 
-    toggleModal = () => {      
+    toggleModal = () => {
         this.setState({
             isModalVisible: !this.state.isModalVisible,
             isModalMenuVisible: true,
@@ -250,14 +250,17 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let pin;
-  
+
         if (!this.state.mapCoordinatesToUse.latitude) {
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
             if (pinType == "Here to teach") {
                 pin = {
                     title: 'Here to teach',
-                    createdBy: this.state.loggedInUserData.userName,
+                    createdBy: {
+                        _id: this.state.loggedInUserData._id,
+                        userName: this.state.loggedInUserData.userName,
+                    },
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
@@ -275,14 +278,17 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Game of S.K.A.T.E") {
                 pin = {
                     title: 'Game of S.K.A.T.E',
-                    createdBy: this.state.loggedInUserData.reviews,
+                    createdBy: {
+                        _id: this.state.loggedInUserData._id,
+                        userName: this.state.loggedInUserData.userName,
+                    },
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
                     photo: 'No Picture Yet',
                     description: this.state.description,
-                    reviews: this.state.loggedInUserData.userName,
+                    reviews: this.state.loggedInUserData.reviews,
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
@@ -293,7 +299,10 @@ export default class SkateMapScreen extends React.Component {
             if (pinType == "Skate spot") {
                 pin = {
                     title: 'Skate spot',
-                    createdBy: this.state.loggedInUserData.userName,
+                    createdBy: {
+                        _id: this.state.loggedInUserData._id,
+                        userName: this.state.loggedInUserData.userName,
+                    },
                     coordinate: {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
@@ -304,8 +313,8 @@ export default class SkateMapScreen extends React.Component {
                 }
             }
 
-            postSkatePin(pin).then(response => {
-                getAllSkatePins().then((skatePins) => {
+            postSkatePin(pin, this.state.loggedInUserData.accessToken).then(response => {
+                getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
                     this.setState({ markers: skatePins })
                 })
             })
@@ -323,7 +332,10 @@ export default class SkateMapScreen extends React.Component {
             currentSkatePinModalData: {
                 _id: _id,
                 title: title,
-                createdBy: createdBy,
+                createdBy: {
+                    _id: createdBy._id,
+                    userName: createdBy.userName
+                },
                 coordinate: coordinate,
                 photo: photo,
                 description: description,
@@ -362,9 +374,9 @@ export default class SkateMapScreen extends React.Component {
     }
 
     deleteUsersPin(pinID) {
-        deleteSkatePin(pinID).then((response) => {
-            this.closeMarkerModal();
-            getAllSkatePins().then((skatePins) => {
+        deleteSkatePin(pinID, this.state.loggedInUserData.accessToken).then((response) => {
+            this.closeMarkerModal()
+            getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
                 this.setState({ markers: skatePins })
             });
         });
@@ -374,8 +386,9 @@ export default class SkateMapScreen extends React.Component {
 
         let travelType = 'walk';
         let lat, lng, start, end;
-        let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
 
+        let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
+      
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
             lng = this.state.currentLng;
@@ -386,13 +399,13 @@ export default class SkateMapScreen extends React.Component {
         if (title == "Skate spot") {
             return (
                 <SkateMarkerModal
-                    onDeletePress={() => this.deleteUsersPin(_id)}
+                    onDeletePress={() => this.deleteUsersPin(_id, this.state.loggedInUserData.accessToken)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
                     modalTitle={title}
-                    createdBy={createdBy}
-                    onUserNamePress={() => console.warn(createdBy)} // .id
+                    createdBy={createdBy.userName}
+                    onUserNamePress={() => console.warn(createdBy._id)} // .id
                     photo={photo}
                     description={description}
                     reviews={reviews}
@@ -403,13 +416,13 @@ export default class SkateMapScreen extends React.Component {
         } else {
             return (
                 <SkateMarkerModal
-                    onDeletePress={() => this.deleteUsersPin(_id)}
+                    onDeletePress={() => this.deleteUsersPin(_id, this.state.loggedInUserData.accessToken)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
                     modalTitle={title}
-                    createdBy={createdBy}
-                    onUserNamePress={() => console.warn(createdBy)} // .id
+                    createdBy={createdBy.userName}
+                    onUserNamePress={() => console.warn(createdBy._id)} // .id
                     description={description}
                     photo={photo}
                     skateDate={skateDate}
@@ -587,13 +600,13 @@ export default class SkateMapScreen extends React.Component {
                     ))}
                 </MapView>
 
-                {this._renderSkatePinModal()}
+                {this.state.isMarkerModalVisible && this._renderSkatePinModal()}
 
                 <Modal
                     backdropTransitionInTiming={3000}
                     backdropTransitionOutTiming={3000}
                     onBackdropPress={() => this.toggleModal()}
-                    style={{ alignItems: 'center' }}
+                    style={{ alignItems: 'center', alignSelf: "center" }}
                     isVisible={this.state.isModalVisible}
                     onBackButtonPress={() => this.toggleModal()}
                 >

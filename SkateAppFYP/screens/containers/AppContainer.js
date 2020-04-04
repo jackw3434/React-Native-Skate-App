@@ -31,7 +31,7 @@ export default class AppContainer extends React.Component {
         this.props.passNav.navigation.navigate('LoginScreen')
     }
 
-    render() {
+    render() {       
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle={barStyle} backgroundColor='black' />
@@ -115,13 +115,13 @@ const styles = StyleSheet.create({
     },
     leftHandContainer: {
         flexDirection: 'row',
-        width: '70%',
+        width: '100%',
         position: 'absolute',
         left: 0,
         alignItems: 'center',
     },
     title: {
-        fontSize: 24
+        fontSize: 24,   
     },
     borderLine: {
         borderBottomColor: 'grey',

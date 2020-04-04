@@ -15,7 +15,6 @@ export default class SkateDateTimePicker extends React.Component {
             <View style={{ flex: Platform.OS == 'android' && 1 }}>
                 <DateTimePicker
                     testID="dateTimePicker"
-                    timeZoneOffsetInMinutes={0}
                     value={this.props.value}
                     mode={this.props.mode}
                     is24Hour={true}

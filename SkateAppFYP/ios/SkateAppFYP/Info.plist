@@ -37,6 +37,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+			<string>For choosing a photo.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>For taking a photo.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>For saving a photo.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
   	<string>Your location is required for the map.</string>
   	<key>NSLocationAlwaysUsageDescription</key>
