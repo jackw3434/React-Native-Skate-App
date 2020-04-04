@@ -119,67 +119,67 @@ export default class UserProfileScreen extends React.Component {
         // });
     }
 
-    storeData = async (data) => {        
-    
-        let userObject = {         
-          age: data.age,       
-          skateStance: data.skateStance          
+    storeData = async (data) => {
+
+        let userObject = {
+            age: data.age,
+            skateStance: data.skateStance
         }
-    
+
         try {
-          await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+            await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
         } catch (e) {
-          console.warn("saving error: ", e)
+            console.warn("saving error: ", e)
         }
-      }
+    }
 
     setSkateStance(stance) {
         this.setState({ skateStance: stance })
         editMe(this.state._id, { skateStance: stance }, this.state.accessToken).then(res => {
 
-            let userObject = {                 
+            let userObject = {
                 _id: this.state._id,
-                userName: this.state.userName,              
+                userName: this.state.userName,
                 userEmail: this.state.userEmail,
-                reviews: this.state.reviews,           
+                reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
-                age: this.state.age,              
+                age: this.state.age,
                 achievedTricks: this.state.achievedTricks,
-                accessToken: this.state.accessToken                       
-              }
-          
-              try {
+                accessToken: this.state.accessToken
+            }
+
+            try {
                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
-              } catch (e) {
-           //     console.warn("saving error: ", e)
-              }
-          //  console.warn("userprofile edit skateStance", res)
-            
+            } catch (e) {
+                //     console.warn("saving error: ", e)
+            }
+            //  console.warn("userprofile edit skateStance", res)
+
         })
     };
 
     setAge(age) {
-         this.setState({ age: age })
-        editMe(this.state._id, { age: age }, this.state.accessToken).then(res => { 
-            
-            let userObject = {                 
+        this.setState({ age: age })
+        editMe(this.state._id, { age: age }, this.state.accessToken).then(res => {
+
+            let userObject = {
                 _id: this.state._id,
-                userName: this.state.userName,              
+                userName: this.state.userName,
                 userEmail: this.state.userEmail,
-                reviews: this.state.reviews,           
+                reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
-                age: this.state.age,              
+                age: this.state.age,
                 achievedTricks: this.state.achievedTricks,
-                accessToken: this.state.accessToken                       
-              }
-          
-              try {
+                accessToken: this.state.accessToken
+            }
+
+            try {
                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
-              } catch (e) {
-              //  console.warn("saving error: ", e)
-              }
-           // console.warn("userprofile edit age", res)
-        })        
+            } catch (e) {
+                //  console.warn("saving error: ", e)
+            }
+            // console.warn("userprofile edit age", res)
+        })
     };
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
@@ -235,44 +235,75 @@ export default class UserProfileScreen extends React.Component {
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
                             <Text style={styles.profileLables}>Skate Stance:</Text>
                             <RNPickerSelect
-                                placeholder={{ label: this.state.skateStance, value: this.state.skateStance }}
+                                placeholder={{
+                                    label: this.state.skateStance ? this.state.skateStance : "select a stance",
+                                    value: this.state.skateStance ? this.state.skateStance : "select a stance"
+                                }}
                                 useNativeAndroidPickerStyle={false}
                                 placeholderTextColor="blue"
-                                value={this.state.skateStance}
+                                value={{
+                                    label: this.state.skateStance ? this.state.skateStance : "select a stance",
+                                    value: this.state.skateStance ? this.state.skateStance : "select a stance"
+                                }}
                                 textInputProps={{
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     borderWidth: 1,
                                     borderColor: 'blue',
                                     borderRadius: 10,
                                     padding: 5,
-                                    marginLeft: 5, width: Platform.OS == 'android' ? 175 : "100%"
+                                    marginLeft: 5,
+                                    paddingRight: Platform.OS == 'android' ? 30 : 0,
+                                    width: "100%"
                                 }}
-                               // onDonePress={(stance) => this.setSkateStance(stance)}                          
-                                onValueChange={(stance) => this.setSkateStance(stance)}
-                                items={skateStanceoptions}
+                                onValueChange={(stance) => {
+                                    if (stance != this.state.skateStance) {
+                                        this.setSkateStance(stance)
+                                    }
+                                }
+                                }
+                                items={[
+                                    { label: "Unsure", value: "Unsure" },
+                                    { label: "Regular - (Left foot at the front)", value: "Regular" },
+                                    { label: "Goofy - (Right foot at the front)", value: "Goofy" },
+                                    { label: "Mongo - (Left foot at the back)", value: "Mongo" },
+                                    { label: "Goofy Mongo - (right foot at the back)", value: "Goofy Mongo" },
+                                ]}
                             />
                         </View>
-
-
 
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
                             <Text style={styles.profileLables}>Age:</Text>
                             <RNPickerSelect
-                                placeholder={{ label: this.state.age, value: this.state.age }}
+                                placeholder={{
+                                    label: this.state.age ? this.state.age : "select age range",
+                                    value: this.state.age ? this.state.age : "select age range"
+                                }}
                                 useNativeAndroidPickerStyle={false}
-                                placeholderTextColor="blue"
-                                value={this.state.age}
+                                placeholderTextColor="blue"                                
+                                value={{
+                                    label: this.state.age ? this.state.age : "select age range",
+                                    value: this.state.age ? this.state.age : "select age range"
+                                }}
                                 textInputProps={{
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     borderWidth: 1,
                                     borderColor: 'blue',
                                     borderRadius: 10,
                                     padding: 5,
-                                    marginLeft: 5, width: Platform.OS == 'android' ? 175 : "100%"
+                                    marginLeft: 5,
+                                    paddingRight: Platform.OS == 'android' ? 30 : 0,
+                                    width: "100%"
                                 }}
-                                //onDonePress={(age) => this.setAge(age)}
-                                onValueChange={(age) => this.setAge(age)}
-                                items={ageOptions}
+                                onValueChange={(age) => {
+                                    if (age != this.state.age) {
+                                        this.setAge(age)
+                                    }
+                                }}
+                                items={[
+                                    { label: "18-24", value: "18-24" },
+                                    { label: "25-30", value: "25-30" },
+                                    { label: "30+", value: "30+" },
+                                ]}
                             />
                         </View>
                         {/* 
