@@ -16,7 +16,7 @@ export default class TrickBookScreen extends React.Component {
             <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book" iconViewBox="0 0 50 50">              
                
                 <View style={{paddingHorizontal:20}}>
-                     <SkateTrickList passNav={this.props}/>
+                     <SkateTrickList trickBook={true} passNav={this.props}/>
                 </View>
                
             </AppContainer>

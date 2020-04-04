@@ -132,23 +132,12 @@ export default class SkateTrickList extends React.Component {
         if (this.props.passNav) {
             this.props.passNav.navigation.navigate(route, params)
         }
-    }  
+    }
 
-    render() {    
+    render() {
         return (
             <ScrollView nestedScrollEnabled={true} >
-                {this.props.usersAchievedtricks == "" ?
-                    <Text style={{fontSize:22, textAlign:'center'}}>Head over to the trick book to learn some new tricks.</Text>
-                    :
-                    this.props.usersAchievedtricks.map((trick, i) => {                        
-                        return (
-                            <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
-                                <Text style={styles.skateText}>{trick}</Text>
-                            </TouchableOpacity>
-                        )
-                    })
-                }
-                {!this.props.usersAchievedtricks &&
+                {this.props.trickBook ?
                     Tricks.map((trick, i) => {
                         return (
                             <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
@@ -156,6 +145,20 @@ export default class SkateTrickList extends React.Component {
                             </TouchableOpacity>
                         )
                     })
+                    :
+                    [
+                        (this.props.usersAchievedtricks.length == 0 ?
+                            <Text style={{ fontSize: 22, textAlign: 'center' }}>Head over to the trick book to learn some new tricks.</Text>
+                            :
+                            this.props.usersAchievedtricks.map((trick, i) => {
+                                return (
+                                    <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
+                                        <Text style={styles.skateText}>{trick}</Text>
+                                    </TouchableOpacity>
+                                )
+                            })
+                        )
+                    ]
                 }
             </ScrollView>
         )
@@ -166,13 +169,14 @@ const styles = StyleSheet.create({
     skateText: {
         fontSize: 32
     },
+
     trickContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 30,
         borderWidth: 2,
         margin: 5,
-        borderColor: 'rgba(0,0,255,0.9)',     
+        borderColor: 'rgba(0,0,255,0.9)',
         maxHeight: 100,
         minHeight: 100,
         minWidth: '80%'

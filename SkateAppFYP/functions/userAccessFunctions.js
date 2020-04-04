@@ -49,6 +49,26 @@ export const loginUser = (userObject) => {
         });
 };
 
+export const editMe = (myID,meToEdit, accessToken) => {
+    //console.log("userObject ", userObject); 
+    return axios.put(url + '/api/users/me/'+myID, meToEdit, {headers: {Authorization: accessToken}})
+        .then(response => {
+            console.warn("done ", response);
+            return response;
+        })
+        .catch(function (error) {   
+            console.warn(error)     
+            if (error === "Error: Request failed with status code 409") {             
+                return error.response;
+            }
+            if (error == "Error: Network Error") {            
+                return error;
+            }
+
+            return error.response;
+        });
+};
+
 export const hitAPI = () => {
     return axios.get(url + '/api')
         .then(response => {

@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, Picker, TouchableOpacity, Dimensions, Image, } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Picker, TouchableOpacity, Dimensions, Image, Platform } from 'react-native';
 import AppContainer from '../containers/AppContainer';
 import ImagePicker from 'react-native-image-picker';
-import SkateTextInput from '../../components/skateTextInput'
+import RNPickerSelect from 'react-native-picker-select';
 import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
-
+import { editMe } from '../../functions/userAccessFunctions'
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default class UserProfileScreen extends React.Component {
@@ -27,6 +27,7 @@ export default class UserProfileScreen extends React.Component {
         };
     }
 
+
     getData = async () => {
         try {
             let userObject = await AsyncStorage.getItem("userObject");
@@ -45,10 +46,10 @@ export default class UserProfileScreen extends React.Component {
         this.props.navigation.navigate(route)
     }
 
-    componentDidMount() {
-        this.getData().then(userObject => {
-            console.warn(userObject)
-            this.setState({
+     componentDidMount() {
+         this.getData().then( userObject => {
+           // console.warn(userObject.profilePicture)
+             this.setState({
                 _id: userObject._id,
                 userName: userObject.userName,
                 region: userObject.region,
@@ -61,14 +62,10 @@ export default class UserProfileScreen extends React.Component {
                 reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
                 skateIQ: userObject.skateIQ,
                 achievedTricks: userObject.achievedTricks,
+                accessToken: userObject.accessToken
             })
         })
     }
-
-    countTricks(tricks) {
-        console.warn(tricks.length)
-    }
-
 
     chooseImage() {
 
@@ -98,11 +95,15 @@ export default class UserProfileScreen extends React.Component {
                 //const source = { uri: response.uri };
 
                 // You can also display the image using data:
-                const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                console.warn('setState source = ');
-                this.setState({
-                    profilePicture: source
-                });
+               // const source = { uri: "data:image/jpeg;base64," + response.data };
+                //let string ='data:image/jpeg;base64,' + response.data ;
+                console.warn('setState source 1 ');
+                editMe(this.state._id, { profilePicture: response.data }, this.state.accessToken).then(res => {
+                    // console.warn("userprofile edit res", res)
+                    console.warn('setState source 2 ');
+                    this.setState({ profilePicture: response.data });
+                })
+
             }
         });
 
@@ -118,17 +119,24 @@ export default class UserProfileScreen extends React.Component {
         // });
     }
 
-
-
     setSkateStance(stance) {
         this.setState({ skateStance: stance })
     };
+
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
     render() {
+        //console.warn(this.state.profilePicture)
+        let skateStanceoptions = [
+            { label: "Unsure", value: "Unsure" },
+            { label: "Reguler - (Left foot at the front)", value: "Regular" },
+            { label: "Goofy - (Right foot at the front)", value: "Goofy" },
+            { label: "Mongo - (Left foot at the back)", value: "Mongo" },
+            { label: "Goofy Mongo - (right foot at the back)", value: "Goofy Mongo" },
+        ]
 
         let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, region, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
-        //this.countTricks(achievedTricks)
+
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
 
@@ -143,7 +151,7 @@ export default class UserProfileScreen extends React.Component {
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={profilePicture} style={styles.picture} />
+                                        <Image source={{uri: "data:image/jpeg;base64," +profilePicture.toString()}} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
@@ -160,25 +168,23 @@ export default class UserProfileScreen extends React.Component {
 
                     <View style={styles.middleSection}>
 
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={styles.profileLables}>Skate Stance: <Text style={{ color: "black" }}>{skateStance}</Text></Text>
-                            {/* <Picker
-                            selectedValue={this.state.skateStance}
-                            style={{ height: 50, backgroundColor:'yellow', width:"50%" }}
-                            onValueChange={stance => this.setSkateStance(stance)}                      
-                        >
-                            <Picker.Item label="Unsure" value="unsure" />
-                            <Picker.Item label="Reguler - (Left foot at the front)" value="regular" />
-                            <Picker.Item label="Goofy - (Right foot at the front)" value="goofy" />
-                            <Picker.Item label="Mongo - (Left foot at the back)" value="mongo" />
-                            <Picker.Item label="Goofy Mongo - (right foot at the back)" value="goofy mongo" />
-                        </Picker> */}
+                            <RNPickerSelect
+                                placeholder={{ label: "select stance", value: "select stance" }}
+                                useNativeAndroidPickerStyle={false}
+                                placeholderTextColor="black"
+
+                                textInputProps={{ fontSize: 18, backgroundColor: 'yellow' }}
+                                onValueChange={(value) => console.log(value)}
+                                items={skateStanceoptions}
+                            />
                         </View>
 
 
                         <Text style={styles.profileLables}>Region: <Text style={{ color: "black" }}>{region}</Text></Text>
                         <Text style={styles.profileLables}>Age: <Text style={{ color: "black" }}>{age}</Text></Text>
-                        <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}> {styleOfSkating}</Text></Text>
+                        <Text style={styles.profileLables}>Style of Skating: <Text style={{ color: "black" }}>{styleOfSkating}</Text></Text>
                         <Text style={styles.profileLables}>Reason for using this app: <Text style={{ color: "black" }}>{reasonsForUsingTheApp}</Text></Text>
 
                         <Text style={styles.profileLables}>Your reviews:</Text>
@@ -186,7 +192,7 @@ export default class UserProfileScreen extends React.Component {
 
                             <ScrollView nestedScrollEnabled={true}>
                                 {reviews.length == 0 ?
-                                    <Text style={{ fontSize: 22, textAlign: 'center', paddingTop:20 }}>No Reviews yet.</Text>
+                                    <Text style={{ fontSize: 22, textAlign: 'center', paddingTop: 20 }}>No Reviews yet.</Text>
                                     :
                                     reviews.map((review, i) => {
                                         return (

@@ -73,7 +73,7 @@ export default class LoginScreen extends React.Component {
   }
 
   storeData = async (data) => {
-    console.warn("data ", data)
+    //console.warn("data ", data)
     let reviews = [];
     for (let i = 0; i < data.reviews.length; i++) {
 
