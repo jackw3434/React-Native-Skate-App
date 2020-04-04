@@ -35,7 +35,9 @@
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.2.0",
     "react-native-svg": "^12.0.3",
-    "react-native-svg-icon": "^0.8.1"
+    "react-native-svg-icon": "^0.8.1",
+    "react-native-webview": "^9.0.2",
+    "react-native-youtube-iframe": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

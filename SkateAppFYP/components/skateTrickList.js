@@ -6,117 +6,117 @@ const Tricks = [
     {
         name: "Ollie",
         description: "Ollie description",
-        videoUrl: "Ollie youtube url"
+        videoUrl: "_cmXDVZrKZU"
     },
     {
         name: "Frontside 180",
         description: "Frontside 180 description",
-        videoUrl: "Frontside 180 youtube url"
+        videoUrl: "OqYb98vp0zI"
     },
     {
         name: "Backside 180",
         description: "Backside 180 description",
-        videoUrl: "Backside 180 youtube url"
+        videoUrl: "5RtkYzx3TdE"
     },
     {
         name: "Pop Shove It",
         description: "Pop Shove It description",
-        videoUrl: "Pop Shove It youtube url"
+        videoUrl: "tyXwyN_t"
     },
     {
         name: "Frontside Pop Shove It",
         description: "Frontside Pop Shove It description",
-        videoUrl: "Frontside Pop Shove It youtube url"
+        videoUrl: "rbpllQ2bGAE"
     },
     {
         name: "Heelflip",
         description: "Heelflip description",
-        videoUrl: "Heelflip youtube url"
+        videoUrl: "phsJk5_jHkU"
     },
     {
         name: "Kickflip",
         description: "Kickflip description",
-        videoUrl: "Kickflip youtube url"
+        videoUrl: "YOf0XeI7KzU"
     },
     {
         name: "Varial Kickflip",
         description: "Varial Kickflip description",
-        videoUrl: "Varial Kickflip youtube url"
+        videoUrl: "q0FxPQp2wHk"
     },
     {
         name: "Hardflip",
         description: "Hardflip description",
-        videoUrl: "Hardflip youtube url"
+        videoUrl: "hZlSr6SQvds"
     },
     {
         name: "Varial Heelflip",
         description: "Varial Heelflip description",
-        videoUrl: "Varial Heelflip youtube url"
+        videoUrl: "ter2CbfTe4E"
     },
     {
         name: "Inward Heelflip",
         description: "Inward Heelflip description",
-        videoUrl: "Inward Heelflip youtube url"
+        videoUrl: "0SmsV8Xb7fA"
     },
     {
         name: "Backside 180 Kickflip",
         description: "Backside 180 Kickflip description",
-        videoUrl: "Backside 180 Kickflip youtube url"
+        videoUrl: "T0VUCWLYg9E"
     },
     {
         name: "Frontside 180 kickflip",
         description: "Frontside 180 kickflip description",
-        videoUrl: "Frontside 180 kickflip youtube url"
+        videoUrl: "_YCXMS2_O6w"
     },
     {
         name: "Backside 180 Heelflip",
         description: "Backside 180 Heelflip description",
-        videoUrl: "Backside 180 Heelflip youtube url"
+        videoUrl: "qLX_ekRgfdw"
     },
     {
         name: "Frontside 180 Heelflip",
         description: "Frontside 180 Heelflip description",
-        videoUrl: "Frontside 180 Heelflip youtube url"
+        videoUrl: "aN0jbylT3IY"
     },
     {
         name: "360 Pop Shove It",
         description: "360 Pop Shove It description",
-        videoUrl: "360 Pop Shove It youtube url"
+        videoUrl: "tapZBLs4xI0"
     },
     {
         name: "Backside Big Spin",
         description: "Backside Big Spin description",
-        videoUrl: "Backside Big Spin youtube url"
+        videoUrl: "MsPPeoeukoU"
     },
     {
         name: "Frontside Big Spin",
         description: "Frontside Big Spin description",
-        videoUrl: "Frontside Big Spin youtube url"
+        videoUrl: "pksJFJQnLHA"
     },
     {
         name: "360 Flip",
         description: "360 Flip description",
-        videoUrl: "360 Flip youtube url"
+        videoUrl: "PnuobIzTPMs"
     },
     {
         name: "Ollie Impossible",
         description: "Ollie Impossible description",
-        videoUrl: "Ollie Impossible youtube url"
+        videoUrl: "a_1Hz88lpY8"
     },
     {
         name: "Laser Flip",
         description: "Laser Flip description",
-        videoUrl: "OLaser Flipllie youtube url"
+        videoUrl: "B991k5v-cvE"
     },
     {
         name: "Casper Flip",
         description: "Casper Flip description",
-        videoUrl: "Casper Flip youtube url"
+        videoUrl: "x4O6bDFlKHw"
     },
     {
         name: "Backside Big Spin Kickflip",
         description: "Backside Big Spin Kickflip description",
-        videoUrl: "Backside Big Spin Kickflip youtube url"
+        videoUrl: "TuzfkgxbOeQ"
     }
 ]
 
