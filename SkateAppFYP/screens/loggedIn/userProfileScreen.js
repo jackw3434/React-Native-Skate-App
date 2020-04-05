@@ -6,7 +6,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
-import { editMe } from '../../functions/userAccessFunctions'
+import { editMe } from '../../functions/userAccessFunctions';
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default class UserProfileScreen extends React.Component {
@@ -119,23 +119,9 @@ export default class UserProfileScreen extends React.Component {
         // });
     }
 
-    storeData = async (data) => {
-
-        let userObject = {
-            age: data.age,
-            skateStance: data.skateStance
-        }
-
-        try {
-            await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
-        } catch (e) {
-            console.warn("saving error: ", e)
-        }
-    }
-
     setSkateStance(stance) {
         this.setState({ skateStance: stance })
-        editMe(this.state._id, { skateStance: stance }, this.state.accessToken).then(res => {
+        editMe({ skateStance: stance }).then(res => {
 
             let userObject = {
                 _id: this.state._id,
@@ -160,7 +146,7 @@ export default class UserProfileScreen extends React.Component {
 
     setAge(age) {
         this.setState({ age: age })
-        editMe(this.state._id, { age: age }, this.state.accessToken).then(res => {
+        editMe({ age: age }).then(res => {
 
             let userObject = {
                 _id: this.state._id,
@@ -279,7 +265,7 @@ export default class UserProfileScreen extends React.Component {
                                     value: this.state.age ? this.state.age : "select age range"
                                 }}
                                 useNativeAndroidPickerStyle={false}
-                                placeholderTextColor="blue"                                
+                                placeholderTextColor="blue"
                                 value={{
                                     label: this.state.age ? this.state.age : "select age range",
                                     value: this.state.age ? this.state.age : "select age range"
