@@ -60,15 +60,14 @@ export const loginUser = (userObject) => {
         });
 };
 
-export const editMe = (meToEdit) => {
-    return getData().then(userObject => {
+export const editMe = async (meToEdit) => {
+    await getData().then(userObject => {
         return axios.put(url + '/api/users/me/' + userObject._id, meToEdit, { headers: { Authorization: userObject.accessToken } })
-            .then(response => {
+            .then(response => {            
                 //console.warn("done ", response);
                 return response;
             })
-            .catch(function (error) {
-                console.warn(error)
+            .catch(function (error) {              
                 if (error === "Error: Request failed with status code 409") {
                     return error.response;
                 }

@@ -25,7 +25,8 @@ export default class SingleTrickScreen extends React.Component {
             styleOfSkating: [],
             reasonsForUsingTheApp: [],
             skateIQ: '',
-            achievedTricks: []
+            achievedTricks: [],
+            accessToken:""
         };
     }
 
@@ -50,7 +51,8 @@ export default class SingleTrickScreen extends React.Component {
                 // profilePicture: userObject.profilePicture,
                 skateStance: userObject.skateStance,
                 age: userObject.age,
-                achievedTricks: userObject.achievedTricks
+                achievedTricks: userObject.achievedTricks,
+                accessToken: userObject.accessToken
             })
         })
     }
@@ -79,7 +81,6 @@ export default class SingleTrickScreen extends React.Component {
         } else {
             newAchievedTricks = this.state.achievedTricks.filter(e => e !== trickName)
         }
-
     
         this.setState({ isEnabled: learned, achievedTricks: newAchievedTricks });
 
