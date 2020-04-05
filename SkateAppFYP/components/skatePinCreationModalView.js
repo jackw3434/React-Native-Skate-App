@@ -58,8 +58,10 @@ export default class SkatePinCreationModalView extends React.Component {
                         {this.props.modalTitle == "Here to teach" ?
                             <View>
                                 <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>What are you going to teach?</Text>
+                                <Text>display drop down list of tricks here</Text>
                                 <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
-                                    <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput>
+                                    {/* <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput> */}
+                                    <Text>display list of tricks to teach here</Text>
                                 </View>
                             </View>
                             :
