@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity ,TextInput} from 'react-native';
 import { deleteSkatePin } from '../functions/skatePinFunctions'
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
@@ -9,10 +9,15 @@ export default class SkateMarkerModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            leaveReview: false
         };
     }
 
-  render() {
+    leaveReview() {
+        this.setState({ leaveReview: true })
+    }
+
+    render() {
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -22,7 +27,7 @@ export default class SkateMarkerModal extends React.Component {
                 style={{ alignItems: 'center' }}
                 isVisible={this.props.isVisible}>
                 <View style={styles.modalContainer}>
-                    <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
                         <TouchableOpacity onPress={this.props.onDeletePress}>
                             <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
@@ -64,18 +69,36 @@ export default class SkateMarkerModal extends React.Component {
                             </View>
                         </View>
                     }
-                    <Text style={{ color: 'blue', padding: 5 }}>Reviews:</Text>
+
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 5 }}>
+                        <Text style={{ color: 'blue', padding: 5, }}>Reviews:</Text>
+                        <TouchableOpacity onPress={() => this.leaveReview()} style={{ borderRadius: 30, borderWidth: 0.5, borderColor: 'blue', padding: 5 }}>
+                            <Text style={{ color: 'blue' }}>Leave a review</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    
                     <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5, paddingLeft: 5 }}>
-                        <ScrollView>
-                            {this.props.reviews && this.props.reviews.map((review, i) => {
-                                return (
-                                    <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
-                                        <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                        <Text>{review.reviewMessage}</Text>
-                                    </View>
-                                )
-                            })}
-                        </ScrollView>
+
+                        {this.state.leaveReview ?
+                            <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
+                                <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={(review) => this.setReviewMessage(review)}>{this.state.review}</TextInput>
+
+                            </View>
+                            :
+                            <ScrollView style={{ marginTop: 5 }}>
+                                {this.props.reviews && this.props.reviews.map((review, i) => {
+                                    return (
+                                        <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                            <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
+                                            <Text>{review.reviewMessage}</Text>
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+                        }
+
                     </View>
                     <View style={{ paddingBottom: 10, paddingTop: 10 }}>
                         <SkateButton
