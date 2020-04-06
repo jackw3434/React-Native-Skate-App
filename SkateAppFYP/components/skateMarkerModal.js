@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity ,TextInput} from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { deleteSkatePin } from '../functions/skatePinFunctions'
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
@@ -9,12 +9,17 @@ export default class SkateMarkerModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaveReview: false
+            leaveReview: false,
+            reviewMessage: ''
         };
     }
 
     leaveReview() {
-        this.setState({ leaveReview: true })
+        this.setState({ leaveReview: !this.state.leaveReview })
+    }
+
+    setReviewMessage(message) {
+        this.setState({ reviewMessage: message })
     }
 
     render() {
@@ -27,7 +32,7 @@ export default class SkateMarkerModal extends React.Component {
                 style={{ alignItems: 'center' }}
                 isVisible={this.props.isVisible}>
                 <View style={styles.modalContainer}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.centerRow}>
                         <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
                         <TouchableOpacity onPress={this.props.onDeletePress}>
                             <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
@@ -43,7 +48,7 @@ export default class SkateMarkerModal extends React.Component {
                             }
                         </TouchableOpacity>
                     </View>
-                    <Text style={{ color: 'blue', paddingTop: 5, paddingLeft: 5, paddingBottom: 5 }}>Description:</Text>
+                    <Text style={styles.descriptionText}>Description:</Text>
                     <View style={styles.descriptionAndPhotoContainer}>
                         {this.props.photo !== "" &&
                             <View style={styles.photoContainer}>
@@ -71,20 +76,45 @@ export default class SkateMarkerModal extends React.Component {
                     }
 
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 5 }}>
+                    <View style={styles.reviewHeaderRow}>
                         <Text style={{ color: 'blue', padding: 5, }}>Reviews:</Text>
                         <TouchableOpacity onPress={() => this.leaveReview()} style={{ borderRadius: 30, borderWidth: 0.5, borderColor: 'blue', padding: 5 }}>
-                            <Text style={{ color: 'blue' }}>Leave a review</Text>
+                            <Text style={{ color: 'blue' }}>{!this.state.leaveReview ? "Leave a review" : "cancel"}</Text>
                         </TouchableOpacity>
-
                     </View>
-                    
-                    <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5, paddingLeft: 5 }}>
+
+                    <View style={{
+                        height: 100,
+                        borderWidth: this.state.leaveReview ? 1 : 0.5,
+                        borderRadius: 5,
+                        paddingLeft: 5,
+                        borderColor: this.state.leaveReview ? "blue" : "black"
+                    }}
+                    >
 
                         {this.state.leaveReview ?
-                            <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
-                                <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={(review) => this.setReviewMessage(review)}>{this.state.review}</TextInput>
+                            <View>
+                                <ScrollView >
+                                    <TextInput
+                                        maxLength={120}
+                                        placeholder={"Enter your review here"}
+                                        multiline={true}
+                                        style={{
+                                            height: 100,
+                                            paddingLeft: 5,
+                                            paddingTop: 10,
+                                            paddingBottom: 10,
+                                            paddingRight: 5,
+                                        }}
+                                        onChangeText={(review) => this.setReviewMessage(review)}
+                                    >
+                                        {this.state.review}
 
+                                    </TextInput>
+                                </ScrollView>
+                                <TouchableOpacity style={{ position: 'absolute', bottom: 5, right: 5, borderRadius: 30, borderWidth: 1, borderColor: 'blue', padding: 5, backgroundColor: "white" }}>
+                                    <Text style={{ color: 'blue', }}>Submit review</Text>
+                                </TouchableOpacity>
                             </View>
                             :
                             <ScrollView style={{ marginTop: 5 }}>
@@ -122,6 +152,10 @@ const styles = StyleSheet.create({
         padding: 30,
         width: '100%'
     },
+    centerRow: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     modalTitle: {
         fontSize: 28,
         borderBottomWidth: 0.5,
@@ -145,6 +179,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexWrap: 'wrap',
     },
+    descriptionText: {
+        color: 'blue',
+        paddingTop: 5,
+        paddingLeft: 5,
+        paddingBottom: 5
+    },
     photoContainer: {
         width: '25%',
         borderWidth: 0.5,
@@ -163,5 +203,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingLeft: 5,
         flexDirection: 'row'
+    },
+    reviewHeaderRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: 5,
+        paddingTop: 5
     }
 });
