@@ -328,7 +328,7 @@ export default class UserProfileScreen extends React.Component {
                                 {reviews.length == 0 ?
                                     <Text style={{ fontSize: 22, textAlign: 'center', paddingTop: 20 }}>No Reviews yet.</Text>
                                     :
-                                    reviews.map((review, i) => {
+                                    reviews.slice(0).reverse().map((review, i) => {
                                         return (
                                             <View key={i} style={{ paddingLeft: 20, paddingVertical: 6 }}>
                                                 <Text style={{ color: 'blue', paddingBottom: 0 }}>{review.reviewerName}:</Text>
