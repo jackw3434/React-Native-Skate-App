@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput } from 'react-native';
-import { deleteSkatePin } from '../functions/skatePinFunctions'
+import { deleteSkatePin, reviewSkater, reviewSkateSpot } from '../functions/skatePinFunctions'
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
 import Icon from '../Icon/Icon';
@@ -9,17 +9,7 @@ export default class SkateMarkerModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaveReview: false,
-            reviewMessage: ''
         };
-    }
-
-    leaveReview() {
-        this.setState({ leaveReview: !this.state.leaveReview })
-    }
-
-    setReviewMessage(message) {
-        this.setState({ reviewMessage: message })
     }
 
     render() {
@@ -42,9 +32,9 @@ export default class SkateMarkerModal extends React.Component {
                         <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
                         <TouchableOpacity onPress={this.props.onUserNamePress}>
                             {this.props.modalTitle == "Skate spot" ?
-                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
                                 :
-                                <Text style={{ fontSize: 14 }}>{this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>{this.props.createdBy.userName}</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -75,60 +65,52 @@ export default class SkateMarkerModal extends React.Component {
                         </View>
                     }
 
-
                     <View style={styles.reviewHeaderRow}>
-                        <Text style={{ color: 'blue', padding: 5, }}>Reviews:</Text>
-                        <TouchableOpacity onPress={() => this.leaveReview()} style={{ borderRadius: 30, borderWidth: 0.5, borderColor: 'blue', padding: 5 }}>
-                            <Text style={{ color: 'blue' }}>{!this.state.leaveReview ? "Leave a review" : "cancel"}</Text>
+                        <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
+                        <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>
+                            <Text style={{ color: 'blue' }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={{
                         height: 100,
-                        borderWidth: this.state.leaveReview ? 1 : 0.5,
+                        borderWidth: this.props.leaveReview ? 1 : 0.5,
                         borderRadius: 5,
                         paddingLeft: 5,
-                        borderColor: this.state.leaveReview ? "blue" : "black"
-                    }}
-                    >
-
-                        {this.state.leaveReview ?
+                        borderColor: this.props.leaveReview ? "blue" : "black"
+                    }}>
+                        {this.props.leaveReview ?
                             <View>
                                 <ScrollView >
                                     <TextInput
                                         maxLength={120}
                                         placeholder={"Enter your review here"}
                                         multiline={true}
-                                        style={{
-                                            height: 100,
-                                            paddingLeft: 5,
-                                            paddingTop: 10,
-                                            paddingBottom: 10,
-                                            paddingRight: 5,
-                                        }}
-                                        onChangeText={(review) => this.setReviewMessage(review)}
+                                        style={styles.reviewTextInput}
+                                        onChangeText={(review) => this.props.onReviewChange(review)}
                                     >
-                                        {this.state.review}
-
+                                        {this.props.reviewMessage}
                                     </TextInput>
                                 </ScrollView>
-                                <TouchableOpacity style={{ position: 'absolute', bottom: 5, right: 5, borderRadius: 30, borderWidth: 1, borderColor: 'blue', padding: 5, backgroundColor: "white" }}>
-                                    <Text style={{ color: 'blue', }}>Submit review</Text>
+                                <TouchableOpacity
+                                    onPress={this.props.onReviewSubmit}
+                                    style={styles.submitReviewButton}
+                                >
+                                    <Text style={{ color: 'blue' }}>Submit review</Text>
                                 </TouchableOpacity>
                             </View>
                             :
                             <ScrollView style={{ marginTop: 5 }}>
-                                {this.props.reviews && this.props.reviews.map((review, i) => {
+                                {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
                                     return (
                                         <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
                                             <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                            <Text>{review.reviewMessage}</Text>
+                                            <Text key={i} >{review.reviewMessage}</Text>
                                         </View>
                                     )
                                 })}
                             </ScrollView>
                         }
-
                     </View>
                     <View style={{ paddingBottom: 10, paddingTop: 10 }}>
                         <SkateButton
@@ -209,5 +191,29 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingBottom: 5,
         paddingTop: 5
+    },
+    leaveAReviewButton: {
+        borderRadius: 30,
+        borderWidth: 0.5,
+        borderColor: 'blue',
+        padding: 5
+    },   
+    reviewTextInput: {
+        height: 100,
+        paddingLeft: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 5,
+        textAlignVertical: 'top'
+    },
+    submitReviewButton: {
+        position: 'absolute',
+        bottom: 5,
+        right: 5,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: 'blue',
+        padding: 5,
+        backgroundColor: "white"
     }
 });

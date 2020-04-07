@@ -27,7 +27,6 @@ export default class UserProfileScreen extends React.Component {
         };
     }
 
-
     getData = async () => {
         try {
             let userObject = await AsyncStorage.getItem("userObject");
@@ -379,8 +378,7 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     profileLables: {
-        fontSize: 22,
-        color: "blue",
+        fontSize: 20,
     },
     labelRow: {
         flexDirection: 'row',
