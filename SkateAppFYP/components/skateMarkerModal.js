@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { deleteSkatePin } from '../functions/skatePinFunctions'
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { deleteSkatePin, reviewSkater, reviewSkateSpot } from '../functions/skatePinFunctions'
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
 import Icon from '../Icon/Icon';
@@ -12,7 +12,7 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
-  render() {
+    render() {
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -22,7 +22,7 @@ export default class SkateMarkerModal extends React.Component {
                 style={{ alignItems: 'center' }}
                 isVisible={this.props.isVisible}>
                 <View style={styles.modalContainer}>
-                    <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                    <View style={styles.centerRow}>
                         <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
                         <TouchableOpacity onPress={this.props.onDeletePress}>
                             <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
@@ -32,13 +32,13 @@ export default class SkateMarkerModal extends React.Component {
                         <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
                         <TouchableOpacity onPress={this.props.onUserNamePress}>
                             {this.props.modalTitle == "Skate spot" ?
-                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
                                 :
-                                <Text style={{ fontSize: 14 }}>{this.props.createdBy}</Text>
+                                <Text style={{ fontSize: 14 }}>{this.props.createdBy.userName}</Text>
                             }
                         </TouchableOpacity>
                     </View>
-                    <Text style={{ color: 'blue', paddingTop: 5, paddingLeft: 5, paddingBottom: 5 }}>Description:</Text>
+                    <Text style={styles.descriptionText}>Description:</Text>
                     <View style={styles.descriptionAndPhotoContainer}>
                         {this.props.photo !== "" &&
                             <View style={styles.photoContainer}>
@@ -64,18 +64,54 @@ export default class SkateMarkerModal extends React.Component {
                             </View>
                         </View>
                     }
-                    <Text style={{ color: 'blue', padding: 5 }}>Reviews:</Text>
-                    <View style={{ height: 100, borderWidth: 0.5, borderRadius: 5, paddingLeft: 5 }}>
-                        <ScrollView>
-                            {this.props.reviews && this.props.reviews.map((review, i) => {
-                                return (
-                                    <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
-                                        <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                        <Text>{review.reviewMessage}</Text>
-                                    </View>
-                                )
-                            })}
-                        </ScrollView>
+
+                    <View style={styles.reviewHeaderRow}>
+                        <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
+                        <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>
+                            <Text style={{ color: 'blue' }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{
+                        height: 100,
+                        borderWidth: this.props.leaveReview ? 1 : 0.5,
+                        borderRadius: 5,
+                        paddingLeft: 5,
+                        borderColor: this.props.leaveReview ? "blue" : "black"
+                    }}>
+                        {this.props.leaveReview ?
+                            <View>
+                                <ScrollView >
+                                    <TextInput
+                                        maxLength={120}
+                                        placeholder={"Enter your review here"}
+                                        multiline={true}
+                                        style={styles.reviewTextInput}
+                                        onChangeText={(review) => this.props.onReviewChange(review)}
+                                    >
+                                        {this.props.reviewMessage}
+                                    </TextInput>
+                                </ScrollView>
+                                <TouchableOpacity
+                                    onPress={this.props.onReviewSubmit}
+                                    style={styles.submitReviewButton}
+                                >
+                                    <Text style={{ color: 'blue' }}>Submit review</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <ScrollView style={{ marginTop: 5 }}>
+                                {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
+                                  //  console.warn("here", review)
+                                    return (
+                                        <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                            <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
+                                            <Text >{review.reviewMessage}</Text>
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+                        }
                     </View>
                     <View style={{ paddingBottom: 10, paddingTop: 10 }}>
                         <SkateButton
@@ -98,6 +134,10 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         padding: 30,
         width: '100%'
+    },
+    centerRow: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     modalTitle: {
         fontSize: 28,
@@ -122,6 +162,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexWrap: 'wrap',
     },
+    descriptionText: {
+        color: 'blue',
+        paddingTop: 5,
+        paddingLeft: 5,
+        paddingBottom: 5
+    },
     photoContainer: {
         width: '25%',
         borderWidth: 0.5,
@@ -140,5 +186,35 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingLeft: 5,
         flexDirection: 'row'
+    },
+    reviewHeaderRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: 5,
+        paddingTop: 5
+    },
+    leaveAReviewButton: {
+        borderRadius: 30,
+        borderWidth: 0.5,
+        borderColor: 'blue',
+        padding: 5
+    },   
+    reviewTextInput: {
+        height: 100,
+        paddingLeft: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 5,
+        textAlignVertical: 'top'
+    },
+    submitReviewButton: {
+        position: 'absolute',
+        bottom: 5,
+        right: 5,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: 'blue',
+        padding: 5,
+        backgroundColor: "white"
     }
 });

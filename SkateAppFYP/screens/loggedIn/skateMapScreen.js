@@ -9,7 +9,7 @@ import Icon from '../../Icon/Icon'
 import Modal from "react-native-modal";
 import SkateDateTimePicker from '../../components/skateDateTimePicker';
 import SkatePinCreationModalView from '../../components/skatePinCreationModalView'
-import { getAllSkatePins, deleteSkatePin, postSkatePin } from '../../functions/skatePinFunctions'
+import { getAllSkatePins, deleteSkatePin, postSkatePin, reviewSkater, reviewSkateSpot } from '../../functions/skatePinFunctions'
 import SkateMarkerModal from '../../components/skateMarkerModal'
 import SkateModalMenu from '../../components/skateModalMenu'
 import { openMap, createOpenLink } from 'react-native-open-maps';
@@ -77,7 +77,9 @@ export default class SkateMapScreen extends React.Component {
                 pinColor: ''
             },
             isPinSubmissionValid: '',
-            hasComponentDidUpdateFired: false
+            hasComponentDidUpdateFired: false,
+            reviewMessage: '',
+            leaveReview: false
         };
     }
 
@@ -309,6 +311,7 @@ export default class SkateMapScreen extends React.Component {
                     },
                     photo: 'No Picture Yet',
                     description: this.state.description,
+                    reviews: [],
                     pinColor: 'blue'
                 }
             }
@@ -382,13 +385,82 @@ export default class SkateMapScreen extends React.Component {
         });
     }
 
+    leaveReview() {
+        this.setState({ leaveReview: !this.state.leaveReview, reviewMessage: "" })
+    }
+
+    setReviewMessage(message) {
+        this.setState({ reviewMessage: message })
+    }
+
+    submitReview(pinID, title, createdBy) {
+
+        let reviewObject = {
+            reviewerName: this.state.loggedInUserData.userName,
+            reviewMessage: this.state.reviewMessage
+        }
+
+        let addReview = this.state.currentSkatePinModalData.reviews.concat(reviewObject)
+
+        if (title == "Skate spot") {
+            reviewSkateSpot(pinID, this.state.reviewMessage).then(res => {
+                getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
+                    this.setState({
+                        markers: skatePins,
+                        currentSkatePinModalData: {
+                            _id: this.state.currentSkatePinModalData._id,
+                            title: this.state.currentSkatePinModalData.title,
+                            createdBy: {
+                                _id: this.state.currentSkatePinModalData.createdBy._id,
+                                userName: this.state.currentSkatePinModalData.createdBy.userName
+                            },
+                            coordinate: this.state.currentSkatePinModalData.coordinate,
+                            photo: this.state.currentSkatePinModalData.photo,
+                            description: this.state.currentSkatePinModalData.description,
+                            reviews: addReview,
+                            startTime: this.state.currentSkatePinModalData.startTime,
+                            endTime: this.state.currentSkatePinModalData.endTime,
+                            pinColor: this.state.currentSkatePinModalData.pinColor,
+                            skateDate: this.state.currentSkatePinModalData.skateDate
+                        }
+                    })
+                });
+            })
+        } else {
+            reviewSkater(createdBy._id, pinID, this.state.reviewMessage).then(res => {
+                getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
+                    this.setState({
+                        markers: skatePins,
+                        currentSkatePinModalData: {
+                            _id: this.state.currentSkatePinModalData._id,
+                            title: this.state.currentSkatePinModalData.title,
+                            createdBy: {
+                                _id: this.state.currentSkatePinModalData.createdBy._id,
+                                userName: this.state.currentSkatePinModalData.createdBy.userName
+                            },
+                            coordinate: this.state.currentSkatePinModalData.coordinate,
+                            photo: this.state.currentSkatePinModalData.photo,
+                            description: this.state.currentSkatePinModalData.description,
+                            reviews: addReview,
+                            startTime: this.state.currentSkatePinModalData.startTime,
+                            endTime: this.state.currentSkatePinModalData.endTime,
+                            pinColor: this.state.currentSkatePinModalData.pinColor,
+                            skateDate: this.state.currentSkatePinModalData.skateDate
+                        }
+                    })
+                });
+            })
+        }
+        this.leaveReview();
+    }
+
     _renderSkatePinModal() {
 
         let travelType = 'walk';
         let lat, lng, start, end;
 
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
-      
+
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
             lng = this.state.currentLng;
@@ -399,16 +471,22 @@ export default class SkateMapScreen extends React.Component {
         if (title == "Skate spot") {
             return (
                 <SkateMarkerModal
+                    pinID={_id}
                     onDeletePress={() => this.deleteUsersPin(_id, this.state.loggedInUserData.accessToken)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
                     modalTitle={title}
-                    createdBy={createdBy.userName}
+                    createdBy={createdBy}
                     onUserNamePress={() => console.warn(createdBy._id)} // .id
                     photo={photo}
                     description={description}
+                    onLeaveReview={() => this.leaveReview()}
+                    leaveReview={this.state.leaveReview}
                     reviews={reviews}
+                    reviewMessage={this.state.reviewMessage}
+                    onReviewChange={(review) => this.setReviewMessage(review)}
+                    onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
@@ -416,19 +494,25 @@ export default class SkateMapScreen extends React.Component {
         } else {
             return (
                 <SkateMarkerModal
+                    pinID={_id}
                     onDeletePress={() => this.deleteUsersPin(_id, this.state.loggedInUserData.accessToken)}
                     onBackButtonPress={() => this.closeMarkerModal()}
                     onBackdropPress={() => this.closeMarkerModal()}
                     isVisible={this.state.isMarkerModalVisible}
                     modalTitle={title}
-                    createdBy={createdBy.userName}
+                    createdBy={createdBy}
                     onUserNamePress={() => console.warn(createdBy._id)} // .id
                     description={description}
                     photo={photo}
                     skateDate={skateDate}
                     startTime={startTime}
                     endTime={endTime}
-                    reviews={reviews}
+                    onLeaveReview={() => this.leaveReview()}
+                    leaveReview={this.state.leaveReview}
+                    reviews={reviews}// get the 
+                    reviewMessage={this.state.reviewMessage}
+                    onReviewChange={(review) => this.setReviewMessage(review)}
+                    onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
