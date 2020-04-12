@@ -79,7 +79,7 @@ export default class SkateMapScreen extends React.Component {
             isPinSubmissionValid: '',
             hasComponentDidUpdateFired: false,
             reviewMessage: '',
-            leaveReview:false
+            leaveReview: false
         };
     }
 
@@ -311,7 +311,7 @@ export default class SkateMapScreen extends React.Component {
                     },
                     photo: 'No Picture Yet',
                     description: this.state.description,
-                    reviews:[],
+                    reviews: [],
                     pinColor: 'blue'
                 }
             }
@@ -387,28 +387,71 @@ export default class SkateMapScreen extends React.Component {
 
     leaveReview() {
         this.setState({ leaveReview: !this.state.leaveReview, reviewMessage: "" })
-    }  
-
-    setReviewMessage(message) {
-        this.setState({ reviewMessage: message  })
     }
 
-    submitReview(pinID, title, createdBy) {    
+    setReviewMessage(message) {
+        this.setState({ reviewMessage: message })
+    }
+
+    submitReview(pinID, title, createdBy) {
+
+        let reviewObject = {
+            reviewerName: this.state.loggedInUserData.userName,
+            reviewMessage: this.state.reviewMessage
+        }
+
+        let addReview = this.state.currentSkatePinModalData.reviews.concat(reviewObject)
+
         if (title == "Skate spot") {
             reviewSkateSpot(pinID, this.state.reviewMessage).then(res => {
-                this.leaveReview();        
                 getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
-                    this.setState({ markers: skatePins })
+                    this.setState({
+                        markers: skatePins,
+                        currentSkatePinModalData: {
+                            _id: this.state.currentSkatePinModalData._id,
+                            title: this.state.currentSkatePinModalData.title,
+                            createdBy: {
+                                _id: this.state.currentSkatePinModalData.createdBy._id,
+                                userName: this.state.currentSkatePinModalData.createdBy.userName
+                            },
+                            coordinate: this.state.currentSkatePinModalData.coordinate,
+                            photo: this.state.currentSkatePinModalData.photo,
+                            description: this.state.currentSkatePinModalData.description,
+                            reviews: addReview,
+                            startTime: this.state.currentSkatePinModalData.startTime,
+                            endTime: this.state.currentSkatePinModalData.endTime,
+                            pinColor: this.state.currentSkatePinModalData.pinColor,
+                            skateDate: this.state.currentSkatePinModalData.skateDate
+                        }
+                    })
                 });
             })
         } else {
-            reviewSkater(createdBy._id, pinID,this.state.reviewMessage).then(res => {           
-                this.leaveReview();
+            reviewSkater(createdBy._id, pinID, this.state.reviewMessage).then(res => {
                 getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
-                    this.setState({ markers: skatePins })
+                    this.setState({
+                        markers: skatePins,
+                        currentSkatePinModalData: {
+                            _id: this.state.currentSkatePinModalData._id,
+                            title: this.state.currentSkatePinModalData.title,
+                            createdBy: {
+                                _id: this.state.currentSkatePinModalData.createdBy._id,
+                                userName: this.state.currentSkatePinModalData.createdBy.userName
+                            },
+                            coordinate: this.state.currentSkatePinModalData.coordinate,
+                            photo: this.state.currentSkatePinModalData.photo,
+                            description: this.state.currentSkatePinModalData.description,
+                            reviews: addReview,
+                            startTime: this.state.currentSkatePinModalData.startTime,
+                            endTime: this.state.currentSkatePinModalData.endTime,
+                            pinColor: this.state.currentSkatePinModalData.pinColor,
+                            skateDate: this.state.currentSkatePinModalData.skateDate
+                        }
+                    })
                 });
             })
         }
+        this.leaveReview();
     }
 
     _renderSkatePinModal() {

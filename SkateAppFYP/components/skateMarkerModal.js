@@ -102,10 +102,11 @@ export default class SkateMarkerModal extends React.Component {
                             :
                             <ScrollView style={{ marginTop: 5 }}>
                                 {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
+                                  //  console.warn("here", review)
                                     return (
                                         <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
                                             <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                            <Text key={i} >{review.reviewMessage}</Text>
+                                            <Text >{review.reviewMessage}</Text>
                                         </View>
                                     )
                                 })}
