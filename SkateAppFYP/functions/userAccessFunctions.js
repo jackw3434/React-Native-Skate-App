@@ -85,7 +85,7 @@ export const submitProfilePicture = async (profilePicture) => {
     bodyFormData.append('file', {
         uri: profilePicture.uri,
         type: profilePicture.type,
-        name: profilePicture.origURL
+        name: profilePicture.uri
     })
 
     await getData().then(userObject => {

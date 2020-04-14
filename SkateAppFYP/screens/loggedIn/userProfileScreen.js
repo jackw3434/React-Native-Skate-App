@@ -163,24 +163,10 @@ export default class UserProfileScreen extends React.Component {
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
     render() {
-        //console.warn(this.state.profilePicture)
-        let skateStanceoptions = [
-            { label: "Unsure", value: "Unsure" },
-            { label: "Reguler - (Left foot at the front)", value: "Regular" },
-            { label: "Goofy - (Right foot at the front)", value: "Goofy" },
-            { label: "Mongo - (Left foot at the back)", value: "Mongo" },
-            { label: "Goofy Mongo - (right foot at the back)", value: "Goofy Mongo" },
-        ]
-
-        let ageOptions = [
-            { label: "18-24", value: "18-24" },
-            { label: "25-30", value: "25-30" },
-            { label: "30+", value: "30+" },
-        ]
+        //console.warn(this.state.profilePicture)       
 
         let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
-
 
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
