@@ -6,7 +6,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
-import { editMe } from '../../functions/userAccessFunctions';
+import { submitProfilePicture, editMe } from '../../functions/userAccessFunctions';
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default class UserProfileScreen extends React.Component {
@@ -81,8 +81,7 @@ export default class UserProfileScreen extends React.Component {
          * The first arg is the options object for customization (it can also be null or omitted for default options),
          * The second arg is the callback which sends object: response (more info in the API Reference)
          */
-        ImagePicker.showImagePicker(options, (response) => {
-            // console.warn('Response = ', response);
+        ImagePicker.showImagePicker(options, (response) => {      
 
             if (response.didCancel) {
                 console.warn('User cancelled image picker');
@@ -92,20 +91,15 @@ export default class UserProfileScreen extends React.Component {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
                 //const source = { uri: response.uri };
-
                 // You can also display the image using data:
-                // const source = { uri: "data:image/jpeg;base64," + response.data };
-                //let string ='data:image/jpeg;base64,' + response.data ;
-                console.warn('setState source 1 ');
-                // editMe(this.state._id, { profilePicture: response.data }, this.state.accessToken).then(res => {
-                //     // console.warn("userprofile edit res", res)
-                //     console.warn('setState source 2 ');
+                // const source = { uri: "data:image/jpeg;base64," + response.data };              
+                // console.warn('setState source 1 ',response.fileName, response.path, response.type, response.uri);
 
-                // })
-                this.setState({ profilePicture: response.data });
+                submitProfilePicture(response).then(res => {
+                    this.setState({ profilePicture: response.data });
+                })
             }
         });
-
 
         // // Launch Camera:
         // ImagePicker.launchCamera(options, (response) => {

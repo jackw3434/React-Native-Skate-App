@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 
-//const url = 'http://localhost:8000';
-const url = 'https://skate-api.herokuapp.com';
+const url = 'http://localhost:7080';
+//const url = 'https://skate-api.herokuapp.com';
 
 const getData = async () => {
     try {
@@ -78,6 +78,62 @@ export const editMe = async (meToEdit) => {
             });
     })
 };
+
+export const submitProfilePicture = async (profilePicture) => {
+
+    let bodyFormData = new FormData()
+    bodyFormData.append('file', {
+        uri: profilePicture.uri,
+        type: profilePicture.type,
+        name: profilePicture.origURL
+    })
+
+    await getData().then(userObject => {
+        return axios.post(url + '/api/upload',
+            bodyFormData,
+            {
+                headers: {
+                    'Authorization': userObject.accessToken,
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(response => {
+                console.warn("done ", response.data);
+                console.warn("done ");
+                return response;
+            })
+            .catch(function (error) {
+                console.warn("error ", error, error.response, error.file);
+                if (error === "Error: Request failed with status code 409") {
+                    return error.response;
+                }
+                if (error == "Error: Network Error") {
+                    return error;
+                }
+                return error.response;
+            });
+    })
+};
+
+// export const getProfilePicture = () => {
+//     return axios.get(url + '/api/files/'+)
+//         .then(response => {
+//             //console.warn("hit api() ", response);
+//             return response;
+//         })
+//         .catch(function (error) {
+//             if (error === "Error: Request failed with status code 409") {
+//                 console.log(error.response);
+//                 return error.response;
+//             }
+//             if (error === "Error: Network Error") {
+//                 console.log("loginUser() Network Error: ", error);
+//                 return;
+//             }
+
+//             return error.response;
+//         });
+// };
 
 export const hitAPI = () => {
     return axios.get(url + '/api')
