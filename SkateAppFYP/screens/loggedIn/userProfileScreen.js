@@ -6,17 +6,21 @@ import RNPickerSelect from 'react-native-picker-select';
 import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
-import { submitProfilePicture, editMe } from '../../functions/userAccessFunctions';
+import { submitProfilePicture, editMe, getProfilePicture, getProfilePicturePromise } from '../../functions/userAccessFunctions';
 const screenHeight = Math.round(Dimensions.get('window').height);
+import axios from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class UserProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            spinner: true,
             _id: '',
             userName: '',
             userEmail: '',
             reviews: [],
+            pictureFilename: '',
             profilePicture: '',
             skateStance: "",
             age: "",
@@ -46,24 +50,41 @@ export default class UserProfileScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.getData().then(userObject => {
-            // console.warn(userObject.profilePicture)
-            this.setState({
-                _id: userObject._id,
-                userName: userObject.userName,
-                region: userObject.region,
-                userEmail: userObject.userEmail,
-                reviews: userObject.reviews,
-                // profilePicture: userObject.profilePicture,
-                skateStance: userObject.skateStance,
-                age: userObject.age,
-                styleOfSkating: userObject.styleOfSkating,
-                reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
-                skateIQ: userObject.skateIQ,
-                achievedTricks: userObject.achievedTricks,
-                accessToken: userObject.accessToken
-            })
-        })
+
+        //const url = 'https://localhost:7080';
+        const url = 'https://skate-api.herokuapp.com';
+        this.getData().then(async userObject => {
+            console.warn("here")
+            await axios.get(url + '/api/image/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
+                .then(response => {              
+
+                    this.setState({
+                        _id: userObject._id,
+                        userName: userObject.userName,
+                        region: userObject.region,
+                        userEmail: userObject.userEmail,
+                        reviews: userObject.reviews,
+                        profilePicture: response.config.url,
+                        skateStance: userObject.skateStance,
+                        age: userObject.age,
+                        styleOfSkating: userObject.styleOfSkating,
+                        reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
+                        skateIQ: userObject.skateIQ,
+                        achievedTricks: userObject.achievedTricks,
+                        accessToken: userObject.accessToken,
+                        spinner: !this.state.spinner
+                    })
+                })
+                .catch(function (error) {
+                    if (error === "Error: Request failed with status code 409") {
+                        return error.response;
+                    }
+                    if (error == "Error: Network Error") {
+                        return error;
+                    }
+                    return error.response;
+                });              
+        })        
     }
 
     chooseImage() {
@@ -81,7 +102,7 @@ export default class UserProfileScreen extends React.Component {
          * The first arg is the options object for customization (it can also be null or omitted for default options),
          * The second arg is the callback which sends object: response (more info in the API Reference)
          */
-        ImagePicker.showImagePicker(options, (response) => {      
+        ImagePicker.showImagePicker(options, (response) => {
 
             if (response.didCancel) {
                 console.warn('User cancelled image picker');
@@ -90,11 +111,11 @@ export default class UserProfileScreen extends React.Component {
             } else if (response.customButton) {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
-                //const source = { uri: response.uri };
+                const source = { uri: response.uri };
                 // You can also display the image using data:
                 // const source = { uri: "data:image/jpeg;base64," + response.data };              
                 // console.warn('setState source 1 ',response.fileName, response.path, response.type, response.uri);
-
+                //console.warn(response.data)
                 submitProfilePicture(response).then(res => {
                     this.setState({ profilePicture: response.data });
                 })
@@ -162,8 +183,7 @@ export default class UserProfileScreen extends React.Component {
     };
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
-    render() {
-        //console.warn(this.state.profilePicture)       
+    render() {       
 
         let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
@@ -182,7 +202,7 @@ export default class UserProfileScreen extends React.Component {
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={{ uri: "data:image/jpeg;base64," + profilePicture.toString() }} style={styles.picture} />
+                                        <Image source={{ uri: this.state.profilePicture }} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
@@ -339,6 +359,12 @@ export default class UserProfileScreen extends React.Component {
                     <View style={styles.bottomSection}>
                         <SkateTrickList usersAchievedtricks={achievedTricks} />
                     </View>
+                    <Spinner
+                        visible={this.state.spinner}
+                        textContent={'Loading...'}
+                        textStyle={styles.spinnerTextStyle}
+                        indicatorStyle={styles.indicatorStyle}
+                    />
                 </View>
             </AppContainer>
         );

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const url = 'http://localhost:7080';
-//const url = 'https://skate-api.herokuapp.com';
+//const url = 'http://localhost:7080';
+const url = 'https://skate-api.herokuapp.com';
 
 const getData = async () => {
     try {
@@ -63,11 +63,11 @@ export const loginUser = (userObject) => {
 export const editMe = async (meToEdit) => {
     await getData().then(userObject => {
         return axios.put(url + '/api/users/me/' + userObject._id, meToEdit, { headers: { Authorization: userObject.accessToken } })
-            .then(response => {            
+            .then(response => {
                 //console.warn("done ", response);
                 return response;
             })
-            .catch(function (error) {              
+            .catch(function (error) {
                 if (error === "Error: Request failed with status code 409") {
                     return error.response;
                 }
@@ -82,6 +82,7 @@ export const editMe = async (meToEdit) => {
 export const submitProfilePicture = async (profilePicture) => {
 
     let bodyFormData = new FormData()
+
     bodyFormData.append('file', {
         uri: profilePicture.uri,
         type: profilePicture.type,
@@ -89,7 +90,7 @@ export const submitProfilePicture = async (profilePicture) => {
     })
 
     await getData().then(userObject => {
-        return axios.post(url + '/api/upload',
+        return axios.post(url + '/api/user/me/' + userObject._id + '/upload',
             bodyFormData,
             {
                 headers: {
@@ -115,24 +116,27 @@ export const submitProfilePicture = async (profilePicture) => {
     })
 };
 
-// export const getProfilePicture = () => {
-//     return axios.get(url + '/api/files/'+)
-//         .then(response => {
-//             //console.warn("hit api() ", response);
-//             return response;
-//         })
-//         .catch(function (error) {
-//             if (error === "Error: Request failed with status code 409") {
-//                 console.log(error.response);
+// export const getProfilePicture = async () => {
+//     await getData().then(userObject => {
+//         return axios.get(url + '/api/files/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
+//             .then(response => {
+//                 //console.warn("get picture ", response);
+//                // if(response.data){
+//                    //cb(null,response)
+//                     return response;
+//                // }
+               
+//             })
+//             .catch(function (error) {
+//                 if (error === "Error: Request failed with status code 409") {
+//                     return error.response;
+//                 }
+//                 if (error == "Error: Network Error") {
+//                     return error;
+//                 }
 //                 return error.response;
-//             }
-//             if (error === "Error: Network Error") {
-//                 console.log("loginUser() Network Error: ", error);
-//                 return;
-//             }
-
-//             return error.response;
-//         });
+//             });
+//     })
 // };
 
 export const hitAPI = () => {
