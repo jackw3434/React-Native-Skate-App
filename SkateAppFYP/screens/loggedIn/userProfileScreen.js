@@ -7,15 +7,17 @@ import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
 import { submitProfilePicture, editMe, getProfilePicture, getProfilePicturePromise } from '../../functions/userAccessFunctions';
-const screenHeight = Math.round(Dimensions.get('window').height);
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
+const screenHeight = Math.round(Dimensions.get('window').height);
+ //const url = 'https://localhost:7080';
+ const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
 
 export default class UserProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            spinner: true,
+            // spinner: true,
             _id: '',
             userName: '',
             userEmail: '',
@@ -51,29 +53,28 @@ export default class UserProfileScreen extends React.Component {
 
     componentDidMount() {
 
-        //const url = 'https://localhost:7080';
-        const url = 'https://skate-api.herokuapp.com';
+       
         this.getData().then(async userObject => {
-            console.warn("here")
-            await axios.get(url + '/api/image/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
-                .then(response => {              
 
-                    this.setState({
-                        _id: userObject._id,
-                        userName: userObject.userName,
-                        region: userObject.region,
-                        userEmail: userObject.userEmail,
-                        reviews: userObject.reviews,
-                        profilePicture: response.config.url,
-                        skateStance: userObject.skateStance,
-                        age: userObject.age,
-                        styleOfSkating: userObject.styleOfSkating,
-                        reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
-                        skateIQ: userObject.skateIQ,
-                        achievedTricks: userObject.achievedTricks,
-                        accessToken: userObject.accessToken,
-                        spinner: !this.state.spinner
-                    })
+            this.setState({
+                _id: userObject._id,
+                userName: userObject.userName,
+               // region: userObject.region,
+                userEmail: userObject.userEmail,
+                reviews: userObject.reviews,
+                skateStance: userObject.skateStance,
+                age: userObject.age,
+                //styleOfSkating: userObject.styleOfSkating,
+                //reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
+                skateIQ: userObject.skateIQ,
+                achievedTricks: userObject.achievedTricks,
+                accessToken: userObject.accessToken,
+                // spinner: !this.state.spinner
+            })
+            await axios.get(url + '/api/image/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
+                .then(response => {
+                    this.setState({ profilePicture: response.config.url })
+                    console.warn("here")
                 })
                 .catch(function (error) {
                     if (error === "Error: Request failed with status code 409") {
@@ -83,8 +84,8 @@ export default class UserProfileScreen extends React.Component {
                         return error;
                     }
                     return error.response;
-                });              
-        })        
+                });
+        })
     }
 
     chooseImage() {
@@ -111,13 +112,61 @@ export default class UserProfileScreen extends React.Component {
             } else if (response.customButton) {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
-                const source = { uri: response.uri };
-                // You can also display the image using data:
+                // const source = { uri: response.uri };           
                 // const source = { uri: "data:image/jpeg;base64," + response.data };              
                 // console.warn('setState source 1 ',response.fileName, response.path, response.type, response.uri);
-                //console.warn(response.data)
-                submitProfilePicture(response).then(res => {
-                    this.setState({ profilePicture: response.data });
+
+                this.setState({ profilePicture: "data:image/jpeg;base64," + response.data });
+
+
+                let bodyFormData = new FormData()
+
+                bodyFormData.append('file', {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.uri
+                })
+
+                this.getData().then(userObject => {
+                    return axios.post(url + '/api/user/me/' + userObject._id + '/upload',
+                        bodyFormData,
+                        {
+                            headers: {
+                                'Authorization': userObject.accessToken,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                        .then(response => {
+                            console.warn("done ", response.data.file.filename);                          
+
+                            let userObject = {
+                                _id: this.state._id,
+                                userName: this.state.userName,
+                                profilePicture: response.data.file.filename,
+                                userEmail: this.state.userEmail,
+                                reviews: this.state.reviews,
+                                skateStance: this.state.skateStance,
+                                age: this.state.age,
+                                achievedTricks: this.state.achievedTricks,
+                                accessToken: this.state.accessToken
+                            }
+                
+                            try {
+                                AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+                            } catch (e) {
+                                //     console.warn("saving error: ", e)
+                            }
+                        })
+                        .catch(function (error) {
+                            console.warn("error ", error, error.response, error.file);
+                            if (error === "Error: Request failed with status code 409") {
+                                return error.response;
+                            }
+                            if (error == "Error: Network Error") {
+                                return error;
+                            }
+                            return error.response;
+                        });
                 })
             }
         });
@@ -140,6 +189,7 @@ export default class UserProfileScreen extends React.Component {
             let userObject = {
                 _id: this.state._id,
                 userName: this.state.userName,
+                profilePicture: this.state.profilePicture,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
@@ -162,9 +212,23 @@ export default class UserProfileScreen extends React.Component {
         this.setState({ age: age })
         editMe({ age: age }).then(res => {
 
+            // let userObject = {
+            //     _id: data._id,
+            //     profilePicture: data.profilePicture,
+            //     userName: data.name,
+            //     userEmail: data.email,
+            //     age: data.age,
+            //     skateStance: data.skateStance,     
+            //     achievedTricks: data.achievedTricks,
+            //     usersCreatedPins: data.usersCreatedPins,
+            //     reviews: reviews,
+            //     accessToken: data.accessToken
+            //   }
+
             let userObject = {
                 _id: this.state._id,
                 userName: this.state.userName,
+                profilePicture: this.state.profilePicture,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
@@ -183,7 +247,7 @@ export default class UserProfileScreen extends React.Component {
     };
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
-    render() {       
+    render() {
 
         let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
@@ -202,7 +266,7 @@ export default class UserProfileScreen extends React.Component {
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={{ uri: this.state.profilePicture }} style={styles.picture} />
+                                        <Image source={{ uri: this.state.profilePicture.toString() }} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
@@ -359,12 +423,6 @@ export default class UserProfileScreen extends React.Component {
                     <View style={styles.bottomSection}>
                         <SkateTrickList usersAchievedtricks={achievedTricks} />
                     </View>
-                    <Spinner
-                        visible={this.state.spinner}
-                        textContent={'Loading...'}
-                        textStyle={styles.spinnerTextStyle}
-                        indicatorStyle={styles.indicatorStyle}
-                    />
                 </View>
             </AppContainer>
         );

@@ -48,7 +48,7 @@ export default class SingleTrickScreen extends React.Component {
                 region: userObject.region,
                 userEmail: userObject.userEmail,
                 reviews: userObject.reviews,
-                // profilePicture: userObject.profilePicture,
+                profilePicture: userObject.profilePicture,
                 skateStance: userObject.skateStance,
                 age: userObject.age,
                 achievedTricks: userObject.achievedTricks,
@@ -84,10 +84,11 @@ export default class SingleTrickScreen extends React.Component {
     
         this.setState({ isEnabled: learned, achievedTricks: newAchievedTricks });
 
-        editMe({ achievedTricks: trickName, learned: learned }).then(res => {
+        editMe({ achievedTricks: trickName, learned: learned }).then(res => {           
 
             let userObject = {
                 _id: this.state._id,
+                profilePicture:this.state.profilePicture,
                 userName: this.state.userName,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,

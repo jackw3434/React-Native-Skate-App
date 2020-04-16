@@ -79,42 +79,42 @@ export const editMe = async (meToEdit) => {
     })
 };
 
-export const submitProfilePicture = async (profilePicture) => {
+// export const submitProfilePicture = async (profilePicture) => {
 
-    let bodyFormData = new FormData()
+//     let bodyFormData = new FormData()
 
-    bodyFormData.append('file', {
-        uri: profilePicture.uri,
-        type: profilePicture.type,
-        name: profilePicture.uri
-    })
+//     bodyFormData.append('file', {
+//         uri: profilePicture.uri,
+//         type: profilePicture.type,
+//         name: profilePicture.uri
+//     })
 
-    await getData().then(userObject => {
-        return axios.post(url + '/api/user/me/' + userObject._id + '/upload',
-            bodyFormData,
-            {
-                headers: {
-                    'Authorization': userObject.accessToken,
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then(response => {
-                console.warn("done ", response.data);
-                console.warn("done ");
-                return response;
-            })
-            .catch(function (error) {
-                console.warn("error ", error, error.response, error.file);
-                if (error === "Error: Request failed with status code 409") {
-                    return error.response;
-                }
-                if (error == "Error: Network Error") {
-                    return error;
-                }
-                return error.response;
-            });
-    })
-};
+//     await getData().then(userObject => {
+//         return axios.post(url + '/api/user/me/' + userObject._id + '/upload',
+//             bodyFormData,
+//             {
+//                 headers: {
+//                     'Authorization': userObject.accessToken,
+//                     'Content-Type': 'multipart/form-data'
+//                 }
+//             })
+//             .then(response => {
+//                 console.warn("done ", response.data);
+//                // console.warn("done ");
+//                 return response.data;
+//             })
+//             .catch(function (error) {
+//                 console.warn("error ", error, error.response, error.file);
+//                 if (error === "Error: Request failed with status code 409") {
+//                     return error.response;
+//                 }
+//                 if (error == "Error: Network Error") {
+//                     return error;
+//                 }
+//                 return error.response;
+//             });
+//     })
+// };
 
 // export const getProfilePicture = async () => {
 //     await getData().then(userObject => {
