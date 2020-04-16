@@ -10,8 +10,8 @@ import { submitProfilePicture, editMe, getProfilePicture, getProfilePicturePromi
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 const screenHeight = Math.round(Dimensions.get('window').height);
- //const url = 'https://localhost:7080';
- const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
+//const url = 'https://localhost:7080';
+const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
 
 export default class UserProfileScreen extends React.Component {
     constructor(props) {
@@ -53,13 +53,13 @@ export default class UserProfileScreen extends React.Component {
 
     componentDidMount() {
 
-       
+
         this.getData().then(async userObject => {
 
             this.setState({
                 _id: userObject._id,
                 userName: userObject.userName,
-               // region: userObject.region,
+                // region: userObject.region,
                 userEmail: userObject.userEmail,
                 reviews: userObject.reviews,
                 skateStance: userObject.skateStance,
@@ -118,7 +118,6 @@ export default class UserProfileScreen extends React.Component {
 
                 this.setState({ profilePicture: "data:image/jpeg;base64," + response.data });
 
-
                 let bodyFormData = new FormData()
 
                 bodyFormData.append('file', {
@@ -137,7 +136,6 @@ export default class UserProfileScreen extends React.Component {
                             }
                         })
                         .then(response => {
-                            console.warn("done ", response.data.file.filename);                          
 
                             let userObject = {
                                 _id: this.state._id,
@@ -150,7 +148,7 @@ export default class UserProfileScreen extends React.Component {
                                 achievedTricks: this.state.achievedTricks,
                                 accessToken: this.state.accessToken
                             }
-                
+
                             try {
                                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
                             } catch (e) {
@@ -211,19 +209,6 @@ export default class UserProfileScreen extends React.Component {
     setAge(age) {
         this.setState({ age: age })
         editMe({ age: age }).then(res => {
-
-            // let userObject = {
-            //     _id: data._id,
-            //     profilePicture: data.profilePicture,
-            //     userName: data.name,
-            //     userEmail: data.email,
-            //     age: data.age,
-            //     skateStance: data.skateStance,     
-            //     achievedTricks: data.achievedTricks,
-            //     usersCreatedPins: data.usersCreatedPins,
-            //     reviews: reviews,
-            //     accessToken: data.accessToken
-            //   }
 
             let userObject = {
                 _id: this.state._id,

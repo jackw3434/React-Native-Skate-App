@@ -67,7 +67,6 @@ export default class SingleTrickScreen extends React.Component {
         }
     }
 
-
     navTo(route) {
         this.props.navigation.navigate(route)
     }
