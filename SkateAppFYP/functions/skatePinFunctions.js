@@ -57,8 +57,7 @@ export const deleteSkatePin = (skatePinID, accessToken) => {
 
 export const getAllSkatePins = (accessToken) => {
     return axios.get(url + '/api/skatePins', { headers: { Authorization: accessToken } })
-        .then(response => {
-            //       console.warn("getAllSkatePins() ", response.data.skatePins);
+        .then(response => {      
             return response.data.skatePins;
         })
         .catch(function (error) {

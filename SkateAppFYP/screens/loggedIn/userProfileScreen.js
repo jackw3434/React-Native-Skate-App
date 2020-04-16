@@ -74,7 +74,6 @@ export default class UserProfileScreen extends React.Component {
             await axios.get(url + '/api/image/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
                 .then(response => {
                     this.setState({ profilePicture: response.config.url })
-                    console.warn("here")
                 })
                 .catch(function (error) {
                     if (error === "Error: Request failed with status code 409") {
@@ -113,8 +112,7 @@ export default class UserProfileScreen extends React.Component {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
                 // const source = { uri: response.uri };           
-                // const source = { uri: "data:image/jpeg;base64," + response.data };              
-                // console.warn('setState source 1 ',response.fileName, response.path, response.type, response.uri);
+                // const source = { uri: "data:image/jpeg;base64," + response.data };            
 
                 this.setState({ profilePicture: "data:image/jpeg;base64," + response.data });
 
@@ -201,8 +199,6 @@ export default class UserProfileScreen extends React.Component {
             } catch (e) {
                 //     console.warn("saving error: ", e)
             }
-            //  console.warn("userprofile edit skateStance", res)
-
         })
     };
 

@@ -50,7 +50,7 @@ export default class LoginScreen extends React.Component {
           }
 
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
-            // console.warn("getData ",  userObject)
+       
             this.setState({ spinner: !this.state.spinner })
             let userData = response.data.userData;
             let accessToken = response.data.accessToken;
