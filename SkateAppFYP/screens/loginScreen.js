@@ -50,7 +50,7 @@ export default class LoginScreen extends React.Component {
           }
 
           if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
-           // console.warn("getData ",  userObject)
+       
             this.setState({ spinner: !this.state.spinner })
             let userData = response.data.userData;
             let accessToken = response.data.accessToken;
@@ -68,12 +68,12 @@ export default class LoginScreen extends React.Component {
         return;
       }
     } catch (e) {
-     // console.warn(" failed login getData ", e)
+      // console.warn(" failed login getData ", e)
     }
   }
 
   storeData = async (data) => {
-    //console.warn("data ", data)
+ 
     let reviews = [];
     for (let i = 0; i < data.reviews.length; i++) {
 
@@ -90,15 +90,12 @@ export default class LoginScreen extends React.Component {
       userName: data.name,
       userEmail: data.email,
       age: data.age,
-      region: data.region,
-      skateStance: data.skateStance,
-      styleOfSkating: data.styleOfSkating,
-      reasonsForUsingTheApp: data.reasonsForUsingTheApp,
+      skateStance: data.skateStance,     
       achievedTricks: data.achievedTricks,
       usersCreatedPins: data.usersCreatedPins,
-        reviews: reviews,
+      reviews: reviews,
       accessToken: data.accessToken
-    }
+    }    
 
     try {
       await AsyncStorage.setItem("userObject", JSON.stringify(userObject))

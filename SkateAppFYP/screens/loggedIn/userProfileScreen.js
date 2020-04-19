@@ -6,17 +6,23 @@ import RNPickerSelect from 'react-native-picker-select';
 import SkateTrickList from '../../components/skateTrickList'
 import Icon from '../../Icon/Icon'
 import AsyncStorage from '@react-native-community/async-storage';
-import { editMe } from '../../functions/userAccessFunctions';
+import { submitProfilePicture, editMe, getProfilePicture, getProfilePicturePromise } from '../../functions/userAccessFunctions';
+import axios from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
 const screenHeight = Math.round(Dimensions.get('window').height);
+//const url = 'https://localhost:7080';
+const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
 
 export default class UserProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // spinner: true,
             _id: '',
             userName: '',
             userEmail: '',
             reviews: [],
+            pictureFilename: '',
             profilePicture: '',
             skateStance: "",
             age: "",
@@ -46,23 +52,38 @@ export default class UserProfileScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.getData().then(userObject => {
-            // console.warn(userObject.profilePicture)
+
+
+        this.getData().then(async userObject => {
+
             this.setState({
                 _id: userObject._id,
                 userName: userObject.userName,
-                region: userObject.region,
+                // region: userObject.region,
                 userEmail: userObject.userEmail,
                 reviews: userObject.reviews,
-                // profilePicture: userObject.profilePicture,
                 skateStance: userObject.skateStance,
                 age: userObject.age,
-                styleOfSkating: userObject.styleOfSkating,
-                reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
+                //styleOfSkating: userObject.styleOfSkating,
+                //reasonsForUsingTheApp: userObject.reasonsForUsingTheApp,
                 skateIQ: userObject.skateIQ,
                 achievedTricks: userObject.achievedTricks,
-                accessToken: userObject.accessToken
+                accessToken: userObject.accessToken,
+                // spinner: !this.state.spinner
             })
+            await axios.get(url + '/api/image/' + userObject.profilePicture, { headers: { Authorization: userObject.accessToken } })
+                .then(response => {
+                    this.setState({ profilePicture: response.config.url })
+                })
+                .catch(function (error) {
+                    if (error === "Error: Request failed with status code 409") {
+                        return error.response;
+                    }
+                    if (error == "Error: Network Error") {
+                        return error;
+                    }
+                    return error.response;
+                });
         })
     }
 
@@ -82,7 +103,6 @@ export default class UserProfileScreen extends React.Component {
          * The second arg is the callback which sends object: response (more info in the API Reference)
          */
         ImagePicker.showImagePicker(options, (response) => {
-            // console.warn('Response = ', response);
 
             if (response.didCancel) {
                 console.warn('User cancelled image picker');
@@ -91,21 +111,61 @@ export default class UserProfileScreen extends React.Component {
             } else if (response.customButton) {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
-                //const source = { uri: response.uri };
+                // const source = { uri: response.uri };           
+                // const source = { uri: "data:image/jpeg;base64," + response.data };            
 
-                // You can also display the image using data:
-                // const source = { uri: "data:image/jpeg;base64," + response.data };
-                //let string ='data:image/jpeg;base64,' + response.data ;
-                console.warn('setState source 1 ');
-                // editMe(this.state._id, { profilePicture: response.data }, this.state.accessToken).then(res => {
-                //     // console.warn("userprofile edit res", res)
-                //     console.warn('setState source 2 ');
+                this.setState({ profilePicture: "data:image/jpeg;base64," + response.data });
 
-                // })
-                this.setState({ profilePicture: response.data });
+                let bodyFormData = new FormData()
+
+                bodyFormData.append('file', {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.uri
+                })
+
+                this.getData().then(userObject => {
+                    return axios.post(url + '/api/user/me/' + userObject._id + '/upload',
+                        bodyFormData,
+                        {
+                            headers: {
+                                'Authorization': userObject.accessToken,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                        .then(response => {
+
+                            let userObject = {
+                                _id: this.state._id,
+                                userName: this.state.userName,
+                                profilePicture: response.data.file.filename,
+                                userEmail: this.state.userEmail,
+                                reviews: this.state.reviews,
+                                skateStance: this.state.skateStance,
+                                age: this.state.age,
+                                achievedTricks: this.state.achievedTricks,
+                                accessToken: this.state.accessToken
+                            }
+
+                            try {
+                                AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+                            } catch (e) {
+                                //     console.warn("saving error: ", e)
+                            }
+                        })
+                        .catch(function (error) {
+                            console.warn("error ", error, error.response, error.file);
+                            if (error === "Error: Request failed with status code 409") {
+                                return error.response;
+                            }
+                            if (error == "Error: Network Error") {
+                                return error;
+                            }
+                            return error.response;
+                        });
+                })
             }
         });
-
 
         // // Launch Camera:
         // ImagePicker.launchCamera(options, (response) => {
@@ -125,6 +185,7 @@ export default class UserProfileScreen extends React.Component {
             let userObject = {
                 _id: this.state._id,
                 userName: this.state.userName,
+                profilePicture: this.state.profilePicture,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
@@ -138,8 +199,6 @@ export default class UserProfileScreen extends React.Component {
             } catch (e) {
                 //     console.warn("saving error: ", e)
             }
-            //  console.warn("userprofile edit skateStance", res)
-
         })
     };
 
@@ -150,6 +209,7 @@ export default class UserProfileScreen extends React.Component {
             let userObject = {
                 _id: this.state._id,
                 userName: this.state.userName,
+                profilePicture: this.state.profilePicture,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,
                 skateStance: this.state.skateStance,
@@ -169,24 +229,9 @@ export default class UserProfileScreen extends React.Component {
 
     //Street, Ramps, Park, Oldschool, Flatland// Learn to skate, teach others to skate, make friends with other skaters
     render() {
-        //console.warn(this.state.profilePicture)
-        let skateStanceoptions = [
-            { label: "Unsure", value: "Unsure" },
-            { label: "Reguler - (Left foot at the front)", value: "Regular" },
-            { label: "Goofy - (Right foot at the front)", value: "Goofy" },
-            { label: "Mongo - (Left foot at the back)", value: "Mongo" },
-            { label: "Goofy Mongo - (right foot at the back)", value: "Goofy Mongo" },
-        ]
-
-        let ageOptions = [
-            { label: "18-24", value: "18-24" },
-            { label: "25-30", value: "25-30" },
-            { label: "30+", value: "30+" },
-        ]
 
         let { _id, userName, userEmail, reviews, profilePicture, skateStance, age, styleOfSkating, reasonsForUsingTheApp, achievedTricks } = this.state;
         let skateIQ = achievedTricks.length
-
 
         return (
             <AppContainer passNav={this.props} isNested={true} scrollView={true} pageTitle={userName + "'s profile"}>
@@ -202,7 +247,7 @@ export default class UserProfileScreen extends React.Component {
                                 :
                                 <View style={{ height: "100%", width: "110%" }}>
                                     <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
-                                        <Image source={{ uri: "data:image/jpeg;base64," + profilePicture.toString() }} style={styles.picture} />
+                                        <Image source={{ uri: this.state.profilePicture.toString() }} style={styles.picture} />
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
                                         <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>

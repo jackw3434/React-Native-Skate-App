@@ -41,6 +41,8 @@ export default class SkateMapScreen extends React.Component {
             gpsStatus: "",
             showDateTimePicker: false,
             dateTimePickerMode: '',
+            epochStartTime: "",
+            epochEndTime: "",
             startOrEndTime: '',
             selectedDate: '',
             selectedTime: '',
@@ -227,7 +229,9 @@ export default class SkateMapScreen extends React.Component {
             startTime: '',
             endTime: '',
             description: '',
-            useCurrentOrSelectedLocation: ''
+            useCurrentOrSelectedLocation: '',
+            epochStartTime: "",
+            epochEndTime: "",
         })
     }
 
@@ -245,15 +249,38 @@ export default class SkateMapScreen extends React.Component {
             skateDate: '',
             startTime: '',
             endTime: '',
-            useCurrentOrSelectedLocation: ''
+            useCurrentOrSelectedLocation: '',
+            epochStartTime: "",
+            epochEndTime: "",
         })
     }
 
     submitPin(pinType) {
 
+        let expiresIn;   
+        let localDate = new Date().toLocaleDateString();
+        let dateNow = Date.parse(localDate) / 1000;
+        let timeRightNow = new Date().getTime() / 1000;
+        let begginningOfEventDay = Date.parse(this.state.skateDate) / 1000;
+        let eventEndTime = this.state.epochEndTime / 1000;
+        let dateToExpire = Date.now();
+
+        if (begginningOfEventDay > dateNow) {
+            let diff = begginningOfEventDay - dateNow;
+            let timeUntilEventEnds = eventEndTime - timeRightNow;
+            expiresIn = diff + timeUntilEventEnds;
+        } else {
+            // event is happening today!!           
+            expiresIn = eventEndTime - timeRightNow;           
+        }
+
+        dateToExpire += expiresIn*1000;    
+        dateToExpire = new Date(dateToExpire)      
+
         let pin;
 
         if (!this.state.mapCoordinatesToUse.latitude) {
+            // handle validation here
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
             if (pinType == "Here to teach") {
@@ -272,6 +299,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
+                    expireAt: dateToExpire,
                     reviews: this.state.loggedInUserData.reviews,
                     pinColor: 'orange'
                 };
@@ -294,6 +322,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
+                    expireAt: dateToExpire,
                     pinColor: 'red'
                 }
             }
@@ -523,29 +552,32 @@ export default class SkateMapScreen extends React.Component {
     setDateTime = (event, date) => {
 
         let utcSeconds = event.nativeEvent.timestamp;
+
         let selectedDate = new Date(utcSeconds).toLocaleDateString();
         let selectedTime = new Date(utcSeconds).toLocaleTimeString();
 
         if (Platform.OS == 'android') {
-
             if (event.type == "set") {
-
                 if (this.state.startOrEndTime == "startTime") {
-
-                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+                    this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false, epochStartTime: utcSeconds })
                 } else if (this.state.startOrEndTime == "endTime") {
-
-                    this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+                    this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false, epochEndTime: utcSeconds })
                 } else if (this.state.startOrEndTime == "Date") {
-
-                    this.setState({ skateDate: selectedDate, showDateTimePicker: false, date: new Date() })
+                    this.setState({ skateDate: selectedDate, showDateTimePicker: false, date: new Date(), epochDate: utcSeconds })
                 }
             }
             if (event.type == "dismissed") {
                 this.cancelDateTime();
             }
         } else {
-            this.setState({ selectedDate: selectedDate, selectedTime: selectedTime, date: date })
+            // this.setState({ selectedDate: selectedDate, selectedTime: selectedTime, date: date })
+            if (this.state.startOrEndTime == "startTime") {
+                this.setState({ startTime: selectedTime, selectedTime: selectedTime, epochStartTime: utcSeconds, date: date })
+            } else if (this.state.startOrEndTime == "endTime") {
+                this.setState({ endTime: selectedTime, selectedTime: selectedTime, epochEndTime: utcSeconds, date: date })
+            } else if (this.state.startOrEndTime == "Date") {
+                this.setState({ selectedDate: selectedDate, date: date, epochDate: utcSeconds })
+            }
         }
     }
 
@@ -564,24 +596,27 @@ export default class SkateMapScreen extends React.Component {
     }
 
     confirmStartTime() {
-        if (Platform.OS == 'ios' && this.state.selectedDate == "") {
+
+        if (Platform.OS == 'ios' && this.state.selectedTime == "") {
             let selectedTime = new Date().toLocaleTimeString();
-            this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+            this.setState({ startTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false, epochStartTime: new Date().getTime() })
         } else {
             this.setState({ startTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
         }
     }
 
     confirmEndTime() {
-        if (Platform.OS == 'ios' && this.state.selectedDate == "") {
+
+        if (Platform.OS == 'ios' && this.state.selectedTime == "") { // on change hasnt triggered for dateTimePicker            
             let selectedTime = new Date().toLocaleTimeString();
-            this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
+            this.setState({ endTime: selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false, epochEndTime: new Date().getTime() })
         } else {
             this.setState({ endTime: this.state.selectedTime, selectedTime: "", date: new Date(), showDateTimePicker: false })
         }
     }
 
     confirmSkateDate() {
+
         if (Platform.OS == 'ios' && this.state.selectedDate == "") {
             let selectedDate = new Date().toLocaleDateString();
             this.setState({ skateDate: selectedDate, showDateTimePicker: false, date: new Date() })

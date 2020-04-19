@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 
-//const url = 'http://localhost:8000';
+//const url = 'http://localhost:7080';
 const url = 'https://skate-api.herokuapp.com';
 
 
@@ -57,8 +57,7 @@ export const deleteSkatePin = (skatePinID, accessToken) => {
 
 export const getAllSkatePins = (accessToken) => {
     return axios.get(url + '/api/skatePins', { headers: { Authorization: accessToken } })
-        .then(response => {
-            //       console.warn("getAllSkatePins() ", response.data.skatePins);
+        .then(response => {      
             return response.data.skatePins;
         })
         .catch(function (error) {
