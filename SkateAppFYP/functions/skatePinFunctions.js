@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const url = 'http://localhost:7080';
-//const url = 'https://skate-api.herokuapp.com';
+//const url = 'http://localhost:7080';
+const url = 'https://skate-api.herokuapp.com';
 
 
 const getData = async () => {

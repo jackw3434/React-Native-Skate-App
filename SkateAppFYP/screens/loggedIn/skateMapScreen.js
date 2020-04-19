@@ -271,8 +271,7 @@ export default class SkateMapScreen extends React.Component {
             expiresIn = diff + timeUntilEventEnds;
         } else {
             // event is happening today!!           
-            expiresIn = eventEndTime - timeRightNow;
-            console.warn("expiresIn ", expiresIn)
+            expiresIn = eventEndTime - timeRightNow;           
         }
 
         dateToExpire += expiresIn*1000;    
