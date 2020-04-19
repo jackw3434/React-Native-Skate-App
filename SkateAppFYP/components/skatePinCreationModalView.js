@@ -45,9 +45,9 @@ export default class SkatePinCreationModalView extends React.Component {
                         </View>
                     }
                 </View>
-
-
-
+                {this.props.missingLocation &&
+                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Please select a location to use.</Text></View>
+                }
 
                 {/* // needs reworking 
                     //here to teach? display list of tricks and a wy to select them
@@ -65,7 +65,7 @@ export default class SkatePinCreationModalView extends React.Component {
                                 </View>
                             </View>
                             :
-                            <View style={{paddingBottom:20}}></View>
+                            <View style={{ paddingBottom: 20 }}></View>
                         }
                         {this.props.onPressSelectedLocation &&
                             <View style={{ paddingLeft: 5 }}>
@@ -106,6 +106,9 @@ export default class SkatePinCreationModalView extends React.Component {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
+                                {this.props.invalidDate &&
+                                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Cannot set pin for in the past.</Text></View>
+                                }
                             </View>
                         }
 

@@ -38,6 +38,7 @@ export default class SkateMapScreen extends React.Component {
             isGameOfSkateVisible: false,
             isMarkerModalVisible: false,
             locationProvider: false,
+            isLocationMissing: false,
             gpsStatus: "",
             showDateTimePicker: false,
             dateTimePickerMode: '',
@@ -53,6 +54,7 @@ export default class SkateMapScreen extends React.Component {
             },
             description: '',
             skateDate: '',
+            isSkateDateInvalid: false,
             startTime: '',
             endTime: '',
             markers: [],
@@ -183,6 +185,8 @@ export default class SkateMapScreen extends React.Component {
             skateDate: '',
             startTime: '',
             endTime: '',
+            isLocationMissing: false,
+            isSkateDateInvalid: false,
             useCurrentOrSelectedLocation: ''
         });
     };
@@ -217,6 +221,8 @@ export default class SkateMapScreen extends React.Component {
 
     cancelCreatingSkatePin() {
         this.setState({
+            isLocationMissing: false,
+            isSkateDateInvalid: false,
             isGameOfSkateVisible: false,
             isHereToTeachVisible: false,
             isNewSkateSpotVisible: false,
@@ -237,6 +243,8 @@ export default class SkateMapScreen extends React.Component {
 
     clearAfterPinSubmission() {
         this.setState({
+            isLocationMissing: false,
+            isSkateDateInvalid: false,
             isHereToTeachVisible: false,
             isGameOfSkateVisible: false,
             isNewSkateSpotVisible: false,
@@ -257,7 +265,7 @@ export default class SkateMapScreen extends React.Component {
 
     submitPin(pinType) {
 
-        let expiresIn;   
+        let expiresIn;
         let localDate = new Date().toLocaleDateString();
         let dateNow = Date.parse(localDate) / 1000;
         let timeRightNow = new Date().getTime() / 1000;
@@ -271,17 +279,20 @@ export default class SkateMapScreen extends React.Component {
             expiresIn = diff + timeUntilEventEnds;
         } else {
             // event is happening today!!           
-            expiresIn = eventEndTime - timeRightNow;           
+            expiresIn = eventEndTime - timeRightNow;
         }
 
-        dateToExpire += expiresIn*1000;    
-        dateToExpire = new Date(dateToExpire)      
+        dateToExpire += expiresIn * 1000;
+        dateToExpire = new Date(dateToExpire)
 
         let pin;
 
         if (!this.state.mapCoordinatesToUse.latitude) {
-            // handle validation here
-            console.warn("no coords", this.state.mapCoordinatesToUse);
+            console.warn("no coords")
+            this.setState({ isLocationMissing: true })            
+        } else if (dateToExpire < new Date() && pinType !== "Skate spot") {
+            console.warn("Invalid skate date ")
+            this.setState({ isSkateDateInvalid: true }) 
         } else {
             if (pinType == "Here to teach") {
                 pin = {
@@ -387,6 +398,7 @@ export default class SkateMapScreen extends React.Component {
     useCurrentLocation() {
         this.getCurrentPosition().then(position => {
             this.setState({
+                isLocationMissing: false,
                 useCurrentOrSelectedLocation: 'current',
                 mapCoordinatesToUse: { latitude: position.coords.latitude, longitude: position.coords.longitude },
                 locationProvider: true,
@@ -398,7 +410,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     selectLocationOnMap() {
-        this.setState({ useCurrentOrSelectedLocation: 'selected', isModalVisible: false, canTapMap: true })
+        this.setState({  isLocationMissing: false, useCurrentOrSelectedLocation: 'selected', isModalVisible: false, canTapMap: true })
     }
 
     returnFromMapLocationSelection() {
@@ -759,6 +771,7 @@ export default class SkateMapScreen extends React.Component {
                                         modalDescription="Let others know where you are going to be and teach someone a new trick!"
                                         createdBy={this.state.loggedInUserData.userName}
                                         locationProvider={this.state.locationProvider}
+                                        missingLocation={this.state.isLocationMissing}
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
                                         useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
@@ -766,6 +779,7 @@ export default class SkateMapScreen extends React.Component {
                                         onChangeText={(text) => { this.setState({ description: text }) }}
                                         onPressShowDatePicker={() => this.showDateOrTimePicker("Date", "Date")}
                                         skateDate={this.state.skateDate}
+                                        invalidDate={this.state.isSkateDateInvalid}
                                         onPressShowStartTimePicker={() => this.showDateOrTimePicker("Time", "startTime")}
                                         startTime={this.state.startTime}
                                         onPressShowEndTimePicker={() => this.showDateOrTimePicker("Time", "endTime")}
@@ -788,6 +802,7 @@ export default class SkateMapScreen extends React.Component {
                                         modalDescription="Let people know you want to have a skate with them."
                                         createdBy={this.state.loggedInUserData.userName}
                                         locationProvider={this.state.locationProvider}
+                                        missingLocation={this.state.isLocationMissing}
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
                                         useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
@@ -795,6 +810,7 @@ export default class SkateMapScreen extends React.Component {
                                         onChangeText={(text) => { this.setState({ description: text }) }}
                                         onPressShowDatePicker={() => this.showDateOrTimePicker("Date", "Date")}
                                         skateDate={this.state.skateDate}
+                                        invalidDate={this.state.isSkateDateInvalid}
                                         onPressShowStartTimePicker={() => this.showDateOrTimePicker("Time", "startTime")}
                                         startTime={this.state.startTime}
                                         onPressShowEndTimePicker={() => this.showDateOrTimePicker("Time", "endTime")}
