@@ -26,7 +26,7 @@ export default class SingleTrickScreen extends React.Component {
             reasonsForUsingTheApp: [],
             skateIQ: '',
             achievedTricks: [],
-            accessToken:""
+            accessToken: ""
         };
     }
 
@@ -75,19 +75,19 @@ export default class SingleTrickScreen extends React.Component {
 
         let newAchievedTricks;
 
-        if(learned){
+        if (learned) {
             newAchievedTricks = this.state.achievedTricks.concat(trickName)
         } else {
             newAchievedTricks = this.state.achievedTricks.filter(e => e !== trickName)
         }
-    
+
         this.setState({ isEnabled: learned, achievedTricks: newAchievedTricks });
 
-        editMe({ achievedTricks: trickName, learned: learned }).then(res => {           
+        editMe({ achievedTricks: trickName, learned: learned }).then(res => {
 
             let userObject = {
                 _id: this.state._id,
-                profilePicture:this.state.profilePicture,
+                profilePicture: this.state.profilePicture,
                 userName: this.state.userName,
                 userEmail: this.state.userEmail,
                 reviews: this.state.reviews,
@@ -122,12 +122,7 @@ export default class SingleTrickScreen extends React.Component {
                             value={this.state.isEnabled}
                         />
                     </View>
-
-                    <View style={{ paddingBottom: 10 }}>
-                        <Text>Description: {trick.description}</Text>
-                    </View>
-
-
+                    <Text style={{ fontSize: 24 }}>Video</Text>
                     <View style={{ height: 220, alignItems: 'center' }}>
                         <YoutubePlayer
                             height={500}
@@ -147,7 +142,21 @@ export default class SingleTrickScreen extends React.Component {
                             }}
                         />
                     </View>
-                    <Text>Video URL: {trick.videoUrl}</Text>
+                    <Text style={{ fontSize: 24, paddingBottom: 5 }}>How to {trick.name}</Text>
+                    <View style={{ paddingBottom: 10 }}>
+                        {!trick.description[0].stepTitle || !trick.description[0].stepDescription ?
+                            <Text style={{ fontSize: 18 }}>No description yet.</Text>
+                            :
+                            trick.description.map((descriptions, i) => {
+                                return (
+                                    <View key={i}>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 5 }}>Step: {descriptions.stepTitle}</Text>
+                                        <Text style={{ paddingBottom: 15 }}>{descriptions.stepDescription}</Text>
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
                 </View>
             </AppContainer>
         );

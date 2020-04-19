@@ -15,7 +15,7 @@ export default class TrickBookScreen extends React.Component {
         return (
             <AppContainer passNav={this.props} isNested={false} scrollView={true} pageTitle="Trick Book" pageTitleIcon="Book" iconViewBox="0 0 50 50">              
                
-                <View style={{paddingHorizontal:20}}>
+                <View style={{paddingHorizontal:20, paddingBottom:20}}>
                      <SkateTrickList trickBook={true} passNav={this.props}/>
                 </View>
                
@@ -25,13 +25,5 @@ export default class TrickBookScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 24,
-        textAlign: "center",
-    },
-    goBack: {
-        color: 'blue',
-        textAlign: "center",
-        paddingTop: '5%',
-    }
+   
 });
