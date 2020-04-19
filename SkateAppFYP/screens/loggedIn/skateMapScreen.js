@@ -258,26 +258,29 @@ export default class SkateMapScreen extends React.Component {
     submitPin(pinType) {
 
         let expiresIn;
+        let timeZoneOffset = 3600
         let localDate = new Date().toLocaleDateString();
         let dateNow = Date.parse(localDate) / 1000;
         let timeRightNow = new Date().getTime() / 1000;
-        let begginningOfEventDay = Date.parse(this.state.skateDate) / 1000;       
-        let eventEndTime = this.state.epochEndTime / 1000; 
-        
-        let dateToExpire;
-        console.warn("da ", new Date(this.state.skateDate).getTime())
+        let begginningOfEventDay = Date.parse(this.state.skateDate) / 1000;
+        let eventEndTime = this.state.epochEndTime / 1000;
+
+        let dateToExpire = Date.now();
+
         if (begginningOfEventDay > dateNow) {
             let diff = begginningOfEventDay - dateNow;
-            let timeUntilEventEnds = Math.round((eventEndTime - timeRightNow));
-            expiresIn = diff + timeUntilEventEnds;           
-            console.warn("expiresIn ", expiresIn)
+            let timeUntilEventEnds = eventEndTime - timeRightNow;
+            expiresIn = diff + timeUntilEventEnds;
         } else {
             // event is happening today!!           
-            expiresIn = Math.round((eventEndTime - timeRightNow));            
+            expiresIn = eventEndTime - timeRightNow;
             console.warn("expiresIn ", expiresIn)
         }
 
-        dateToExpire = new Date();
+        dateToExpire += expiresIn*1000;
+       // dateToExpire += timeZoneOffset*1000;
+        dateToExpire = new Date(dateToExpire)
+
         console.warn("dateToExpire ", dateToExpire)
 
         let pin;
@@ -301,7 +304,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
-                    expire_at:dateToExpire,
+                    expireAt: dateToExpire,
                     reviews: this.state.loggedInUserData.reviews,
                     pinColor: 'orange'
                 };
@@ -324,7 +327,7 @@ export default class SkateMapScreen extends React.Component {
                     skateDate: this.state.skateDate,
                     startTime: this.state.startTime,
                     endTime: this.state.endTime,
-                    expire_at:dateToExpire,
+                    expireAt: dateToExpire,
                     pinColor: 'red'
                 }
             }
