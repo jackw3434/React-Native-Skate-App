@@ -257,14 +257,12 @@ export default class SkateMapScreen extends React.Component {
 
     submitPin(pinType) {
 
-        let expiresIn;
-        let timeZoneOffset = 3600
+        let expiresIn;   
         let localDate = new Date().toLocaleDateString();
         let dateNow = Date.parse(localDate) / 1000;
         let timeRightNow = new Date().getTime() / 1000;
         let begginningOfEventDay = Date.parse(this.state.skateDate) / 1000;
         let eventEndTime = this.state.epochEndTime / 1000;
-
         let dateToExpire = Date.now();
 
         if (begginningOfEventDay > dateNow) {
@@ -277,15 +275,13 @@ export default class SkateMapScreen extends React.Component {
             console.warn("expiresIn ", expiresIn)
         }
 
-        dateToExpire += expiresIn*1000;
-       // dateToExpire += timeZoneOffset*1000;
-        dateToExpire = new Date(dateToExpire)
-
-        console.warn("dateToExpire ", dateToExpire)
+        dateToExpire += expiresIn*1000;    
+        dateToExpire = new Date(dateToExpire)      
 
         let pin;
 
         if (!this.state.mapCoordinatesToUse.latitude) {
+            // handle validation here
             console.warn("no coords", this.state.mapCoordinatesToUse);
         } else {
             if (pinType == "Here to teach") {
