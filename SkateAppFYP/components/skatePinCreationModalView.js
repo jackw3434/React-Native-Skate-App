@@ -2,13 +2,21 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import Icon from '../Icon/Icon';
 import SkateButton from './skateButton'
+import RNPickerSelect from 'react-native-picker-select';
 
 export default class SkatePinCreationModalView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            descriptor:[]
         };
     }
+
+    setDescriptor(descriptor) {
+     let array =  this.state.descriptor;
+     array.push(descriptor)
+        this.setState({ descriptor: array })       
+    };
 
     render() {
         return (
@@ -122,9 +130,60 @@ export default class SkatePinCreationModalView extends React.Component {
 
                     :
                     <View>
-                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Enter a description of the skate spot you have found and want to share:</Text>
+                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Select descriptions of the skate spot you have found and want to share:</Text>
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>                            
+                            <RNPickerSelect
+                                placeholder={{
+                                    label:  "select descriptor",
+                                    value:  "select descriptor"
+                                }}
+                                useNativeAndroidPickerStyle={false}
+                                placeholderTextColor="blue"
+                                value={{
+                                    label:  this.state.descriptor ? this.state.descriptor :"select descriptor",
+                                    value:  this.state.descriptor ? this.state.descriptor :"select descriptor"
+                                }}
+                                textInputProps={{
+                                    fontSize: 16,
+                                    borderWidth: 1,
+                                    borderColor: 'blue',
+                                    borderRadius: 10,
+                                    padding: 5,
+                                    marginLeft: 5,
+                                    paddingRight: Platform.OS == 'android' ? 30 : 0,
+                                    width: "100%"
+                                }}
+                                onValueChange={(descriptor) => {
+                                    if (descriptor != this.state.descriptor) {
+                                        this.setDescriptor(descriptor)
+                                    }
+                                }}
+                                items={[
+                                    { label: "street", value: "street" },
+                                    { label: "plaza", value: "plaza" },
+                                    { label: "ramp", value: "ramp" },
+                                    { label: "flat", value: "flat" },
+                                    { label: "smooth", value: "smooth" },
+                                    { label: "rough", value: "rough" },
+                                    { label: "large", value: "large" },
+                                    { label: "medium", value: "small" },
+                                    { label: "small", value: "small" },
+                                    { label: "busy", value: "busy" },
+                                    { label: "quiet", value: "quiet" },
+                                    { label: "flat-bank", value: "flat-bank" },
+                                    { label: "ledge", value: "ledge" },
+                                    { label: "stair set", value: "stair set" },
+                                    { label: "rail", value: "rail" },
+                                    { label: "transitions", value: "transitions" },
+                                    { label: "concrete", value: "concrete" },
+                                    { label: "metal", value: "metal" },
+                                    { label: "wood", value: "wood" },                                   
+                                ]}
+                            />
+                        </View>
                         <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
-                            <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput>
+                                <Text>{this.state.descriptor}</Text>
+                            {/* <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput> */}
                         </View>
                     </View>
                 }
