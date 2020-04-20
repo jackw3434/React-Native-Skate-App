@@ -12,6 +12,8 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
+    
+
     render() {  
         return (
             <Modal

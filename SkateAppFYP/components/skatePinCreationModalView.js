@@ -1,9 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 import Icon from '../Icon/Icon';
 import SkateButton from './skateButton'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import AsyncStorage from '@react-native-community/async-storage';
+import ImagePicker from 'react-native-image-picker';
+const screenHeight = Math.round(Dimensions.get('window').height);
+//const url = 'https://localhost:7080';
+const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
 
 export default class SkatePinCreationModalView extends React.Component {
     constructor(props) {
@@ -11,7 +15,8 @@ export default class SkatePinCreationModalView extends React.Component {
         this.state = {
             selectectedItems: [],
             isShownPicker: false,
-            achievedTricks:''
+            achievedTricks: '',
+            skateSpotPicture:''
         };
     }
 
@@ -27,13 +32,80 @@ export default class SkatePinCreationModalView extends React.Component {
 
     componentDidMount() {
         this.getData().then(userObject => {
-            this.setState({                
-                achievedTricks: userObject.achievedTricks,              
+            this.setState({
+                achievedTricks: userObject.achievedTricks,
             })
         })
     }
 
-    render() {    
+    chooseImage() {
+
+        const options = {
+            title: 'Take a picture',         
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+       
+        ImagePicker.showImagePicker(options, (response) => {
+
+            if (response.didCancel) {
+                console.warn('User cancelled image picker');
+            } else if (response.error) {
+                console.warn('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.warn('User tapped custom button: ', response.customButton);
+            } else {                          
+
+                this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
+
+                let bodyFormData = new FormData()
+
+                bodyFormData.append('file', {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.uri
+                })
+
+                // this.getData().then(userObject => {
+                //     return axios.post(url + '/api/skateSpotImage/' + userObject._id + '/upload',
+                //         bodyFormData,
+                //         {
+                //             headers: {
+                //                 'Authorization': userObject.accessToken,
+                //                 'Content-Type': 'multipart/form-data'
+                //             }
+                //         })
+                //         .then(response => {
+                           
+                //         })
+                //         .catch(function (error) {
+                //             console.warn("error ", error, error.response, error.file);
+                //             if (error === "Error: Request failed with status code 409") {
+                //                 return error.response;
+                //             }
+                //             if (error == "Error: Network Error") {
+                //                 return error;
+                //             }
+                //             return error.response;
+                //         });
+                // })
+            }
+        });
+
+        // // Launch Camera:
+        // ImagePicker.launchCamera(options, (response) => {
+        //     // Same code as in above section!
+        // });
+
+        // // Open Image Library:
+        // ImagePicker.launchImageLibrary(options, (response) => {
+        //     // Same code as in above section!
+        // });
+    }
+
+    render() {
         return (
             <View>
                 <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
@@ -68,67 +140,87 @@ export default class SkatePinCreationModalView extends React.Component {
                                 </View>
                             }
                         </View>
+                        {this.props.modalTitle === "New skate spot" &&
+                            <View style={styles.uploadAvatar}>
+                                {!this.state.skateSpotPicture || this.state.skateSpotPicture == "" ?
+                                    <TouchableOpacity onPress={() => this.chooseImage()}>
+                                        <Icon name='AddCamera' viewBox="-450 -450 1400 1400" height='130' width='130' style={{ alignSelf: 'center' }} />
+                                    </TouchableOpacity>
+                                    :
+                                    <View style={{ height: "100%", width: "110%" }}>
+                                        <View style={{ alignSelf: 'center', paddingRight: "9%" }}>
+                                            <Image source={{ uri: this.state.skateSpotPicture.toString() }} style={styles.picture} />
+                                        </View>
+                                        <View style={{ position: 'absolute', bottom: 0, right: 0 }}>
+                                            <TouchableOpacity style={styles.touchPencial} onPress={() => this.chooseImage()}>
+                                                <Icon name='Pencil' viewBox="-200 -200 900 900" height='40' width='40' fill="rgb(0, 0, 153)" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                }
+                            </View>
+                        }
                     </View>
                 }
                 {this.props.missingLocation &&
                     <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Please select a location to use.</Text></View>
-                }               
+                }
                 {this.props.onPressSelectedLocation ?
                     <View>
                         {this.props.modalTitle == "Here to teach" ?
                             <View>
-                                <Text style={{ paddingTop: 10, paddingBottom: 5 }}>What are you going to teach?</Text>                                
+                                <Text style={{ paddingTop: 10, paddingBottom: 5 }}>What are you going to teach?</Text>
                                 <TouchableOpacity
-                            onPress={() => {
-                                this.setState({ isShownPicker: !this.state.isShownPicker })
-                            }}
-                            style={{ alignItems: 'flex-start', padding: 5 }}>
-                            <Text style={{
-                                borderWidth: 1,
-                                borderColor: 'blue',
-                                borderRadius: 10,
-                                padding: 7,
-                                color: 'blue'
-                            }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
-                        </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>                         
-                            {this.state.isShownPicker ? <MultipleSelectPicker
-                                items={this.state.achievedTricks.map(trick => {
-                                    return(
-                                    { label: trick, value: trick }
-                                    )
-                                })}
-                                style={{ height: 150 }}
-                                onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
-                                selectedItems={this.state.selectectedItems}
-                                checkboxStyle={{ height: 20, width: 20 }}
-                            />
-                                : null
-                            }                        
-                        </View>
-                        <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
-                            <ScrollView
-                                ref={ref => { this.scrollview = ref }}
-                                onContentSizeChange={() => this.scrollview.scrollToEnd({ animated: true })}
-                                contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
-                                {this.props.description.length > 0 && this.props.description.map((item, index) => {
-                                    return (
-                                        <View style={{ alignItems: 'center', padding: 5 }}>
-                                            <Text style={{
-                                                borderWidth: 1,
-                                                borderColor: 'blue',
-                                                borderRadius: 10,
-                                                padding: 7,
-                                                color: 'blue'
-                                            }}
-                                                key={index}>
-                                                {item}
-                                            </Text>
-                                        </View>
-                                    )
-                                })}
-                            </ScrollView>
-                        </View>
+                                    onPress={() => {
+                                        this.setState({ isShownPicker: !this.state.isShownPicker })
+                                    }}
+                                    style={{ alignItems: 'flex-start', padding: 5 }}>
+                                    <Text style={{
+                                        borderWidth: 1,
+                                        borderColor: 'blue',
+                                        borderRadius: 10,
+                                        padding: 7,
+                                        color: 'blue'
+                                    }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
+                                </TouchableOpacity>
+                                <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
+                                    {this.state.isShownPicker ? <MultipleSelectPicker
+                                        items={this.state.achievedTricks.map(trick => {
+                                            return (
+                                                { label: trick, value: trick }
+                                            )
+                                        })}
+                                        style={{ height: 150 }}
+                                        onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
+                                        selectedItems={this.state.selectectedItems}
+                                        checkboxStyle={{ height: 20, width: 20 }}
+                                    />
+                                        : null
+                                    }
+                                </View>
+                                <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
+                                    <ScrollView
+                                        ref={ref => { this.scrollview = ref }}
+                                        onContentSizeChange={() => this.scrollview.scrollToEnd({ animated: true })}
+                                        contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
+                                        {this.props.description.length > 0 && this.props.description.map((item, index) => {
+                                            return (
+                                                <View style={{ alignItems: 'center', padding: 5 }}>
+                                                    <Text style={{
+                                                        borderWidth: 1,
+                                                        borderColor: 'blue',
+                                                        borderRadius: 10,
+                                                        padding: 7,
+                                                        color: 'blue'
+                                                    }}
+                                                        key={index}>
+                                                        {item}
+                                                    </Text>
+                                                </View>
+                                            )
+                                        })}
+                                    </ScrollView>
+                                </View>
                             </View>
                             :
                             <View style={{ paddingBottom: 20 }}></View>
@@ -191,7 +283,7 @@ export default class SkatePinCreationModalView extends React.Component {
                                 color: 'blue'
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>                         
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
                             {this.state.isShownPicker ? <MultipleSelectPicker
                                 items={[
                                     { label: "street", value: "street" },
@@ -225,7 +317,7 @@ export default class SkatePinCreationModalView extends React.Component {
                                 checkboxStyle={{ height: 20, width: 20 }}
                             />
                                 : null
-                            }                        
+                            }
                         </View>
                         <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
                             <ScrollView
@@ -281,5 +373,32 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 2,
         color: 'blue'
-    }
+    },
+    uploadAvatar: {
+        height: screenHeight / 10,
+        width: screenHeight / 10,
+        backgroundColor: 'rgba(211,211,211,0.7)',
+        borderRadius: screenHeight / 10,
+        borderColor: 'blue',
+        borderWidth: 2,
+        justifyContent: 'center',
+        zIndex: 100
+    },
+    picture: {
+        height: screenHeight / 10.4,
+        width: screenHeight / 10.5,
+       borderRadius: screenHeight / 10,
+        zIndex: 1
+    },
+    touchPencial: {
+        zIndex: 2,
+        height: screenHeight / 24,
+        width: screenHeight / 24,
+        borderRadius: screenHeight / 24,
+        borderWidth: 2,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(211,211,211,1)',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 });
