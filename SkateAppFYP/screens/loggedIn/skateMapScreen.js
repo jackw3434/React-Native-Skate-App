@@ -752,7 +752,7 @@ export default class SkateMapScreen extends React.Component {
                         {this.state.isNewSkateSpotVisible &&
                             <SkatePinCreationModalView
                                 modalTitle="New skate spot"
-                                modalDescription="Let others know about a good places to skate."
+                                modalDescription="Let others know about a good place to skate."
                                 createdBy={this.state.loggedInUserData.userName}
                                 locationProvider={this.state.locationProvider}
                                 onPressCurrentLocation={this.useCurrentLocation()}
