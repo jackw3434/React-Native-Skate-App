@@ -112,13 +112,11 @@ export default class SkatePinCreationModalView extends React.Component {
                                     <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Cannot set pin for in the past.</Text></View>
                                 }
                             </View>
-                        }                       
+                        }
                     </View>
                     :
                     <View>
-                        {!this.state.isShownPicker &&
-                            <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Select descriptions of the skate spot you have found and want to share:</Text>
-                        }
+                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Select descriptions of the skate spot you have found and want to share:</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 this.setState({ isShownPicker: !this.state.isShownPicker })
@@ -133,7 +131,7 @@ export default class SkatePinCreationModalView extends React.Component {
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
-                            <ScrollView>
+                            {/* <ScrollView> */}
                                 {this.state.isShownPicker ? <MultipleSelectPicker
                                     items={[
                                         { label: "street", value: "street" },
@@ -157,15 +155,13 @@ export default class SkatePinCreationModalView extends React.Component {
                                         { label: "wood", value: "wood" },
                                     ]}
                                     style={{ height: 200 }}
-                                    onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }) }}
+                                    onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
                                     selectedItems={this.state.selectectedItems}
-                                    buttonStyle={{ height: 100, justifyContent: 'center', alignItems: 'center' }}
-                                    buttonText='hello'
                                     checkboxStyle={{ height: 20, width: 20 }}
                                 />
                                     : null
                                 }
-                            </ScrollView>
+                            {/* </ScrollView> */}
                         </View>
                         <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
                             <ScrollView

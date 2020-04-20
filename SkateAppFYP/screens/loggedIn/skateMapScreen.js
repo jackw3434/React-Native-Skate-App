@@ -113,7 +113,7 @@ export default class SkateMapScreen extends React.Component {
 
     componentDidMount() {
         this.getData().then(userObject => {
-            getAllSkatePins(userObject.accessToken).then((skatePins) => {
+            getAllSkatePins(userObject.accessToken).then((skatePins) => {       
                 this.setState({ markers: skatePins, loggedInUserData: userObject })
             });
         }) // will need to eventually check list of user pins to enable delete            
@@ -288,11 +288,9 @@ export default class SkateMapScreen extends React.Component {
         let pin;
 
         if (!this.state.mapCoordinatesToUse.latitude) {
-            console.warn("no coords")
-            this.setState({ isLocationMissing: true })            
+            this.setState({ isLocationMissing: true })
         } else if (dateToExpire < new Date() && pinType !== "Skate spot") {
-            console.warn("Invalid skate date ")
-            this.setState({ isSkateDateInvalid: true }) 
+            this.setState({ isSkateDateInvalid: true })
         } else {
             if (pinType == "Here to teach") {
                 pin = {
@@ -338,7 +336,8 @@ export default class SkateMapScreen extends React.Component {
                 }
             }
 
-            if (pinType == "Skate spot") {
+            if (pinType == "Skate spot") {              
+               
                 pin = {
                     title: 'Skate spot',
                     createdBy: {
@@ -410,7 +409,7 @@ export default class SkateMapScreen extends React.Component {
     }
 
     selectLocationOnMap() {
-        this.setState({  isLocationMissing: false, useCurrentOrSelectedLocation: 'selected', isModalVisible: false, canTapMap: true })
+        this.setState({ isLocationMissing: false, useCurrentOrSelectedLocation: 'selected', isModalVisible: false, canTapMap: true })
     }
 
     returnFromMapLocationSelection() {
@@ -501,7 +500,7 @@ export default class SkateMapScreen extends React.Component {
         let lat, lng, start, end;
 
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
-
+     
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
             lng = this.state.currentLng;
@@ -724,7 +723,7 @@ export default class SkateMapScreen extends React.Component {
                                 longitude: marker.coordinate.longitude,
                             }}
                             title={marker.title}
-                            description={marker.description}
+                            description={marker.description[0]}
                             pinColor={marker.pinColor}
                             onPress={() => this.openMarkerModal(marker)}
                         />
@@ -758,7 +757,14 @@ export default class SkateMapScreen extends React.Component {
                                 onPressCurrentLocation={this.useCurrentLocation()}
                                 useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
                                 description={this.state.description}
-                                onChangeText={(text) => { this.setState({ description: text }) }}
+                                onChangePicker={(text) => {
+                                    let joinDescription = []
+                                    for (let index = 0; index < text.length; index++) {
+                                        const element = text[index].value;
+                                        joinDescription = joinDescription.concat(element);
+                                    }
+                                    this.setState({ description: joinDescription })
+                                }}
                                 onPressSubmitPin={() => this.submitPin("Skate spot")}
                                 onPressCancelPin={() => this.cancelCreatingSkatePin()}
                             />

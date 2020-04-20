@@ -13,6 +13,7 @@ export default class SkateMarkerModal extends React.Component {
     }
 
     render() {
+        console.warn(this.props.description)
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -45,11 +46,28 @@ export default class SkateMarkerModal extends React.Component {
                                 <Text>{this.props.photo}</Text>
                             </View>
                         }
-                        <ScrollView>
-                            <Text style={styles.descriptionContainer}>
-                                {this.props.description}
-                            </Text>
-                        </ScrollView>
+                        <View style={styles.descriptionContainer}>
+                            <ScrollView
+                                ref={ref => { this.scrollview = ref }}                                
+                                contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
+                                {this.props.description.map((descriptor, index) => {
+                                    return (
+                                        <View style={{ alignItems: 'center', padding: 5 }}>
+                                            <Text style={{
+                                                borderWidth: 1,
+                                                borderColor: 'blue',
+                                                borderRadius: 10,
+                                                padding: 4,
+                                                color: 'blue'
+                                            }}
+                                                key={index}>
+                                                 {descriptor}
+                                            </Text>
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+                        </View>                
                     </View>
 
                     {this.props.modalTitle !== "Skate spot" &&
@@ -101,7 +119,7 @@ export default class SkateMarkerModal extends React.Component {
                             </View>
                             :
                             <ScrollView style={{ marginTop: 5 }}>
-                                {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {                                
+                                {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
                                     return (
                                         <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
                                             <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
@@ -197,7 +215,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: 'blue',
         padding: 5
-    },   
+    },
     reviewTextInput: {
         height: 100,
         paddingLeft: 5,
