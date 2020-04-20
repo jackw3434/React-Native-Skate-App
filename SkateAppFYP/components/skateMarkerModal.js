@@ -12,8 +12,7 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
-    render() {
-        console.warn(this.props.description)
+    render() {  
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -82,7 +81,6 @@ export default class SkateMarkerModal extends React.Component {
                             </View>
                         </View>
                     }
-
                     <View style={styles.reviewHeaderRow}>
                         <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
                         <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>

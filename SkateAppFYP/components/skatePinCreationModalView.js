@@ -2,19 +2,38 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from '../Icon/Icon';
 import SkateButton from './skateButton'
-import RNPickerSelect from 'react-native-picker-select';
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class SkatePinCreationModalView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             selectectedItems: [],
-            isShownPicker: false
+            isShownPicker: false,
+            achievedTricks:''
         };
     }
 
-    render() {
+    getData = async () => {
+        try {
+            let userObject = await AsyncStorage.getItem("userObject");
+            return JSON.parse(userObject);
+        } catch (e) {
+            // error reading value
+            console.warn("e ", e)
+        }
+    }
+
+    componentDidMount() {
+        this.getData().then(userObject => {
+            this.setState({                
+                achievedTricks: userObject.achievedTricks,              
+            })
+        })
+    }
+
+    render() {    
         return (
             <View>
                 <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
@@ -53,21 +72,63 @@ export default class SkatePinCreationModalView extends React.Component {
                 }
                 {this.props.missingLocation &&
                     <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Please select a location to use.</Text></View>
-                }
-                {/* // needs reworking 
-                    //here to teach? display list of tricks and a wy to select them
-                    // game of skate? dont show anything here              
-                */}
+                }               
                 {this.props.onPressSelectedLocation ?
                     <View>
                         {this.props.modalTitle == "Here to teach" ?
                             <View>
-                                <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>What are you going to teach?</Text>
-                                <Text>display drop down list of tricks here</Text>
-                                <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10 }}>
-                                    {/* <TextInput multiline={true} style={{ flex: 1, paddingLeft: 5, paddingTop: 10, paddingBottom: 10, paddingRight: 5 }} onChangeText={this.props.onChangeText}>{this.props.description}</TextInput> */}
-                                    <Text>display list of tricks to teach here</Text>
-                                </View>
+                                <Text style={{ paddingTop: 10, paddingBottom: 5 }}>What are you going to teach?</Text>                                
+                                <TouchableOpacity
+                            onPress={() => {
+                                this.setState({ isShownPicker: !this.state.isShownPicker })
+                            }}
+                            style={{ alignItems: 'flex-start', padding: 5 }}>
+                            <Text style={{
+                                borderWidth: 1,
+                                borderColor: 'blue',
+                                borderRadius: 10,
+                                padding: 7,
+                                color: 'blue'
+                            }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>                         
+                            {this.state.isShownPicker ? <MultipleSelectPicker
+                                items={this.state.achievedTricks.map(trick => {
+                                    return(
+                                    { label: trick, value: trick }
+                                    )
+                                })}
+                                style={{ height: 150 }}
+                                onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
+                                selectedItems={this.state.selectectedItems}
+                                checkboxStyle={{ height: 20, width: 20 }}
+                            />
+                                : null
+                            }                        
+                        </View>
+                        <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
+                            <ScrollView
+                                ref={ref => { this.scrollview = ref }}
+                                onContentSizeChange={() => this.scrollview.scrollToEnd({ animated: true })}
+                                contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
+                                {this.props.description.length > 0 && this.props.description.map((item, index) => {
+                                    return (
+                                        <View style={{ alignItems: 'center', padding: 5 }}>
+                                            <Text style={{
+                                                borderWidth: 1,
+                                                borderColor: 'blue',
+                                                borderRadius: 10,
+                                                padding: 7,
+                                                color: 'blue'
+                                            }}
+                                                key={index}>
+                                                {item}
+                                            </Text>
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+                        </View>
                             </View>
                             :
                             <View style={{ paddingBottom: 20 }}></View>
@@ -109,7 +170,7 @@ export default class SkatePinCreationModalView extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 {this.props.invalidDate &&
-                                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Cannot set pin for in the past.</Text></View>
+                                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Invalid date or time.</Text></View>
                                 }
                             </View>
                         }
@@ -130,38 +191,41 @@ export default class SkatePinCreationModalView extends React.Component {
                                 color: 'blue'
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
-                            {/* <ScrollView> */}
-                                {this.state.isShownPicker ? <MultipleSelectPicker
-                                    items={[
-                                        { label: "street", value: "street" },
-                                        { label: "plaza", value: "plaza" },
-                                        { label: "ramp", value: "ramp" },
-                                        { label: "flat", value: "flat" },
-                                        { label: "smooth", value: "smooth" },
-                                        { label: "rough", value: "rough" },
-                                        { label: "large", value: "large" },
-                                        { label: "medium", value: "medium" },
-                                        { label: "small", value: "small" },
-                                        { label: "busy", value: "busy" },
-                                        { label: "quiet", value: "quiet" },
-                                        { label: "flat-bank", value: "flat-bank" },
-                                        { label: "ledge", value: "ledge" },
-                                        { label: "stair set", value: "stair set" },
-                                        { label: "rail", value: "rail" },
-                                        { label: "transitions", value: "transitions" },
-                                        { label: "concrete", value: "concrete" },
-                                        { label: "metal", value: "metal" },
-                                        { label: "wood", value: "wood" },
-                                    ]}
-                                    style={{ height: 200 }}
-                                    onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
-                                    selectedItems={this.state.selectectedItems}
-                                    checkboxStyle={{ height: 20, width: 20 }}
-                                />
-                                    : null
-                                }
-                            {/* </ScrollView> */}
+                        <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>                         
+                            {this.state.isShownPicker ? <MultipleSelectPicker
+                                items={[
+                                    { label: "street", value: "street" },
+                                    { label: "plaza", value: "plaza" },
+                                    { label: "park", value: "park" },
+                                    { label: "quater pipe", value: "quater pipe" },
+                                    { label: "bowl", value: "bowl" },
+                                    { label: "snake run", value: "snake run" },
+                                    { label: "half pipe", value: "half pipe" },
+                                    { label: "ramp", value: "ramp" },
+                                    { label: "flat", value: "flat" },
+                                    { label: "smooth", value: "smooth" },
+                                    { label: "rough", value: "rough" },
+                                    { label: "large", value: "large" },
+                                    { label: "medium", value: "medium" },
+                                    { label: "small", value: "small" },
+                                    { label: "busy", value: "busy" },
+                                    { label: "quiet", value: "quiet" },
+                                    { label: "flat-bank", value: "flat-bank" },
+                                    { label: "ledge", value: "ledge" },
+                                    { label: "stair set", value: "stair set" },
+                                    { label: "rail", value: "rail" },
+                                    { label: "transitions", value: "transitions" },
+                                    { label: "concrete", value: "concrete" },
+                                    { label: "metal", value: "metal" },
+                                    { label: "wood", value: "wood" }
+                                ]}
+                                style={{ height: 200 }}
+                                onSelectionsChange={(ele) => { this.setState({ selectectedItems: ele }), this.props.onChangePicker(ele) }}
+                                selectedItems={this.state.selectectedItems}
+                                checkboxStyle={{ height: 20, width: 20 }}
+                            />
+                                : null
+                            }                        
                         </View>
                         <View style={{ paddingLeft: 5, height: 80, width: '100%', borderWidth: 0.5, borderRadius: 10, borderColor: 'blue', marginBottom: 10, paddingVertical: 5 }}>
                             <ScrollView
@@ -209,7 +273,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'left',
         paddingTop: 10,
-        paddingBottom: 10
+        paddingBottom: 5
     },
     highlightedLocationOption: {
         borderWidth: 1,

@@ -693,7 +693,7 @@ export default class SkateMapScreen extends React.Component {
         }
     }
 
-    render() {
+    render() {      
         return (
             <AppContainer
                 passNav={this.props}
@@ -723,7 +723,7 @@ export default class SkateMapScreen extends React.Component {
                                 longitude: marker.coordinate.longitude,
                             }}
                             title={marker.title}
-                            description={marker.description[0]}
+                            description={marker.description && marker.description[0]}
                             pinColor={marker.pinColor}
                             onPress={() => this.openMarkerModal(marker)}
                         />
@@ -781,8 +781,15 @@ export default class SkateMapScreen extends React.Component {
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
                                         useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
-                                        description={this.state.description}
-                                        onChangeText={(text) => { this.setState({ description: text }) }}
+                                        description={this.state.description}                                       
+                                        onChangePicker={(text) => {
+                                            let joinDescription = []
+                                            for (let index = 0; index < text.length; index++) {
+                                                const element = text[index].value;
+                                                joinDescription = joinDescription.concat(element);
+                                            }                                          
+                                            this.setState({ description: joinDescription })
+                                        }}
                                         onPressShowDatePicker={() => this.showDateOrTimePicker("Date", "Date")}
                                         skateDate={this.state.skateDate}
                                         invalidDate={this.state.isSkateDateInvalid}
