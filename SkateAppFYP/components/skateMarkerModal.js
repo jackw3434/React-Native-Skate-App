@@ -12,9 +12,9 @@ export default class SkateMarkerModal extends React.Component {
         };
     }
 
-    
 
-    render() {  
+
+    render() {
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -31,49 +31,52 @@ export default class SkateMarkerModal extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.userNameContainer}>
-                        <Icon name='UserInCircleIcon' viewBox="20 0 250 250" height="30" width="30" fill='blue' />
+                        <Icon name='UserInCircleIcon' viewBox="0 0 250 250" height="30" width="30" fill='blue' />
                         <TouchableOpacity onPress={this.props.onUserNamePress}>
                             {this.props.modalTitle == "Skate spot" ?
                                 <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
                                 :
-                                <Text style={{ fontSize: 14 }}>{this.props.createdBy.userName}</Text>
+                                <Text style={{ fontSize: 14, paddingLeft:3 }}>{this.props.createdBy.userName}</Text>
                             }
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.descriptionText}>Description:</Text>
-                    <View style={styles.descriptionAndPhotoContainer}>
-                        {this.props.photo !== "" &&
-                            <View style={styles.photoContainer}>
-                                <Text>{this.props.photo}</Text>
+                    {this.props.modalTitle !== "Game of S.K.A.T.E" &&
+                        <View>
+                            <Text style={styles.descriptionText}>Description:</Text>
+                            <View style={styles.descriptionAndPhotoContainer}>
+                                {this.props.photo !== "" && this.props.modalTitle === "Skate spot" && 
+                                    <View style={styles.photoContainer}>
+                                        <Text>{this.props.photo}</Text>
+                                    </View>
+                                }
+                                <View style={styles.descriptionContainer}>
+                                    <ScrollView
+                                        ref={ref => { this.scrollview = ref }}
+                                        contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
+                                        {this.props.description.map((descriptor, index) => {
+                                            return (
+                                                <View style={{ alignItems: 'center', padding: 5 }}>
+                                                    <Text style={{
+                                                        borderWidth: 1,
+                                                        borderColor: 'blue',
+                                                        borderRadius: 10,
+                                                        padding: 4,
+                                                        color: 'blue'
+                                                    }}
+                                                        key={index}>
+                                                        {descriptor}
+                                                    </Text>
+                                                </View>
+                                            )
+                                        })}
+                                    </ScrollView>
+                                </View>
                             </View>
-                        }
-                        <View style={styles.descriptionContainer}>
-                            <ScrollView
-                                ref={ref => { this.scrollview = ref }}                                
-                                contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
-                                {this.props.description.map((descriptor, index) => {
-                                    return (
-                                        <View style={{ alignItems: 'center', padding: 5 }}>
-                                            <Text style={{
-                                                borderWidth: 1,
-                                                borderColor: 'blue',
-                                                borderRadius: 10,
-                                                padding: 4,
-                                                color: 'blue'
-                                            }}
-                                                key={index}>
-                                                 {descriptor}
-                                            </Text>
-                                        </View>
-                                    )
-                                })}
-                            </ScrollView>
-                        </View>                
-                    </View>
-
+                        </View>
+                    }
                     {this.props.modalTitle !== "Skate spot" &&
                         <View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop: 15, paddingBottom: 5 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop: 10, paddingBottom: 5 }}>
                                 <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
                                 <Text>{this.props.skateDate}</Text>
                             </View>
@@ -169,7 +172,8 @@ const styles = StyleSheet.create({
     userNameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingTop: 5
+        paddingTop: 5,
+       // paddingLeft:5
     },
     descriptionContainer: {
         paddingLeft: 5,

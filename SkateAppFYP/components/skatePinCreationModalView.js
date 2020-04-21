@@ -16,7 +16,7 @@ export default class SkatePinCreationModalView extends React.Component {
             selectectedItems: [],
             isShownPicker: false,
             achievedTricks: '',
-            skateSpotPicture:''
+            skateSpotPicture: ''
         };
     }
 
@@ -41,13 +41,13 @@ export default class SkatePinCreationModalView extends React.Component {
     chooseImage() {
 
         const options = {
-            title: 'Take a picture',         
+            title: 'Take a picture',
             storageOptions: {
                 skipBackup: true,
                 path: 'images',
             },
         };
-       
+
         ImagePicker.showImagePicker(options, (response) => {
 
             if (response.didCancel) {
@@ -56,7 +56,7 @@ export default class SkatePinCreationModalView extends React.Component {
                 console.warn('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
                 console.warn('User tapped custom button: ', response.customButton);
-            } else {                          
+            } else {
 
                 this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
 
@@ -78,7 +78,7 @@ export default class SkatePinCreationModalView extends React.Component {
                 //             }
                 //         })
                 //         .then(response => {
-                           
+
                 //         })
                 //         .catch(function (error) {
                 //             console.warn("error ", error, error.response, error.file);
@@ -141,6 +141,7 @@ export default class SkatePinCreationModalView extends React.Component {
                             }
                         </View>
                         {this.props.modalTitle === "New skate spot" &&
+                        
                             <View style={styles.uploadAvatar}>
                                 {!this.state.skateSpotPicture || this.state.skateSpotPicture == "" ?
                                     <TouchableOpacity onPress={() => this.chooseImage()}>
@@ -158,7 +159,9 @@ export default class SkatePinCreationModalView extends React.Component {
                                         </View>
                                     </View>
                                 }
+                                    
                             </View>
+                       
                         }
                     </View>
                 }
@@ -169,7 +172,7 @@ export default class SkatePinCreationModalView extends React.Component {
                     <View>
                         {this.props.modalTitle == "Here to teach" ?
                             <View>
-                                <Text style={{ paddingTop: 10, paddingBottom: 5 }}>What are you going to teach?</Text>
+                                <Text style={{ paddingTop: 10, paddingBottom: 5, paddingLeft: 5 }}>What are you going to teach?</Text>
                                 <TouchableOpacity
                                     onPress={() => {
                                         this.setState({ isShownPicker: !this.state.isShownPicker })
@@ -269,7 +272,7 @@ export default class SkatePinCreationModalView extends React.Component {
                     </View>
                     :
                     <View>
-                        <Text style={{ paddingTop: 15, paddingBottom: 5, paddingLeft: 5 }}>Select descriptions of the skate spot you have found and want to share:</Text>
+                        <Text style={{ paddingTop: 25, paddingBottom: 5, paddingLeft: 5 }}>Select descriptions of the skate spot you have found and want to share:</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 this.setState({ isShownPicker: !this.state.isShownPicker })
@@ -382,12 +385,18 @@ const styles = StyleSheet.create({
         borderColor: 'blue',
         borderWidth: 2,
         justifyContent: 'center',
-        zIndex: 100
+        zIndex: 100,
+        position:'absolute',
+        alignSelf:'flex-end',
+        right:30,
+        //top:10,
+        bottom:-15
+      
     },
     picture: {
         height: screenHeight / 10.4,
         width: screenHeight / 10.5,
-       borderRadius: screenHeight / 10,
+        borderRadius: screenHeight / 10,
         zIndex: 1
     },
     touchPencial: {
