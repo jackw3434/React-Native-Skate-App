@@ -68,29 +68,9 @@ export default class SkatePinCreationModalView extends React.Component {
                     name: response.uri
                 })
 
-                // this.getData().then(userObject => {
-                //     return axios.post(url + '/api/skateSpotImage/' + userObject._id + '/upload',
-                //         bodyFormData,
-                //         {
-                //             headers: {
-                //                 'Authorization': userObject.accessToken,
-                //                 'Content-Type': 'multipart/form-data'
-                //             }
-                //         })
-                //         .then(response => {
-
-                //         })
-                //         .catch(function (error) {
-                //             console.warn("error ", error, error.response, error.file);
-                //             if (error === "Error: Request failed with status code 409") {
-                //                 return error.response;
-                //             }
-                //             if (error == "Error: Network Error") {
-                //                 return error;
-                //             }
-                //             return error.response;
-                //         });
-                // })
+                return this.props.skateSpotImage(bodyFormData)
+                
+                // return bodyFormData to map screen for pin submission
             }
         });
 
@@ -362,7 +342,8 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 28,
         borderBottomWidth: 0.5,
-        width: '80%'
+        width: '80%',
+        borderBottomColor:'grey'
     },
     modalDescription: {
         fontSize: 16,

@@ -153,8 +153,7 @@ export default class UserProfileScreen extends React.Component {
                                 //     console.warn("saving error: ", e)
                             }
                         })
-                        .catch(function (error) {
-                            console.warn("error ", error, error.response, error.file);
+                        .catch(function (error) {                            
                             if (error === "Error: Request failed with status code 409") {
                                 return error.response;
                             }

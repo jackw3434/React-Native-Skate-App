@@ -83,7 +83,8 @@ export default class SkateMapScreen extends React.Component {
             isPinSubmissionValid: '',
             hasComponentDidUpdateFired: false,
             reviewMessage: '',
-            leaveReview: false
+            leaveReview: false,
+            skateSpotImageData:''
         };
     }
 
@@ -238,6 +239,7 @@ export default class SkateMapScreen extends React.Component {
             useCurrentOrSelectedLocation: '',
             epochStartTime: "",
             epochEndTime: "",
+            skateSpotImageData:''
         })
     }
 
@@ -260,6 +262,7 @@ export default class SkateMapScreen extends React.Component {
             useCurrentOrSelectedLocation: '',
             epochStartTime: "",
             epochEndTime: "",
+            skateSpotImageData:''
         })
     }
 
@@ -337,7 +340,8 @@ export default class SkateMapScreen extends React.Component {
             }
 
             if (pinType == "Skate spot") {              
-               
+               console.warn(this.state.skateSpotImageData)
+           
                 pin = {
                     title: 'Skate spot',
                     createdBy: {
@@ -355,7 +359,7 @@ export default class SkateMapScreen extends React.Component {
                 }
             }
 
-            postSkatePin(pin, this.state.loggedInUserData.accessToken).then(response => {
+            postSkatePin(pin, this.state.loggedInUserData.accessToken,this.state.skateSpotImageData).then(response => {
                 getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
                     this.setState({ markers: skatePins })
                 })
@@ -756,6 +760,7 @@ export default class SkateMapScreen extends React.Component {
                                 locationProvider={this.state.locationProvider}
                                 onPressCurrentLocation={this.useCurrentLocation()}
                                 useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
+                                skateSpotImage={(bodyFormData) =>this.setState({skateSpotImageData: bodyFormData})}
                                 description={this.state.description}
                                 onChangePicker={(text) => {
                                     let joinDescription = []
