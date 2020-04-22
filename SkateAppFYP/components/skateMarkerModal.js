@@ -1,20 +1,55 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Image, Dimensions } from 'react-native';
 import { deleteSkatePin, reviewSkater, reviewSkateSpot } from '../functions/skatePinFunctions'
+import AsyncStorage from '@react-native-community/async-storage';
 import Modal from "react-native-modal";
 import SkateButton from './skateButton'
 import Icon from '../Icon/Icon';
+import axios from 'axios';
+//const url = 'https://localhost:7080';
+const url = 'https://skate-api.herokuapp.com'; // only heroku url works for displaying images
+const screenHeight = Math.round(Dimensions.get('window').height);
+const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default class SkateMarkerModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            skateSpotPicture:''
         };
     }
 
+    getData = async () => {
+        try {
+            let userObject = await AsyncStorage.getItem("userObject");
+            return JSON.parse(userObject);
+        } catch (e) {
+            // error reading value
+            console.warn("e ", e)
+        }
+    } 
+
+    componentDidMount() {
+
+        this.getData().then(async userObject => {            
+            await axios.get(url + '/api/image/' + this.props.photo, { headers: { Authorization: userObject.accessToken } })
+                .then(response => {                 
+                    this.setState({ skateSpotPicture: response.config.url })
+                })
+                .catch(function (error) {
+                    if (error === "Error: Request failed with status code 409") {
+                        return error.response;
+                    }
+                    if (error == "Error: Network Error") {
+                        return error;
+                    }
+                    return error.response;
+                });
+        })
+    }
 
 
-    render() {
+    render() {      
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -36,7 +71,7 @@ export default class SkateMarkerModal extends React.Component {
                             {this.props.modalTitle == "Skate spot" ?
                                 <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
                                 :
-                                <Text style={{ fontSize: 14, paddingLeft:3 }}>{this.props.createdBy.userName}</Text>
+                                <Text style={{ fontSize: 14, paddingLeft: 3 }}>{this.props.createdBy.userName}</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -44,15 +79,18 @@ export default class SkateMarkerModal extends React.Component {
                         <View>
                             <Text style={styles.descriptionText}>Description:</Text>
                             <View style={styles.descriptionAndPhotoContainer}>
-                                {this.props.photo !== "" && this.props.modalTitle === "Skate spot" && 
+                                {this.props.photo !== "" && this.props.modalTitle === "Skate spot" &&
                                     <View style={styles.photoContainer}>
-                                        <Text>{this.props.photo}</Text>
+                                        {/* <Text>{this.props.photo}</Text> */}
+                                        <View style={{ alignSelf: 'center', paddingHorizontal:5 }}>
+                                        <Image source={{ uri: this.state.skateSpotPicture.toString() }} style={styles.picture} />
+                                    </View>
                                     </View>
                                 }
                                 <View style={styles.descriptionContainer}>
                                     <ScrollView
                                         ref={ref => { this.scrollview = ref }}
-                                        contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%', }}>
+                                        contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
                                         {this.props.description.map((descriptor, index) => {
                                             return (
                                                 <View style={{ alignItems: 'center', padding: 5 }}>
@@ -153,7 +191,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: 30,
         padding: 30,
-        width: '100%'
+        width: screenWidth-50
     },
     centerRow: {
         flexDirection: 'row',
@@ -172,16 +210,15 @@ const styles = StyleSheet.create({
     userNameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingTop: 5,
-       // paddingLeft:5
+        paddingTop: 5,      
     },
-    descriptionContainer: {
-        paddingLeft: 5,
-        paddingRight: 8,
+    descriptionContainer: {         
+   
         fontSize: 16,
         textAlign: 'left',
         flex: 1,
         flexWrap: 'wrap',
+       // width:"70%"
     },
     descriptionText: {
         color: 'blue',
@@ -189,23 +226,14 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingBottom: 5
     },
-    photoContainer: {
-        width: '25%',
-        borderWidth: 0.5,
-        borderRadius: 5,
-        paddingLeft: 5,
-        paddingTop: 3,
-        paddingRight: 2,
-        paddingBottom: 2
+    photoContainer: {        
     },
     descriptionAndPhotoContainer: {
         flexDirection: 'row',
-        paddingTop: 5,
-        paddingBottom: 5,
-        height: 100,
+        alignItems:'center',     
+        height: screenHeight/9,
         borderWidth: 0.5,
-        borderRadius: 5,
-        paddingLeft: 5,
+        borderRadius: 5,        
         flexDirection: 'row'
     },
     reviewHeaderRow: {
@@ -237,5 +265,12 @@ const styles = StyleSheet.create({
         borderColor: 'blue',
         padding: 5,
         backgroundColor: "white"
-    }
+    },
+    picture: {   
+       
+        height: screenHeight/10,
+        width: screenHeight/10,
+        borderRadius: 10,
+        zIndex: 1
+    },
 });

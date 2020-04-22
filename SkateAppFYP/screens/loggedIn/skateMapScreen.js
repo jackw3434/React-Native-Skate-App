@@ -14,6 +14,7 @@ import SkateMarkerModal from '../../components/skateMarkerModal'
 import SkateModalMenu from '../../components/skateModalMenu'
 import { openMap, createOpenLink } from 'react-native-open-maps';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 export default class SkateMapScreen extends React.Component {
     constructor(props) {
@@ -84,7 +85,7 @@ export default class SkateMapScreen extends React.Component {
             hasComponentDidUpdateFired: false,
             reviewMessage: '',
             leaveReview: false,
-            skateSpotImageData:''
+            skateSpotImageData: ''
         };
     }
 
@@ -114,7 +115,7 @@ export default class SkateMapScreen extends React.Component {
 
     componentDidMount() {
         this.getData().then(userObject => {
-            getAllSkatePins(userObject.accessToken).then((skatePins) => {       
+            getAllSkatePins(userObject.accessToken).then((skatePins) => {
                 this.setState({ markers: skatePins, loggedInUserData: userObject })
             });
         }) // will need to eventually check list of user pins to enable delete            
@@ -239,7 +240,7 @@ export default class SkateMapScreen extends React.Component {
             useCurrentOrSelectedLocation: '',
             epochStartTime: "",
             epochEndTime: "",
-            skateSpotImageData:''
+            skateSpotImageData: ''
         })
     }
 
@@ -262,7 +263,7 @@ export default class SkateMapScreen extends React.Component {
             useCurrentOrSelectedLocation: '',
             epochStartTime: "",
             epochEndTime: "",
-            skateSpotImageData:''
+            skateSpotImageData: ''
         })
     }
 
@@ -315,6 +316,12 @@ export default class SkateMapScreen extends React.Component {
                     reviews: this.state.loggedInUserData.reviews,
                     pinColor: 'orange'
                 };
+                postSkatePin(pin, this.state.loggedInUserData.accessToken).then(async response => {
+                    getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
+                        this.setState({ markers: skatePins })
+                        this.clearAfterPinSubmission();
+                    })
+                })
             }
 
             if (pinType == "Game of S.K.A.T.E") {
@@ -337,11 +344,16 @@ export default class SkateMapScreen extends React.Component {
                     expireAt: dateToExpire,
                     pinColor: 'red'
                 }
+                postSkatePin(pin, this.state.loggedInUserData.accessToken).then(async response => {
+                    getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
+                        this.setState({ markers: skatePins })
+                        this.clearAfterPinSubmission();
+                    })
+                })
             }
 
-            if (pinType == "Skate spot") {              
-               console.warn(this.state.skateSpotImageData)
-           
+            if (pinType == "Skate spot") {
+
                 pin = {
                     title: 'Skate spot',
                     createdBy: {
@@ -352,20 +364,42 @@ export default class SkateMapScreen extends React.Component {
                         latitude: this.state.mapCoordinatesToUse.latitude,
                         longitude: this.state.mapCoordinatesToUse.longitude
                     },
-                    photo: 'No Picture Yet',
                     description: this.state.description,
                     reviews: [],
                     pinColor: 'blue'
                 }
-            }
 
-            postSkatePin(pin, this.state.loggedInUserData.accessToken,this.state.skateSpotImageData).then(response => {
-                getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
-                    this.setState({ markers: skatePins })
+                postSkatePin(pin, this.state.loggedInUserData.accessToken).then(async response => {
+
+                    let pinID = response.data.newSkatePin._id;
+                    const url = 'https://skate-api.herokuapp.com';
+
+                    await axios.post(url + '/api/skateSpotImage/' + pinID + '/upload',
+                        this.state.skateSpotImageData,
+                        {
+                            headers: {
+                                'Authorization': this.state.loggedInUserData.accessToken,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                        .then(response => {
+                            getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
+                                this.setState({ markers: skatePins })
+                                this.clearAfterPinSubmission();
+                            })
+                        })
+                        .catch(function (error) {
+
+                            if (error === "Error: Request failed with status code 409") {
+                                return error.response;
+                            }
+                            if (error == "Error: Network Error") {
+                                return error;
+                            }
+                            return error.response;
+                        });
                 })
-            })
-
-            this.clearAfterPinSubmission();
+            }
         }
     }
 
@@ -504,7 +538,7 @@ export default class SkateMapScreen extends React.Component {
         let lat, lng, start, end;
 
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
-     
+
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
             lng = this.state.currentLng;
@@ -697,7 +731,7 @@ export default class SkateMapScreen extends React.Component {
         }
     }
 
-    render() {      
+    render() {
         return (
             <AppContainer
                 passNav={this.props}
@@ -760,7 +794,7 @@ export default class SkateMapScreen extends React.Component {
                                 locationProvider={this.state.locationProvider}
                                 onPressCurrentLocation={this.useCurrentLocation()}
                                 useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
-                                skateSpotImage={(bodyFormData) =>this.setState({skateSpotImageData: bodyFormData})}
+                                skateSpotImage={(bodyFormData) => { console.warn("bodyFormData ", bodyFormData); this.setState({ skateSpotImageData: bodyFormData }) }}
                                 description={this.state.description}
                                 onChangePicker={(text) => {
                                     let joinDescription = []
@@ -786,13 +820,13 @@ export default class SkateMapScreen extends React.Component {
                                         onPressCurrentLocation={() => this.useCurrentLocation()}
                                         onPressSelectedLocation={() => this.selectLocationOnMap()}
                                         useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
-                                        description={this.state.description}                                       
+                                        description={this.state.description}
                                         onChangePicker={(text) => {
                                             let joinDescription = []
                                             for (let index = 0; index < text.length; index++) {
                                                 const element = text[index].value;
                                                 joinDescription = joinDescription.concat(element);
-                                            }                                          
+                                            }
                                             this.setState({ description: joinDescription })
                                         }}
                                         onPressShowDatePicker={() => this.showDateOrTimePicker("Date", "Date")}

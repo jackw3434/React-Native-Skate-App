@@ -48,8 +48,34 @@ export default class SkatePinCreationModalView extends React.Component {
             },
         };
 
-        ImagePicker.showImagePicker(options, (response) => {
+        // ImagePicker.showImagePicker(options, (response) => {
 
+        //     if (response.didCancel) {
+        //         console.warn('User cancelled image picker');
+        //     } else if (response.error) {
+        //         console.warn('ImagePicker Error: ', response.error);
+        //     } else if (response.customButton) {
+        //         console.warn('User tapped custom button: ', response.customButton);
+        //     } else {
+
+           
+
+        //         let bodyFormData = new FormData()
+
+        //         bodyFormData.append('file', {
+        //             uri: response.uri,
+        //             type: response.type,
+        //             name: response.uri
+        //         })
+
+        //         this.props.skateSpotImage(bodyFormData)
+        //         this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
+        //         // return bodyFormData to map screen for pin submission
+        //     }
+        // });
+
+        // Launch Camera:
+        ImagePicker.launchCamera(options, (response) => {
             if (response.didCancel) {
                 console.warn('User cancelled image picker');
             } else if (response.error) {
@@ -58,7 +84,7 @@ export default class SkatePinCreationModalView extends React.Component {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
 
-                this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
+           
 
                 let bodyFormData = new FormData()
 
@@ -68,16 +94,11 @@ export default class SkatePinCreationModalView extends React.Component {
                     name: response.uri
                 })
 
-                return this.props.skateSpotImage(bodyFormData)
-                
+                this.props.skateSpotImage(bodyFormData)
+                this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
                 // return bodyFormData to map screen for pin submission
             }
         });
-
-        // // Launch Camera:
-        // ImagePicker.launchCamera(options, (response) => {
-        //     // Same code as in above section!
-        // });
 
         // // Open Image Library:
         // ImagePicker.launchImageLibrary(options, (response) => {
