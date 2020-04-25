@@ -58,7 +58,7 @@ export default class SkatePinCreationModalView extends React.Component {
         //         console.warn('User tapped custom button: ', response.customButton);
         //     } else {
 
-           
+
 
         //         let bodyFormData = new FormData()
 
@@ -84,7 +84,7 @@ export default class SkatePinCreationModalView extends React.Component {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
 
-           
+
 
                 let bodyFormData = new FormData()
 
@@ -142,7 +142,7 @@ export default class SkatePinCreationModalView extends React.Component {
                             }
                         </View>
                         {this.props.modalTitle === "New skate spot" &&
-                        
+
                             <View style={styles.uploadAvatar}>
                                 {!this.state.skateSpotPicture || this.state.skateSpotPicture == "" ?
                                     <TouchableOpacity onPress={() => this.chooseImage()}>
@@ -160,9 +160,9 @@ export default class SkatePinCreationModalView extends React.Component {
                                         </View>
                                     </View>
                                 }
-                                    
+
                             </View>
-                       
+
                         }
                     </View>
                 }
@@ -178,13 +178,20 @@ export default class SkatePinCreationModalView extends React.Component {
                                     onPress={() => {
                                         this.setState({ isShownPicker: !this.state.isShownPicker })
                                     }}
-                                    style={{ alignItems: 'flex-start', padding: 5 }}>
-                                    <Text style={{
-                                        borderWidth: 1,
-                                        borderColor: 'blue',
-                                        borderRadius: 10,
-                                        padding: 7,
-                                        color: 'blue'
+                                    style={{                                
+                                        alignSelf:'flex-start',
+                                         borderWidth: 1,
+                                         borderColor: 'blue',
+                                         borderRadius: 30,                          
+                                         color: 'white',
+                                         backgroundColor: 'rgba(0,0,255,0.9)',
+                                         alignItems: 'flex-start', 
+                                         padding: 1
+                                     }}>
+                                     <Text style={{                             
+                                         padding: 7,
+                                          color: 'white',
+                                          fontWeight:'bold'
                                     }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                                 </TouchableOpacity>
                                 <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
@@ -278,13 +285,20 @@ export default class SkatePinCreationModalView extends React.Component {
                             onPress={() => {
                                 this.setState({ isShownPicker: !this.state.isShownPicker })
                             }}
-                            style={{ alignItems: 'flex-start', padding: 5 }}>
-                            <Text style={{
+                            style={{                                
+                               alignSelf:'flex-start',
                                 borderWidth: 1,
                                 borderColor: 'blue',
-                                borderRadius: 10,
+                                borderRadius: 30,                          
+                                color: 'white',
+                                backgroundColor: 'rgba(0,0,255,0.9)',
+                                alignItems: 'flex-start', 
+                                padding: 1
+                            }}>
+                            <Text style={{                             
                                 padding: 7,
-                                color: 'blue'
+                                 color: 'white',
+                                 fontWeight:'bold'
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
@@ -364,7 +378,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         borderBottomWidth: 0.5,
         width: '80%',
-        borderBottomColor:'grey'
+        borderBottomColor: 'grey'
     },
     modalDescription: {
         fontSize: 16,
@@ -376,7 +390,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'blue',
         borderRadius: 10,
-        padding: 2,
+        padding: 3,
         color: 'blue'
     },
     uploadAvatar: {
@@ -388,12 +402,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         justifyContent: 'center',
         zIndex: 100,
-        position:'absolute',
-        alignSelf:'flex-end',
-        right:30,
+        position: 'absolute',
+        alignSelf: 'flex-end',
+        right: 30,
         //top:10,
-        bottom:-15
-      
+        bottom: -15
+
     },
     picture: {
         height: screenHeight / 10.4,
