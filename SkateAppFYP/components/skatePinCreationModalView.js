@@ -159,13 +159,14 @@ export default class SkatePinCreationModalView extends React.Component {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                }
-
-                            </View>
-
+                                }                               
+                            </View>                
                         }
                     </View>
                 }
+                 {!this.props.missingPhoto &&
+                                    <View><Text style={{ color: 'red', paddingLeft:5, paddingTop: 10, fontWeight: 'bold' }}>Please take a photo.</Text></View>
+                                }
                 {this.props.missingLocation &&
                     <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Please select a location to use.</Text></View>
                 }
@@ -193,6 +194,9 @@ export default class SkatePinCreationModalView extends React.Component {
                                           color: 'white'                                      
                                     }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                                 </TouchableOpacity>
+                                {this.props.invalidDescription &&
+                                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Must select at least 1 descriptor.</Text></View>
+                                }
                                 <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
                                     {this.state.isShownPicker ? <MultipleSelectPicker
                                         items={this.state.achievedTricks.map(trick => {
@@ -234,7 +238,7 @@ export default class SkatePinCreationModalView extends React.Component {
                             </View>
                             :
                             <View style={{ paddingBottom: 20 }}></View>
-                        }
+                        }                        
                         {this.props.onPressSelectedLocation &&
                             <View style={{ paddingLeft: 5 }}>
                                 <Text style={{ paddingBottom: 10 }}>Select the date and time you will be there:</Text>
@@ -299,6 +303,9 @@ export default class SkatePinCreationModalView extends React.Component {
                                  color: 'white',                             
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
+                        {this.props.invalidDescription &&
+                                    <View><Text style={{ color: 'red', textAlign: 'center', paddingTop: 10, fontWeight: 'bold' }}>Must select at least 1 descriptor.</Text></View>
+                                }
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
                             {this.state.isShownPicker ? <MultipleSelectPicker
                                 items={[

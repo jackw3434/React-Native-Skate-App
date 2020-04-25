@@ -37,7 +37,7 @@ export const postSkatePin = (skatePin, accessToken) => {
 export const deleteSkatePin = (skatePinID, accessToken) => {
 
     return axios.delete(url + '/api/skatePin/' + skatePinID, { headers: { Authorization: accessToken } })
-        .then(response => {
+        .then(response => {         
             return response;
         })
         .catch(function (error) {
