@@ -884,11 +884,11 @@ export default class SkateMapScreen extends React.Component {
                 </TouchableOpacity>
 
                 <View style={styles.bottomContainer}>
-                    {this.state.gpsStatus != "" &&
+                    {/* {this.state.gpsStatus != "" &&
                         <View>
                             <Text style={styles.gpsStatusStle}>{this.state.gpsStatus}</Text>
                         </View>
-                    }
+                    } */}
                     <TouchableOpacity style={styles.mapIconStyle} onPress={() => this.toggleModal()} >
                         <Icon name='PlusIcon' viewBox="-200 -150 900 900" height='100' width='100' />
                     </TouchableOpacity>
