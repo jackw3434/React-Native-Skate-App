@@ -163,8 +163,22 @@ export default class SkateMarkerModal extends React.Component {
                         }
                         <View style={styles.reviewHeaderRow}>
                             <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
-                            <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>
-                                <Text style={{ color: 'blue' }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
+                            <TouchableOpacity 
+                            onPress={this.props.onLeaveReview} 
+                            style={{
+                                alignSelf: 'flex-start',
+                                borderWidth: 1,
+                                borderColor: 'blue',
+                                borderRadius: 30,
+                                color: 'white',
+                                backgroundColor: 'rgba(0,0,255,0.9)',
+                                alignItems: 'flex-start',
+                               // padding: 1
+                            }}>
+                                <Text style={{
+                                    padding: 4,
+                                    color: 'white',                                    
+                                }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -192,7 +206,7 @@ export default class SkateMarkerModal extends React.Component {
                                         onPress={this.props.onReviewSubmit}
                                         style={styles.submitReviewButton}
                                     >
-                                        <Text style={{ color: 'blue' }}>Submit review</Text>
+                                        <Text style={{ color: 'white' }}>Submit review</Text>
                                     </TouchableOpacity>
                                 </View>
                                 :
@@ -303,7 +317,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'blue',
         padding: 5,
-        backgroundColor: "white"
+        backgroundColor: "blue"
     },
     picture: {
         backgroundColor: "rgba(220,220,220,1)",

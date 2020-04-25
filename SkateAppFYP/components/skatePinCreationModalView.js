@@ -190,8 +190,7 @@ export default class SkatePinCreationModalView extends React.Component {
                                      }}>
                                      <Text style={{                             
                                          padding: 7,
-                                          color: 'white',
-                                          fontWeight:'bold'
+                                          color: 'white'                                      
                                     }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                                 </TouchableOpacity>
                                 <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
@@ -297,8 +296,7 @@ export default class SkatePinCreationModalView extends React.Component {
                             }}>
                             <Text style={{                             
                                 padding: 7,
-                                 color: 'white',
-                                 fontWeight:'bold'
+                                 color: 'white',                             
                             }}>{!this.state.isShownPicker ? "Open picker" : "Close picker"}</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', paddingBottom: 10, alignItems: 'center' }}>
