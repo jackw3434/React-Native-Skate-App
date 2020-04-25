@@ -164,7 +164,7 @@ export default class SkatePinCreationModalView extends React.Component {
                         }
                     </View>
                 }
-                {!this.props.missingPhoto &&
+                {!this.props.missingPhoto && this.props.modalTitle === "New skate spot" &&
                     <View><Text style={{ color: 'red', paddingLeft: 5, paddingTop: 10, fontWeight: 'bold' }}>Please take a photo.</Text></View>
                 }
                 {this.props.missingLocation &&
