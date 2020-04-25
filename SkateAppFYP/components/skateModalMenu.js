@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 28,
         borderBottomWidth: 0.5,
-        width: '80%'
+        borderBottomColor:'grey',   
     },
 });

@@ -82,7 +82,7 @@ export default class RegisterScreen extends React.Component {
         }
 
         if (!passwordVerified) {
-            this.setState({ passwordValid: false, regErrorMessage: "Error: Password should contain at least one digit, one upper and lower case letter and be at least 8 characters long." });
+            this.setState({ passwordValid: false, regErrorMessage: "Error: Password should contain at least one digit, one upper and lower case letter and be at least 8 characters long with no special characters." });
         }
 
         if (password !== confirmPassword) {

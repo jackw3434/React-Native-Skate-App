@@ -12,13 +12,13 @@ export default class SkateDateTimePicker extends React.Component {
 
     render() {       
         return (
-            <View style={{ flex: Platform.OS == 'android' && 1 }}>
-                <DateTimePicker
+            <View>
+                <DateTimePicker               
                     testID="dateTimePicker"
                     value={this.props.value}
                     mode={this.props.mode}
                     is24Hour={true}
-                    display="default"
+                    display="spinner"
                     onChange={this.props.onChange}
                 />
                 {Platform.OS == 'ios' &&
