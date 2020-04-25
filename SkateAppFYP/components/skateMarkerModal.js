@@ -15,7 +15,9 @@ export default class SkateMarkerModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            skateSpotPicture:''
+            skateSpotPicture: '',
+            loading: true,
+            viewPhoto: false,
         };
     }
 
@@ -27,13 +29,13 @@ export default class SkateMarkerModal extends React.Component {
             // error reading value
             console.warn("e ", e)
         }
-    } 
+    }
 
     componentDidMount() {
 
-        this.getData().then(async userObject => {            
+        this.getData().then(async userObject => {
             await axios.get(url + '/api/image/' + this.props.photo, { headers: { Authorization: userObject.accessToken } })
-                .then(response => {                 
+                .then(response => {
                     this.setState({ skateSpotPicture: response.config.url })
                 })
                 .catch(function (error) {
@@ -49,8 +51,13 @@ export default class SkateMarkerModal extends React.Component {
     }
 
 
-    render() {      
+    render() {
         return (
+
+
+
+
+
             <Modal
                 backdropTransitionInTiming={3000}
                 backdropTransitionOutTiming={3000}
@@ -58,130 +65,162 @@ export default class SkateMarkerModal extends React.Component {
                 onBackdropPress={this.props.onBackdropPress}
                 style={{ alignItems: 'center' }}
                 isVisible={this.props.isVisible}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.centerRow}>
-                        <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
-                        <TouchableOpacity onPress={this.props.onDeletePress}>
-                            <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.userNameContainer}>
-                        <Icon name='UserInCircleIcon' viewBox="0 0 250 250" height="30" width="30" fill='blue' />
-                        <TouchableOpacity onPress={this.props.onUserNamePress}>
-                            {this.props.modalTitle == "Skate spot" ?
-                                <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
-                                :
-                                <Text style={{ fontSize: 14, paddingLeft: 3 }}>{this.props.createdBy.userName}</Text>
-                            }
-                        </TouchableOpacity>
-                    </View>
-                    {this.props.modalTitle !== "Game of S.K.A.T.E" &&
-                        <View>
-                            <Text style={styles.descriptionText}>Description:</Text>
-                            <View style={styles.descriptionAndPhotoContainer}>
-                                {this.props.photo !== "" && this.props.modalTitle === "Skate spot" &&
-                                    <View style={styles.photoContainer}>
-                                        {/* <Text>{this.props.photo}</Text> */}
-                                        <View style={{ alignSelf: 'center', paddingHorizontal:5 }}>
-                                        <Image source={{ uri: this.state.skateSpotPicture.toString() }} style={styles.picture} />
-                                    </View>
-                                    </View>
+                {this.state.viewPhoto ?
+                    <TouchableOpacity onPress={() => this.setState({ viewPhoto: false })}>
+                        <Image
+                            onLoadStart={(e) => this.setState({ loading: true })}
+                            onLoadEnd={(e) => this.setState({ loading: false })}
+                            source={{ uri: this.state.skateSpotPicture.toString() }}
+                            style={{ height: screenHeight, width: screenHeight }}
+                        />
+                    </TouchableOpacity>
+                    :
+                    <View style={styles.modalContainer}>
+                        <View style={styles.centerRow}>
+                            <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
+                            <TouchableOpacity onPress={this.props.onDeletePress}>
+                                <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.userNameContainer}>
+                            <Icon name='UserInCircleIcon' viewBox="0 0 250 250" height="30" width="30" fill='blue' />
+                            <TouchableOpacity onPress={this.props.onUserNamePress}>
+                                {this.props.modalTitle == "Skate spot" ?
+                                    <Text style={{ fontSize: 14 }}>Found By: {this.props.createdBy.userName}</Text>
+                                    :
+                                    <Text style={{ fontSize: 14, paddingLeft: 3 }}>{this.props.createdBy.userName}</Text>
                                 }
-                                <View style={styles.descriptionContainer}>
-                                    <ScrollView
-                                        ref={ref => { this.scrollview = ref }}
-                                        contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
-                                        {this.props.description.map((descriptor, index) => {
-                                            return (
-                                                <View style={{ alignItems: 'center', padding: 5 }}>
+                            </TouchableOpacity>
+                        </View>
+                        {this.props.modalTitle !== "Game of S.K.A.T.E" &&
+                            <View>
+                                <Text style={styles.descriptionText}>Description:</Text>
+                                <View style={styles.descriptionAndPhotoContainer}>
+                                    {this.props.photo !== "" && this.props.modalTitle === "Skate spot" &&
+                                        <View style={styles.photoContainer}>
+                                            {/* <Text>{this.props.photo}</Text> */}
+                                            <View style={{ alignSelf: 'center', paddingHorizontal: 5 }}>
+                                                {this.state.skateSpotPicture ?
+                                                    <TouchableOpacity onPress={() => this.setState({ viewPhoto: true })}>
+                                                        <Image
+                                                            onLoadStart={(e) => this.setState({ loading: true })}
+                                                            onLoadEnd={(e) => this.setState({ loading: false })}
+                                                            source={{ uri: this.state.skateSpotPicture.toString() }}
+                                                            style={styles.picture}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    :
                                                     <Text style={{
-                                                        borderWidth: 1,
-                                                        borderColor: 'blue',
+                                                        backgroundColor: "rgba(220,220,220,1)",
+                                                        height: screenHeight / 10,
+                                                        width: screenHeight / 10,
                                                         borderRadius: 10,
-                                                        padding: 4,
-                                                        color: 'blue'
-                                                    }}
-                                                        key={index}>
-                                                        {descriptor}
-                                                    </Text>
-                                                </View>
-                                            )
-                                        })}
-                                    </ScrollView>
+                                                        textAlign: 'center',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        paddingTop: 10
+                                                    }}>skate spot image loading...</Text>
+                                                }
+                                            </View>
+                                        </View>
+                                    }
+                                    <View style={styles.descriptionContainer}>
+                                        <ScrollView
+                                            ref={ref => { this.scrollview = ref }}
+                                            contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
+                                            {this.props.description.map((descriptor, index) => {
+                                                return (
+                                                    <View style={{ alignItems: 'center', padding: 5 }}>
+                                                        <Text style={{
+                                                            borderWidth: 1,
+                                                            borderColor: 'blue',
+                                                            borderRadius: 10,
+                                                            padding: 4,
+                                                            color: 'blue'
+                                                        }}
+                                                            key={index}>
+                                                            {descriptor}
+                                                        </Text>
+                                                    </View>
+                                                )
+                                            })}
+                                        </ScrollView>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    }
-                    {this.props.modalTitle !== "Skate spot" &&
-                        <View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop: 10, paddingBottom: 5 }}>
-                                <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
-                                <Text>{this.props.skateDate}</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', paddingLeft: 5 }}>
-                                <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
-                                <Text>{this.props.startTime} - {this.props.endTime}</Text>
-                            </View>
-                        </View>
-                    }
-                    <View style={styles.reviewHeaderRow}>
-                        <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
-                        <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>
-                            <Text style={{ color: 'blue' }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={{
-                        height: 100,
-                        borderWidth: this.props.leaveReview ? 1 : 0.5,
-                        borderRadius: 5,
-                        paddingLeft: 5,
-                        borderColor: this.props.leaveReview ? "blue" : "black"
-                    }}>
-                        {this.props.leaveReview ?
-                            <View>
-                                <ScrollView >
-                                    <TextInput
-                                        maxLength={120}
-                                        placeholder={"Enter your review here"}
-                                        multiline={true}
-                                        style={styles.reviewTextInput}
-                                        onChangeText={(review) => this.props.onReviewChange(review)}
-                                    >
-                                        {this.props.reviewMessage}
-                                    </TextInput>
-                                </ScrollView>
-                                <TouchableOpacity
-                                    onPress={this.props.onReviewSubmit}
-                                    style={styles.submitReviewButton}
-                                >
-                                    <Text style={{ color: 'blue' }}>Submit review</Text>
-                                </TouchableOpacity>
-                            </View>
-                            :
-                            <ScrollView style={{ marginTop: 5 }}>
-                                {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
-                                    return (
-                                        <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
-                                            <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
-                                            <Text >{review.reviewMessage}</Text>
-                                        </View>
-                                    )
-                                })}
-                            </ScrollView>
                         }
+                        {this.props.modalTitle !== "Skate spot" &&
+                            <View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 5, paddingTop: 10, paddingBottom: 5 }}>
+                                    <Icon name='Calender' viewBox="0 -20 700 700" height="28" width="28" fill='blue' />
+                                    <Text>{this.props.skateDate}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', paddingLeft: 5 }}>
+                                    <Icon name='Clock' viewBox="-50 -50 1024 1024" height="28" width="28" fill='blue' />
+                                    <Text>{this.props.startTime} - {this.props.endTime}</Text>
+                                </View>
+                            </View>
+                        }
+                        <View style={styles.reviewHeaderRow}>
+                            <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
+                            <TouchableOpacity onPress={this.props.onLeaveReview} style={styles.leaveAReviewButton}>
+                                <Text style={{ color: 'blue' }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{
+                            height: 100,
+                            borderWidth: this.props.leaveReview ? 1 : 0.5,
+                            borderRadius: 5,
+                            paddingLeft: 5,
+                            borderColor: this.props.leaveReview ? "blue" : "black"
+                        }}>
+                            {this.props.leaveReview ?
+                                <View>
+                                    <ScrollView >
+                                        <TextInput
+                                            maxLength={120}
+                                            placeholder={"Enter your review here"}
+                                            multiline={true}
+                                            style={styles.reviewTextInput}
+                                            onChangeText={(review) => this.props.onReviewChange(review)}
+                                        >
+                                            {this.props.reviewMessage}
+                                        </TextInput>
+                                    </ScrollView>
+                                    <TouchableOpacity
+                                        onPress={this.props.onReviewSubmit}
+                                        style={styles.submitReviewButton}
+                                    >
+                                        <Text style={{ color: 'blue' }}>Submit review</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                :
+                                <ScrollView style={{ marginTop: 5 }}>
+                                    {this.props.reviews && this.props.reviews.slice(0).reverse().map((review, i) => {
+                                        return (
+                                            <View key={i} style={{ paddingBottom: 5, paddingLeft: 2, flexDirection: 'column' }}>
+                                                <Text style={{ color: 'blue' }}>{review.reviewerName}: </Text>
+                                                <Text >{review.reviewMessage}</Text>
+                                            </View>
+                                        )
+                                    })}
+                                </ScrollView>
+                            }
+                        </View>
+                        <View style={{ paddingBottom: 10, paddingTop: 10 }}>
+                            <SkateButton
+                                buttonText="Get Directions"
+                                iconName="MapIcon"
+                                viewBox="0 0 30 30"
+                                iconStyle={styles.skateButtonIcon}
+                                onPress={this.props.onDirectionsPress}
+                            />
+                        </View>
                     </View>
-                    <View style={{ paddingBottom: 10, paddingTop: 10 }}>
-                        <SkateButton
-                            buttonText="Get Directions"
-                            iconName="MapIcon"
-                            viewBox="0 0 30 30"
-                            iconStyle={styles.skateButtonIcon}
-                            onPress={this.props.onDirectionsPress}
-                        />
-                    </View>
-                </View>
+                }
             </Modal>
+
         );
     }
 }
@@ -191,7 +230,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,1)',
         borderRadius: 30,
         padding: 30,
-        width: screenWidth-50
+        width: screenWidth - 50
     },
     centerRow: {
         flexDirection: 'row',
@@ -210,15 +249,15 @@ const styles = StyleSheet.create({
     userNameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingTop: 5,      
+        paddingTop: 5,
     },
-    descriptionContainer: {         
-   
+    descriptionContainer: {
+
         fontSize: 16,
         textAlign: 'left',
         flex: 1,
         flexWrap: 'wrap',
-       // width:"70%"
+        // width:"70%"
     },
     descriptionText: {
         color: 'blue',
@@ -226,14 +265,14 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingBottom: 5
     },
-    photoContainer: {        
+    photoContainer: {
     },
     descriptionAndPhotoContainer: {
         flexDirection: 'row',
-        alignItems:'center',     
-        height: screenHeight/9,
+        alignItems: 'center',
+        height: screenHeight / 9,
         borderWidth: 0.5,
-        borderRadius: 5,        
+        borderRadius: 5,
         flexDirection: 'row'
     },
     reviewHeaderRow: {
@@ -266,11 +305,11 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: "white"
     },
-    picture: {   
-       
-        height: screenHeight/10,
-        width: screenHeight/10,
+    picture: {
+        backgroundColor: "rgba(220,220,220,1)",
+        height: screenHeight / 10,
+        width: screenHeight / 10,
         borderRadius: 10,
-        zIndex: 1
+
     },
 });
