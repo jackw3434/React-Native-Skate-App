@@ -290,8 +290,8 @@ const styles = StyleSheet.create({
     reviewHeaderRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingBottom: 10,
-        paddingTop: 10
+        paddingBottom: 5,
+        paddingTop: 5
     },
     leaveAReviewButton: {
         borderRadius: 30,
