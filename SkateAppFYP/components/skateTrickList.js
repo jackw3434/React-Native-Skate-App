@@ -725,7 +725,7 @@ export default class SkateTrickList extends React.Component {
                             this.props.usersAchievedtricks.map((trick, i) => {
                                 return (
                                     <TouchableOpacity key={i} style={styles.trickContainer} onPress={() => this.navTo("SingleTrick", trick)}>
-                                        <Text style={styles.skateText}>{trick}</Text>
+                                        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.skateText}>{trick}</Text>
                                     </TouchableOpacity>
                                 )
                             })
