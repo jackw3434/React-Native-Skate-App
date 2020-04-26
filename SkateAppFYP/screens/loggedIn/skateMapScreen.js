@@ -127,42 +127,42 @@ export default class SkateMapScreen extends React.Component {
 
         // causing infinite loop: does detect when gps is turned on or off by the user - causes map to update
 
-        // if (!this.state.currentLat) {
-        //     Geolocation.getCurrentPosition(
-        //         position => {
-        //             if (this.state.locationProvider) {
-        //                 this.setState({
-        //                     currentLat: position.coords.latitude,
-        //                     currentLng: position.coords.longitude,
+        if (!this.state.currentLat) {
+            Geolocation.getCurrentPosition(
+                position => {
+                    if (this.state.locationProvider) {
+                        this.setState({
+                            currentLat: position.coords.latitude,
+                            currentLng: position.coords.longitude,
 
-        //                 })
-        //             } else {
-        //                 this.setState({
-        //                     region: {
-        //                         latitude: position.coords.latitude,
-        //                         longitude: position.coords.longitude,
-        //                         latitudeDelta: 0.1321,
-        //                         longitudeDelta: 0.1321,
-        //                     },
-        //                     currentLat: position.coords.latitude,
-        //                     currentLng: position.coords.longitude,
-        //                     locationProvider: true,
-        //                     gpsStatus: "GPS Status: enabled"
-        //                 })
-        //             }
-        //         },
-        //         (error) => {
-        //             // calling setState on error creates complications
+                        })
+                    } else {
+                        this.setState({
+                            region: {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                latitudeDelta: 0.1321,
+                                longitudeDelta: 0.1321,
+                            },
+                            currentLat: position.coords.latitude,
+                            currentLng: position.coords.longitude,
+                            locationProvider: true,
+                            gpsStatus: "GPS Status: enabled"
+                        })
+                    }
+                },
+                (error) => {
+                    // calling setState on error creates complications
 
-        //             // if (this.state.locationProvider) {
-        //             //     return;
-        //             // } else {
-        //             //     this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message })
-        //             // }
-        //         },
-        //         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-        //     );
-        // }
+                    // if (this.state.locationProvider) {
+                    //     return;
+                    // } else {
+                    //     this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message })
+                    // }
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+            );
+        }
     }
 
     componentWillUnmount() {
