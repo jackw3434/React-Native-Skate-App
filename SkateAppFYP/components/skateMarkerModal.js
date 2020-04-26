@@ -74,9 +74,11 @@ export default class SkateMarkerModal extends React.Component {
                     <View style={styles.modalContainer}>
                         <View style={styles.centerRow}>
                             <Text style={styles.modalTitle}>{this.props.modalTitle}</Text>
+                            {this.props.myPin &&
                             <TouchableOpacity onPress={this.props.onDeletePress}>
                                 <Icon name='Bin' viewBox="-30 -30 570 570" height="37" width="37" fill='blue' />
                             </TouchableOpacity>
+                            }
                         </View>
                         <View style={styles.userNameContainer}>
                             <Icon name='UserInCircleIcon' viewBox="0 0 250 250" height="30" width="30" fill='blue' />
@@ -159,7 +161,7 @@ export default class SkateMarkerModal extends React.Component {
                         }
                         <View style={styles.reviewHeaderRow}>
                             <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
-                            {!this.props.disableReview &&
+                            {!this.props.myPin &&
                                 <TouchableOpacity
                                     onPress={this.props.onLeaveReview}
                                     style={{

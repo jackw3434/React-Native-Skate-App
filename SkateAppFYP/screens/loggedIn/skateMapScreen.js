@@ -553,12 +553,12 @@ export default class SkateMapScreen extends React.Component {
 
         let travelType = 'walk';
         let lat, lng, start, end;
-        let disableReview = false;
+        let myPin = false;
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
        
         if(createdBy._id == this.state.loggedInUserData._id){
             console.warn("createdBy._id, this.state.loggedInUserData._id is the same, cannot leave review")
-            disableReview = true;
+            myPin = true;
         }
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
@@ -586,7 +586,7 @@ export default class SkateMapScreen extends React.Component {
                     reviewMessage={this.state.reviewMessage}
                     onReviewChange={(review) => this.setReviewMessage(review)}
                     onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
-                    disableReview={disableReview}
+                    myPin={myPin}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
@@ -613,7 +613,7 @@ export default class SkateMapScreen extends React.Component {
                     reviewMessage={this.state.reviewMessage}
                     onReviewChange={(review) => this.setReviewMessage(review)}
                     onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
-                    disableReview={disableReview}
+                    myPin={myPin}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
