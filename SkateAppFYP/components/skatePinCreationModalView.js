@@ -26,7 +26,7 @@ export default class SkatePinCreationModalView extends React.Component {
             return JSON.parse(userObject);
         } catch (e) {
             // error reading value
-            console.warn("e ", e)
+          
         }
     }
 
@@ -46,33 +46,7 @@ export default class SkatePinCreationModalView extends React.Component {
                 skipBackup: true,
                 path: 'images',
             },
-        };
-
-        // ImagePicker.showImagePicker(options, (response) => {
-
-        //     if (response.didCancel) {
-        //         console.warn('User cancelled image picker');
-        //     } else if (response.error) {
-        //         console.warn('ImagePicker Error: ', response.error);
-        //     } else if (response.customButton) {
-        //         console.warn('User tapped custom button: ', response.customButton);
-        //     } else {
-
-
-
-        //         let bodyFormData = new FormData()
-
-        //         bodyFormData.append('file', {
-        //             uri: response.uri,
-        //             type: response.type,
-        //             name: response.uri
-        //         })
-
-        //         this.props.skateSpotImage(bodyFormData)
-        //         this.setState({ skateSpotPicture: "data:image/jpeg;base64," + response.data });
-        //         // return bodyFormData to map screen for pin submission
-        //     }
-        // });
+        };        
 
         // Launch Camera:
         ImagePicker.launchCamera(options, (response) => {
@@ -83,8 +57,6 @@ export default class SkatePinCreationModalView extends React.Component {
             } else if (response.customButton) {
                 console.warn('User tapped custom button: ', response.customButton);
             } else {
-
-
 
                 let bodyFormData = new FormData()
 
@@ -99,11 +71,6 @@ export default class SkatePinCreationModalView extends React.Component {
                 // return bodyFormData to map screen for pin submission
             }
         });
-
-        // // Open Image Library:
-        // ImagePicker.launchImageLibrary(options, (response) => {
-        //     // Same code as in above section!
-        // });
     }
 
     render() {

@@ -150,7 +150,7 @@ export default class UserProfileScreen extends React.Component {
                             try {
                                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
                             } catch (e) {
-                                //     console.warn("saving error: ", e)
+                              
                             }
                         })
                         .catch(function (error) {                            
@@ -196,7 +196,7 @@ export default class UserProfileScreen extends React.Component {
             try {
                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
             } catch (e) {
-                //     console.warn("saving error: ", e)
+               
             }
         })
     };
@@ -220,9 +220,9 @@ export default class UserProfileScreen extends React.Component {
             try {
                 AsyncStorage.setItem("userObject", JSON.stringify(userObject))
             } catch (e) {
-                //  console.warn("saving error: ", e)
+             
             }
-            // console.warn("userprofile edit age", res)
+         
         })
     };
 

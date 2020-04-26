@@ -20,7 +20,7 @@ export default class SkateMapScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          isPhotoPresent:true,
+            isPhotoPresent: true,
             region: {
                 latitude: 50.3762, // Plymouth Uni - will need to get region from user 
                 longitude: -4.1395,
@@ -57,7 +57,7 @@ export default class SkateMapScreen extends React.Component {
             description: '',
             skateDate: '',
             isSkateDateInvalid: false,
-            isDescriptionInvalid:false,
+            isDescriptionInvalid: false,
             startTime: '',
             endTime: '',
             markers: [],
@@ -295,16 +295,14 @@ export default class SkateMapScreen extends React.Component {
         dateToExpire = new Date(dateToExpire)
 
         let pin;
-    
+
         if (!this.state.mapCoordinatesToUse.latitude) {
             this.setState({ isLocationMissing: true })
         } else if (dateToExpire < new Date() && pinType !== "Skate spot") {
             this.setState({ isSkateDateInvalid: true })
-        }  else if (pinType == "Skate spot" && !this.state.description || pinType == "Here to teach" && !this.state.description) {
-            console.warn("here", this.state.description)
+        } else if (pinType == "Skate spot" && !this.state.description || pinType == "Here to teach" && !this.state.description) {
             this.setState({ isDescriptionInvalid: true })
         } else {
-            console.warn("submitting")
             if (pinType == "Here to teach") {
                 pin = {
                     title: 'Here to teach',
@@ -363,8 +361,7 @@ export default class SkateMapScreen extends React.Component {
 
             if (pinType == "Skate spot") {
 
-                if(this.state.skateSpotImageData ==""){
-                    console.warn("no image")
+                if (this.state.skateSpotImageData == "") {
                     this.setState({ isPhotoPresent: false })
                 } else {
                     pin = {
@@ -381,12 +378,12 @@ export default class SkateMapScreen extends React.Component {
                         reviews: [],
                         pinColor: 'blue'
                     }
-    
+
                     postSkatePin(pin, this.state.loggedInUserData.accessToken).then(async response => {
-    
+
                         let pinID = response.data.newSkatePin._id;
                         const url = 'https://skate-api.herokuapp.com';
-    
+
                         await axios.post(url + '/api/skateSpotImage/' + pinID + '/upload',
                             this.state.skateSpotImageData,
                             {
@@ -396,15 +393,12 @@ export default class SkateMapScreen extends React.Component {
                                 }
                             })
                             .then(response => {
-                                console.warn("response, ", response)
                                 getAllSkatePins(this.state.loggedInUserData.accessToken).then((skatePins) => {
                                     this.setState({ markers: skatePins })
                                     this.clearAfterPinSubmission();
-                                    console.warn("clearAfterPinSubmission")
                                 })
                             })
                             .catch(function (error) {
-                                console.warn("error, ", error.response)
                                 if (error === "Error: Request failed with status code 409") {
                                     return error.response;
                                 }
@@ -415,7 +409,7 @@ export default class SkateMapScreen extends React.Component {
                             });
                     })
                 }
-                
+
             }
         }
     }
@@ -555,9 +549,8 @@ export default class SkateMapScreen extends React.Component {
         let lat, lng, start, end;
         let myPin = false;
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
-       
-        if(createdBy._id == this.state.loggedInUserData._id){
-            console.warn("createdBy._id, this.state.loggedInUserData._id is the same, cannot leave review")
+
+        if (createdBy._id == this.state.loggedInUserData._id) {
             myPin = true;
         }
         if (this.state.currentLat && this.state.currentLng) {
@@ -777,7 +770,7 @@ export default class SkateMapScreen extends React.Component {
                     onPress={(e) => this.showTempPin(e)}
                 >
                     {this.state.markers && this.state.markers.map(marker => (
-                        
+
                         <Marker
                             key={marker._id}
                             coordinate={{
@@ -805,6 +798,7 @@ export default class SkateMapScreen extends React.Component {
                     <View style={styles.modalContainer}>
                         {this.state.isModalMenuVisible &&
                             <SkateModalMenu
+                                achievedTricks={this.state.loggedInUserData.achievedTricks}
                                 onSkateSpotPress={() => this.openSkateSpotModal()}
                                 onHereToTeachPress={() => this.openHereToTeachModal()}
                                 onGameOfSkatePress={() => this.openGameOfSkateModal()}
@@ -818,7 +812,7 @@ export default class SkateMapScreen extends React.Component {
                                 locationProvider={this.state.locationProvider}
                                 onPressCurrentLocation={this.useCurrentLocation()}
                                 useCurrentOrSelectedLocation={this.state.useCurrentOrSelectedLocation}
-                                skateSpotImage={(bodyFormData) => { this.setState({ skateSpotImageData: bodyFormData, isPhotoPresent:true }) }}
+                                skateSpotImage={(bodyFormData) => { this.setState({ skateSpotImageData: bodyFormData, isPhotoPresent: true }) }}
                                 description={this.state.description}
                                 invalidDescription={this.state.isDescriptionInvalid}
                                 missingPhoto={this.state.isPhotoPresent}
@@ -828,7 +822,7 @@ export default class SkateMapScreen extends React.Component {
                                         const element = text[index].value;
                                         joinDescription = joinDescription.concat(element);
                                     }
-                                    this.setState({ description: joinDescription, isDescriptionInvalid:false })
+                                    this.setState({ description: joinDescription, isDescriptionInvalid: false })
                                 }}
                                 onPressSubmitPin={() => this.submitPin("Skate spot")}
                                 onPressCancelPin={() => this.cancelCreatingSkatePin()}
@@ -853,7 +847,7 @@ export default class SkateMapScreen extends React.Component {
                                                 const element = text[index].value;
                                                 joinDescription = joinDescription.concat(element);
                                             }
-                                            this.setState({ description: joinDescription, isDescriptionInvalid:false  })
+                                            this.setState({ description: joinDescription, isDescriptionInvalid: false })
                                         }}
                                         onPressShowDatePicker={() => this.showDateOrTimePicker("Date", "Date")}
                                         skateDate={this.state.skateDate}

@@ -26,8 +26,7 @@ export default class SkateMarkerModal extends React.Component {
             let userObject = await AsyncStorage.getItem("userObject");
             return JSON.parse(userObject);
         } catch (e) {
-            // error reading value
-            console.warn("e ", e)
+            // error reading value           
         }
     }
 
@@ -51,8 +50,7 @@ export default class SkateMarkerModal extends React.Component {
     }
 
 
-    render() {
-        console.warn(this.props.disableReview)
+    render() {     
         return (
             <Modal
                 backdropTransitionInTiming={3000}
@@ -292,8 +290,8 @@ const styles = StyleSheet.create({
     reviewHeaderRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingBottom: 5,
-        paddingTop: 5
+        paddingBottom: 10,
+        paddingTop: 10
     },
     leaveAReviewButton: {
         borderRadius: 30,

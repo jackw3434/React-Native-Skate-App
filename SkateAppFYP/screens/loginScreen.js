@@ -68,7 +68,7 @@ export default class LoginScreen extends React.Component {
         return;
       }
     } catch (e) {
-      // console.warn(" failed login getData ", e)
+      
     }
   }
 

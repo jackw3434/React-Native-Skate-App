@@ -83,8 +83,7 @@ export default class SingleTrickScreen extends React.Component {
 
         this.setState({ isEnabled: learned, achievedTricks: newAchievedTricks });
 
-        editMe({ achievedTricks: newAchievedTricks, learned: learned }).then(res => {
-            console.warn(res)
+        editMe({ achievedTricks: newAchievedTricks, learned: learned }).then(res => {         
             let userObject = {
                 _id: this.state._id,
                 profilePicture: this.state.profilePicture,
