@@ -127,42 +127,42 @@ export default class SkateMapScreen extends React.Component {
 
         // causing infinite loop: does detect when gps is turned on or off by the user - causes map to update
 
-        if (!this.state.currentLat) {
-            Geolocation.getCurrentPosition(
-                position => {
-                    if (this.state.locationProvider) {
-                        this.setState({
-                            currentLat: position.coords.latitude,
-                            currentLng: position.coords.longitude,
+        // if (!this.state.currentLat) {
+        //     Geolocation.getCurrentPosition(
+        //         position => {
+        //             if (this.state.locationProvider) {
+        //                 this.setState({
+        //                     currentLat: position.coords.latitude,
+        //                     currentLng: position.coords.longitude,
 
-                        })
-                    } else {
-                        this.setState({
-                            region: {
-                                latitude: position.coords.latitude,
-                                longitude: position.coords.longitude,
-                                latitudeDelta: 0.1321,
-                                longitudeDelta: 0.1321,
-                            },
-                            currentLat: position.coords.latitude,
-                            currentLng: position.coords.longitude,
-                            locationProvider: true,
-                            gpsStatus: "GPS Status: enabled"
-                        })
-                    }
-                },
-                (error) => {
-                    // calling setState on error creates complications
+        //                 })
+        //             } else {
+        //                 this.setState({
+        //                     region: {
+        //                         latitude: position.coords.latitude,
+        //                         longitude: position.coords.longitude,
+        //                         latitudeDelta: 0.1321,
+        //                         longitudeDelta: 0.1321,
+        //                     },
+        //                     currentLat: position.coords.latitude,
+        //                     currentLng: position.coords.longitude,
+        //                     locationProvider: true,
+        //                     gpsStatus: "GPS Status: enabled"
+        //                 })
+        //             }
+        //         },
+        //         (error) => {
+        //             // calling setState on error creates complications
 
-                    // if (this.state.locationProvider) {
-                    //     return;
-                    // } else {
-                    //     this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message })
-                    // }
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-            );
-        }
+        //             // if (this.state.locationProvider) {
+        //             //     return;
+        //             // } else {
+        //             //     this.setState({ locationProvider: false, gpsStatus: "GPS Status: disabled " + error.message })
+        //             // }
+        //         },
+        //         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+        //     );
+        // }
     }
 
     componentWillUnmount() {
@@ -553,9 +553,13 @@ export default class SkateMapScreen extends React.Component {
 
         let travelType = 'walk';
         let lat, lng, start, end;
-
+        let disableReview = false;
         let { _id, title, createdBy, coordinate, photo, description, reviews, startTime, endTime, pinColor, skateDate } = this.state.currentSkatePinModalData;
-
+       
+        if(createdBy._id == this.state.loggedInUserData._id){
+            console.warn("createdBy._id, this.state.loggedInUserData._id is the same, cannot leave review")
+            disableReview = true;
+        }
         if (this.state.currentLat && this.state.currentLng) {
             lat = this.state.currentLat;
             lng = this.state.currentLng;
@@ -582,6 +586,7 @@ export default class SkateMapScreen extends React.Component {
                     reviewMessage={this.state.reviewMessage}
                     onReviewChange={(review) => this.setReviewMessage(review)}
                     onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
+                    disableReview={disableReview}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
@@ -608,6 +613,7 @@ export default class SkateMapScreen extends React.Component {
                     reviewMessage={this.state.reviewMessage}
                     onReviewChange={(review) => this.setReviewMessage(review)}
                     onReviewSubmit={() => this.submitReview(_id, title, createdBy)}
+                    disableReview={disableReview}
                     coordinate={coordinate}
                     onDirectionsPress={createOpenLink({ travelType, start, end, zoom: 10 })}
                 />
@@ -771,6 +777,7 @@ export default class SkateMapScreen extends React.Component {
                     onPress={(e) => this.showTempPin(e)}
                 >
                     {this.state.markers && this.state.markers.map(marker => (
+                        
                         <Marker
                             key={marker._id}
                             coordinate={{

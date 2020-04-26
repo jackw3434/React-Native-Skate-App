@@ -52,12 +52,8 @@ export default class SkateMarkerModal extends React.Component {
 
 
     render() {
+        console.warn(this.props.disableReview)
         return (
-
-
-
-
-
             <Modal
                 backdropTransitionInTiming={3000}
                 backdropTransitionOutTiming={3000}
@@ -163,23 +159,25 @@ export default class SkateMarkerModal extends React.Component {
                         }
                         <View style={styles.reviewHeaderRow}>
                             <Text style={{ color: 'blue', padding: 5, }}>{!this.props.leaveReview ? "Reviews:" : "Your review:"}</Text>
-                            <TouchableOpacity 
-                            onPress={this.props.onLeaveReview} 
-                            style={{
-                                alignSelf: 'flex-start',
-                                borderWidth: 1,
-                                borderColor: 'blue',
-                                borderRadius: 30,
-                                color: 'white',
-                                backgroundColor: 'rgba(0,0,255,0.9)',
-                                alignItems: 'flex-start',
-                               // padding: 1
-                            }}>
-                                <Text style={{
-                                    padding: 4,
-                                    color: 'white',                                    
-                                }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
-                            </TouchableOpacity>
+                            {!this.props.disableReview &&
+                                <TouchableOpacity
+                                    onPress={this.props.onLeaveReview}
+                                    style={{
+                                        alignSelf: 'flex-start',
+                                        borderWidth: 1,
+                                        borderColor: 'blue',
+                                        borderRadius: 30,
+                                        color: 'white',
+                                        backgroundColor: 'rgba(0,0,255,0.9)',
+                                        alignItems: 'flex-start',
+                                        // padding: 1
+                                    }}>
+                                    <Text style={{
+                                        padding: 4,
+                                        color: 'white',
+                                    }}>{!this.props.leaveReview ? "Leave a review" : "cancel"}</Text>
+                                </TouchableOpacity>
+                            }
                         </View>
 
                         <View style={{
