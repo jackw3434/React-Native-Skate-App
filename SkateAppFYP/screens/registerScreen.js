@@ -66,50 +66,60 @@ export default class RegisterScreen extends React.Component {
                 this.setState({ confirmPasswordValid: false });
             }
         }
+
+        // /^
+        //   (?=.*\d)          // should contain at least one digit
+        //   (?=.*[a-z])       // should contain at least one lower case
+        //   (?=.*[A-Z])       // should contain at least one upper case
+        //   [a-zA-Z0-9]{8,}   // should contain at least 8 from the mentioned characters
+        // $/ 
+
+        let emailVerified = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+        let passwordVerified = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(password);
+
+        if (!emailVerified) {
+            this.setState({ emailValid: false, regErrorMessage: "Error: Invalid Email" });
+        }
+
+        if (!passwordVerified) {
+            this.setState({ passwordValid: false, regErrorMessage: "Error: Password should contain at least one digit, one upper and lower case letter and be at least 8 characters long with no special characters." });
+        }
+
         if (password !== confirmPassword) {
             this.setState({ passwordValid: false, confirmPasswordValid: false, regErrorMessage: "Error: Passwords do not match*" });
         } else {
 
-            let newUser = {
-                "name": name,
-                "email": email,
-                "password": password
-            };
+            if (emailVerified && passwordVerified && password === confirmPassword) {
 
-            registerUser(newUser)
+                let newUser = {
+                    "name": name,
+                    "email": email,
+                    "password": password
+                };
 
-                .then(response => {
+                registerUser(newUser).then(response => {
+
                     if (response === "User: " + email + " has been created.") {
-
                         this.setState({ name: "", email: "", password: "", confirmPassword: "", regErrorMessage: "", successReg: true });
-
-                        setTimeout(() => { this.navTo('LoginScreen'); }, 3000)
-
+                        setTimeout(() => { this.navTo('LoginScreen'); }, 1000);
                     }
 
-                    if (response === "Error: Request failed with status code 409") {
-                        console.warn("User with that email already exists");
+                    if (response == "Error: Request failed with status code 409") {
                         this.setState({ regErrorMessage: "User with that email already exists", emailValid: false });
                         return;
-                    }
+                    }                  
 
-                    if (response === "UnauthorizedError: jwt expired, clearing cache and retrying") {
-                        console.warn("UnauthorizedError: jwt expired, clearing cache and retrying");
-                        return;
-                    }
-
-                    if (response === "Error: Network Error") {
-                        console.warn("Error: Network Error, server not running");
+                    if (response === "Error: Network Error") {                      
                         this.setState({ regErrorMessage: "Error: Network Error, please try again later." });
                         return;
                     }
 
-                    if (response === undefined) {
-                        console.warn("Generic_error: Network/JWT Issue");
+                    if (response === undefined) {                     
                         this.setState({ regErrorMessage: "Oops, something went wrong, please try again later." });
                         return;
                     }
                 })
+            }
         }
     }
 
@@ -142,7 +152,8 @@ export default class RegisterScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             viewBox="2 -6 20 30"
                             keyboardType='email-address'
-                            onFocus={() => this.setState({ emailValid: true })}
+                            onFocus={() => this.setState({ emailValid: true, regErrorMessage: "" })}
+                            autoCapitalize='none'
                         />
                         <SkateTextInput
                             valid={this.state.passwordValid}
@@ -153,6 +164,7 @@ export default class RegisterScreen extends React.Component {
                             iconName="Padlock"
                             viewBox="0 0 20 30"
                             secureTextEntry={true}
+                            autoCapitalize='none'
                         />
                         <SkateTextInput
                             valid={this.state.confirmPasswordValid}
@@ -163,6 +175,7 @@ export default class RegisterScreen extends React.Component {
                             iconStyle={{ marginTop: 7 }}
                             viewBox="0 0 20 30"
                             secureTextEntry={true}
+                            autoCapitalize='none'
                         />
                     </View>
 
@@ -194,7 +207,7 @@ export default class RegisterScreen extends React.Component {
 const styles = StyleSheet.create({
     pageContainer: {
         height: screenHeight - 100,
-        padding:30
+        padding: 30
     },
     topSection: {
         height: '20%'
@@ -231,6 +244,6 @@ const styles = StyleSheet.create({
     success: {
         color: 'green',
         textAlign: "center",
-        fontWeight:'bold'
+        fontWeight: 'bold'
     }
 });

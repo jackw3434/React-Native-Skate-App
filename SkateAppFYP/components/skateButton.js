@@ -11,9 +11,32 @@ export default class SkateButton extends React.Component {
 
     render() {
         return (
-            <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: this.props.bgColor ? this.props.bgColor : 'rgba(0,0,255,0.9)', width: this.props.width }]} onPress={this.props.onPress}>
-                {!this.props.icon && <Icon style={this.props.iconStyle} name={this.props.iconName ? this.props.iconName : ''} fill="white" viewBox={this.props.viewBox} height="28" width="28" />}
-                <Text style={styles.text}>{this.props.buttonText}</Text>
+            <TouchableOpacity
+                style={
+                    [
+                        styles.buttonContainer, {
+                            backgroundColor: this.props.bgColor ? this.props.bgColor : 'rgba(0,0,255,0.9)',
+                            width: this.props.width
+                        }
+                    ]
+                }
+                onPress={!this.props.learnSomeTricks ? this.props.onPress : ""}>
+                {!this.props.icon &&
+                    <Icon
+                        style={this.props.iconStyle}
+                        name={this.props.iconName ? this.props.iconName : ''}
+                        fill="white"
+                        viewBox={this.props.viewBox}
+                        height="28"
+                        width="28"
+                    />
+                }
+                <View style={{ justifyContent: 'center' }}>
+                    <Text style={styles.text}>{this.props.buttonText}</Text>
+                    {this.props.learnSomeTricks &&
+                        <Text style={styles.text}>First learn tricks to teach.</Text>
+                    }
+                </View>
             </TouchableOpacity>
         );
     }
@@ -33,10 +56,12 @@ const styles = StyleSheet.create({
         height: 45,
         maxHeight: 45,
         minHeight: 45,
-        minWidth: '80%'
+        minWidth: '80%',
+        flexWrap: 'wrap'
     },
     text: {
         color: '#fff',
         fontSize: 16,
+        textAlign: "center"
     }
 });

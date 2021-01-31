@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Icon from '../../Icon/Icon'
 
 const barStyle = Platform.OS === 'ios' ? 'default' : 'yellow';
@@ -15,7 +16,22 @@ export default class AppContainer extends React.Component {
         this.props.navigation.goBack()
     }
 
-    render() {
+    clearData = async () => {
+        try {
+            await AsyncStorage.setItem("userObject", "")
+            await AsyncStorage.setItem("userPassword", "")
+        } catch (e) {
+            // saving error
+            console.warn("saving error: ", e)
+        }
+    }
+
+    logout() {
+        this.clearData()
+        this.props.passNav.navigation.navigate('LoginScreen')
+    }
+
+    render() {       
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle={barStyle} backgroundColor='black' />
@@ -31,10 +47,10 @@ export default class AppContainer extends React.Component {
                                         </View>
 
                                         <View style={styles.rightHandContainer}>
-                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen')}>
+                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('UserProfileScreen', this.props.userData)}>
                                                 <Icon name='UserInCircleIcon' fill="blue" viewBox="0 0 250 250" height="40" width="40" />
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => this.props.passNav.navigation.navigate('LoginScreen')}>
+                                            <TouchableOpacity onPress={() => this.logout()}>
                                                 <Icon name='LogoutIcon' fill="blue" viewBox="-20 -25 175 175" height="40" width="40" />
                                             </TouchableOpacity>
                                         </View>
@@ -56,7 +72,7 @@ export default class AppContainer extends React.Component {
                         </View>
                     }
                     {this.props.scrollView ?
-                        <ScrollView style={styles.container}>
+                        <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
                             {this.props.children}
                         </ScrollView>
                         :
@@ -99,13 +115,13 @@ const styles = StyleSheet.create({
     },
     leftHandContainer: {
         flexDirection: 'row',
-        width: '70%',
+        width: '100%',
         position: 'absolute',
         left: 0,
         alignItems: 'center',
     },
     title: {
-        fontSize: 24
+        fontSize: 24,   
     },
     borderLine: {
         borderBottomColor: 'grey',

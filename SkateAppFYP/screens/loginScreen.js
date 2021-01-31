@@ -1,10 +1,11 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, TextInput, Button, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import SkateButton from '../components/skateButton';
 import SkateTextInput from '../components/skateTextInput';
 import AppContainer from './containers/AppContainer';
-import { loginUser, hitAPI } from '../functions/userAccessFunctions';
+import { loginUser } from '../functions/userAccessFunctions';
 import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
@@ -19,14 +20,89 @@ export default class LoginScreen extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   // hitAPI();
-  //   setInterval(() => {
-  //     this.setState({
-  //       spinner: !this.state.spinner
-  //     });
-  //   }, 3000);
-  // }
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = async () => {
+    try {
+
+      let userObject = await AsyncStorage.getItem("userObject");
+      let userPassword = await AsyncStorage.getItem("userPassword");
+
+      userObject = JSON.parse(userObject)
+      userPassword = JSON.parse(userPassword)
+
+      if (userObject && userPassword) {
+
+        let user = {
+          "email": userObject.userEmail,
+          "password": userPassword
+        };
+
+        this.setState({ spinner: !this.state.spinner });
+
+        loginUser(user).then(response => {
+
+          if (response == "Error: Network Error") {
+            this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
+            return;
+          }
+
+          if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+       
+            this.setState({ spinner: !this.state.spinner })
+            let userData = response.data.userData;
+            let accessToken = response.data.accessToken;
+            userData.accessToken = accessToken;
+
+            this.storeData(userData);
+            this.navTo('LoginTabNavigationStack');
+            return
+
+          } else {
+            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
+          }
+        });
+      } else {
+        return;
+      }
+    } catch (e) {
+      
+    }
+  }
+
+  storeData = async (data) => {
+ 
+    let reviews = [];
+    for (let i = 0; i < data.reviews.length; i++) {
+
+      reviews.push({
+        reviewerID: data.reviews[i].reviewerID,
+        reviewerName: data.reviews[i].reviewerName,
+        reviewMessage: data.reviews[i].reviewMessage
+      })
+    }
+
+    let userObject = {
+      _id: data._id,
+      profilePicture: data.profilePicture,
+      userName: data.name,
+      userEmail: data.email,
+      age: data.age,
+      skateStance: data.skateStance,     
+      achievedTricks: data.achievedTricks,
+      usersCreatedPins: data.usersCreatedPins,
+      reviews: reviews,
+      accessToken: data.accessToken
+    }    
+
+    try {
+      await AsyncStorage.setItem("userObject", JSON.stringify(userObject))
+    } catch (e) {
+      console.warn("saving error: ", e)
+    }
+  }
 
   navTo(route) {
     this.props.navigation.navigate(route)
@@ -54,26 +130,29 @@ export default class LoginScreen extends React.Component {
         "password": password
       };
 
-      loginUser(user)
-        .then(response => {
-          if (response == "Error: Network Error") {
-            this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
-            return;
-          }
-          if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+      AsyncStorage.setItem("userPassword", JSON.stringify(password))
 
-            // localStorage.setItem("user_id", response.data.userData._id);
-            // localStorage.setItem("first_name", response.data.userData.first_name);
-            // localStorage.setItem("surname", response.data.userData.surname);
-            // localStorage.setItem("email", response.data.userData.email);
-            // localStorage.setItem("token", response.data.accessToken);
+      loginUser(user).then(response => {
 
-            this.setState({ spinner: !this.state.spinner });
-            this.navTo('LoginTabNavigationStack')
-          } else {
-            this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' })
-          }
-        });
+        if (response == "Error: Network Error") {
+          this.setState({ spinner: !this.state.spinner, loginErrorMessage: 'Network Error: Try again later' });
+          return;
+        }
+
+        if (response && response.data.successMessage === "User Logged In" && response.data.accessToken) {
+
+          let userData = response.data.userData;
+          let accessToken = response.data.accessToken;
+          userData.accessToken = accessToken;
+
+          this.storeData(userData);
+          this.setState({ spinner: !this.state.spinner });
+          this.navTo('LoginTabNavigationStack');
+
+        } else {
+          this.setState({ passwordValid: false, emailValid: false, spinner: !this.state.spinner, loginErrorMessage: 'Incorrect Login' });
+        }
+      });
       this.setState({ email: "", password: "" });
     }
   }
@@ -107,6 +186,7 @@ export default class LoginScreen extends React.Component {
             iconStyle={{ marginTop: 7 }}
             viewBox="0 0 20 30"
             secureTextEntry={true}
+            autoCapitalize='none'
           />
 
           <TouchableOpacity onPress={() => this.navTo('ForgottenPasswordScreen')} style={styles.forgotPasswordContainer}>
@@ -124,15 +204,6 @@ export default class LoginScreen extends React.Component {
             onPress={() => this.loginButton()}
           />
 
-          {/* <Text style={styles.connectText}>or connect using</Text> */}
-          {/* <SkateButton
-                    buttonText="Google+"
-                    onPress={}
-                    iconName="Padlock"
-                    iconStyle={{ marginTop: 7 }}
-                    viewBox="0 0 20 30"
-                  /> */}
-
           <View style={styles.dontHaveAccountContainer}>
             <Text>Don't have an account?</Text>
             <TouchableOpacity onPress={() => this.navTo('RegisterScreen')}>
@@ -147,7 +218,6 @@ export default class LoginScreen extends React.Component {
           />
         </View>
       </AppContainer>
-
     );
   }
 }
@@ -200,7 +270,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
     color: '#FFF',
   },
-
   errorMessege: {
     paddingTop: 10,
     color: 'red',
